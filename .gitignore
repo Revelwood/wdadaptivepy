@@ -174,5 +174,3 @@ cython_debug/
 .pypirc
 
 # custom test files
-test_rwg.py
-*.csv
