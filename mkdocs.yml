@@ -1,0 +1,188 @@
+site_name: wdadaptivepy
+site_description: Documentation for wdadaptivepy
+site_url: https://revelwood.github.io/wdadaptivepy
+
+repo_name: revelwood/wdadaptivepy
+repo_url: https://github.com/revelwood/wdadaptivepy
+
+theme:
+  name: material
+  custom_dir: material/overrides
+  # font:
+  #   text: Roboto
+  #   code: Google Sans Code
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.tabs
+    # - navigation.tabs.sticky
+    # - navigation.sections
+    # - navigation.expand
+    - navigation.indexes
+    - toc.follow
+    - toc.integrate
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    # - header.autohide
+    - navigation.footer
+    - content.action.edit
+    - content.action.view
+  palette:
+    # Automatic Mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+nav:
+  - Home: index.md
+  - Getting Started:
+      - getting_started/index.md
+      - Installation: getting_started/installation.md
+      - Connecting to Adaptive: getting_started/ConnectingtoAdaptive.md
+      - Get All Levels: getting_started/Levels.GetAll.md
+      - Get All Ancestors: getting_started/Levels.GetAncestors.md
+      - Get Data from Modeled Sheet: getting_started/GetDataFromModeledSheet.md
+      - Get Data: getting_started/GetData.md
+#  - Usage:
+#      - usage/index.md
+#      - Metadata:
+#          - Creating Metadata: usage/metadata/creating.md
+#          - Retrieving Metadata: usage/metadata/retrieving.md
+#          - Updating Metadata: usage/metadata/updating.md
+#          - Deleting Metadata: usage/metadata/deleting.md
+#      - Data:
+#          - Creating Data: usage/data/creating.md
+#          - Retrieving Data: usage/data/retrieving.md
+#          - Updating Data: usage/data/updating.md
+#          - Deleting Data: usage/data/deleting.md
+  - Reference: reference/
+#  - Community:
+#      - community/index.md
+#      - Code of Conduct: community/code_of_conduct.md
+#      - License: community/license.md
+#      - Requesting Features: community/requesting_features.md
+#      - Reporting Bugs: community/reporting_bugs.md
+#      - Contributing Code: community/developing.md
+#      - Updating Documentation: community/updating_documentation.md
+#      - Reporting Security Vulnerabilities: community/reporting_security_vulnerabilities.md
+#      - Credits: community/credits.md
+#  - News:
+#      - news/index.md
+plugins:
+  - privacy
+  - search
+  - blog:
+      blog_dir: news
+      categories_allowed:
+        - Release
+        - Roadmap
+      post_url_format: "{slug}"
+      blog_toc: true
+      pagination_per_page: 10
+  - rss:
+      match_path: "news/posts/.*"
+      pretty_print: true
+      date_from_meta:
+        as_creation: date.created
+        as_update: date.updated
+  - gen-files:
+      scripts:
+        - scripts/gen_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - mkdocstrings:
+      handlers:
+        python:
+          inventories:
+            - https://docs.python.org/3/objects.inv
+          #   - https://installer.readthedocs.io/en/stable/objects.inv # demonstration purpose in the docs
+          #   - https://mkdocstrings.github.io/autorefs/objects.inv
+          #   - https://www.mkdocs.org/objects.inv
+          #   - https://python-markdown.github.io/objects.inv
+          #   - https://jinja.palletsprojects.com/en/stable/objects.inv
+          #   - https://markupsafe.palletsprojects.com/en/stable/objects.inv
+          paths: [src]
+          options:
+            show_symbol_type_toc: true
+          #
+          #   backlinks: tree
+          #   docstring_options:
+          #     ignore_init_summary: true
+          #   docstring_section_style: list
+          #   filters: ["!^_"]
+          #   heading_level: 1
+          #   inherited_members: true
+          #   merge_init_into_class: true
+          #   parameter_headings: true
+          #   separate_signature: true
+          #   show_root_heading: true
+          #   show_root_full_path: false
+          #   show_signature_annotations: true
+          #   show_source: false
+          #   show_symbol_type_heading: true
+          #   show_symbol_type_toc: true
+          #   signature_crossrefs: true
+          #   summary: true
+  - git-revision-date-localized:
+      type: datetime
+      fallback_to_build_date: false
+      enable_creation_date: true
+      enabled: true
+      exclude:
+        - index.md
+  - git-committers:
+      enabled: !ENV [CI, false]
+      repository: revelwood/wdadaptivepy
+      branch: main
+      exclude:
+        - index.md
+        - usage/*
+extra:
+  generator: false
+  version:
+    provider: mike
+  social:
+    - icon: simple/youtube
+      link: https://www.youtube.com/@Revelwoodinc
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/Revelwood
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/revelwood
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/wdadaptivepy/
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+copyright: Copyright &copy; 2025 Revelwood

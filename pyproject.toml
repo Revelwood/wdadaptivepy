@@ -1,0 +1,143 @@
+[project]
+name = "wdadaptivepy"
+version = "0.1.0"
+description = "Wrapper for Workday Adaptive Planning's API"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["requests>=2.32.4"]
+authors = [{ name = "Revelwood Labs", email = "labs@revelwood.com" }]
+maintainers = [{ name = "Revelwood Labs", email = "labs@revelwood.com" }]
+license = { file = "LICENSE" }
+keywords = [
+  # "Adaptive",
+  "Adaptive Insights",
+  "Adaptive Planning",
+  "Workday",
+  # "Workday Adaptive",
+  "Workday Adaptive Planning",
+  # "api",
+  # "wrapper",
+  "api wrapper",
+  "financial planning",
+  "business analytics",
+]
+classifiers = [
+  "Development Status :: 1 - Planning",
+  # "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: System Administrators",
+  "Intended Audience :: Financial and Insurance Industry",
+  # "Intended Audience :: Other Audience",
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Natural Language :: English",
+  # "Operating System :: Microsoft",
+  # "Operating System :: MacOS",
+  "Operating System :: OS Independent",
+  # "Operating System :: Other OS",
+  # "Operating System :: POSIX",
+  # "Operating System :: Unix",
+  "Programming Language :: Python :: 3.12",
+  # "Programming Language :: Python :: 3.13",
+  # "Programming Language :: Python :: Implementation :: CPython",
+  # "Topic :: Database",
+  # "Topic :: Internet",
+  # "Topic :: Office/Business",
+  "Topic :: Office/Business :: Financial",
+  # "Topic :: Office/Business :: Financial :: Accounting",
+  # "Topic :: Office/Business :: Financial :: Spreadsheet",
+  # "Topic :: Office/Business :: Office Suites",
+  # "Topic :: System",
+  # "Topic :: Terminals",
+  # "Topic :: Text Processing :: Markup :: XML",
+  # "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://revelwood.github.io/wdadaptivepy"
+Documentation = "https://revelwood.github.io/wdadaptivepy"
+Repository = "https://github.com/revelwood/wdadaptivepy"
+"Bug Tracker" = "https://github.com/revelwood/wdadaptivepy/issues"
+# Changelog = ""
+
+[dependency-groups]
+dev = [
+  "mkdocs-gen-files>=0.5.0",
+  "mkdocs-git-committers-plugin-2>=2.5.0",
+  "mkdocs-git-revision-date-localized-plugin>=1.4.7",
+  "mkdocs-literate-nav>=0.6.2",
+  "mkdocs-material>=9.6.17",
+  "mkdocs-rss-plugin>=1.17.3",
+  "mkdocstrings-python>=1.17.0",
+  "pyright>=1.1.403",
+  "pytest>=8.4.1",
+  "pytest-cov>=6.2.1",
+  "pytest-mock>=3.14.1",
+  "ruff>=0.12.8",
+]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q -vv"
+testpaths = ["tests"]
+
+[build-system]
+requires = ["uv_build>=0.8.9,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "wdadaptivepy"
+
+[tool.ruff.lint]
+extend-select = [
+  "ANN",
+  "S",
+  "BLE",
+  "FBT",
+  "B",
+  "A",
+  "COM",
+  "C4",
+  "DTZ",
+  "T10",
+  "EM",
+  "FIX",
+  "FA",
+  "INT",
+  "ISC",
+  "ICN",
+  "LOG",
+  "G",
+  "INP",
+  "PIE",
+  "T20",
+  "PYI",
+  "PT",
+  "Q",
+  "RSE",
+  "RET",
+  "SLF",
+  "SIM",
+  "SLOT",
+  "TID",
+  "TD",
+  "TC",
+  "ARG",
+  "PTH",
+  "FLY",
+  "I",
+  "N",
+  "PERF",
+  "E",
+  "W",
+  "D",
+  "F",
+  "PL",
+  "UP",
+  "RUF",
+  "TRY",
+]
+ignore = ["D203", "D213", "COM812"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = ["S101", "S314"]
+"scripts/*.py" = ["INP001"]
