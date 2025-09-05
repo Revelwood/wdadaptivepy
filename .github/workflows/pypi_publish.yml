@@ -1,1 +1,10 @@
-# publish to our pypi project
+name: Publish to Python Package Index
+on: [release]
+jobs:
+  pypi:
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - run: uv publish
