@@ -102,6 +102,7 @@ for level in levels:
 - wdadaptivepy
   - [wdadaptivepy Source Code](https://github.com/Revelwood/wdadaptivepy)
   - [wdadaptivepy Documentation](https://revelwood.github.io/wdadaptivepy)
+  - [wdadaptivepy PyPI Project](https://pypi.org/project/wdadaptivepy/)
 
 - Workday Adaptive Planning
   - [Workday Adaptive Planning XML API Documentation](https://doc.workday.com/adaptive-planning/en-us/workday-adaptive-planning-documentation/integration/managing-data-integration/api-documentation/understanding-the-adaptive-planning-rest-api/api-methods/brk1623709249507.html?toc=11.0.4.1.3.0)
