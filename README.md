@@ -94,11 +94,7 @@ adaptive = AdaptiveConnection(username="YOUR_ADAPTIVE@USER.NAME", password="Y0ur
 levels = adaptive.levels.get_all()
 for level in levels:
     level.name.replace(" - OLD", " - NEW")
-adaptive.levels.update(levels)
-
-# Create new Accounts from CSV file
-accounts = adaptive.accounts.from_csv("new_accounts.csv")
-adaptive.accounts.update(accounts)
+# adaptive.levels.update(levels)  # Not currently implemented
 ```
 
 ## Documentatation
