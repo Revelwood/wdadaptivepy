@@ -111,6 +111,7 @@ for level in levels:
 ## Issues
 
 Please submit an issue on the [GitHub repository](https://github.com/Revelwood/wdadaptivepy) for any bugs or issues that are found.
+For any security vulnerabilities, please email labs@revelwood.com with a summary of the vulnerability.
 
 ## Contribute
 
