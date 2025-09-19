@@ -79,7 +79,7 @@ def test_get_all(
     account_service: AccountService,
     mock_accounts: MagicMock,
 ) -> None:
-    """Tests that wdadaptivepy properly parses Adaptive's exportAccounts XML API response.
+    """Tests wdadaptivepy properly parses Adaptive's exportAccounts XML API response.
 
     Args:
         element: Adaptive's exportAccounts XML API response
