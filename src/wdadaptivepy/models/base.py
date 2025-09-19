@@ -922,8 +922,12 @@ class BaseAttributtedMetadata:
             if (attribute.attribute_id == attribute_id) or (
                 attribute_id == 0 and attribute.name == adaptive_attribute_name
             ):
-                self.__adaptive_attributes[index].value = ""
-                self.__adaptive_attributes[index].value_id = 0
+                self.__adaptive_attributes[index] = MetadataAttribute(
+                    attribute_id=self.__adaptive_attributes[index].attribute_id,
+                    name=self.__adaptive_attributes[index].name,
+                    value_id=0,
+                    value="",
+                )
                 return
 
 
