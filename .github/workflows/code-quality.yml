@@ -1,5 +1,5 @@
 name: Python Code Quality
-on: [push]
+on: [push, pull_request]
 jobs:
   lock_file:
     runs-on: ubuntu-latest
