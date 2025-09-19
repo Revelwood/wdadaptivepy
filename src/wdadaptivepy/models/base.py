@@ -513,7 +513,7 @@ class BaseMetadata:
             for field_name, field_def in cls.__dataclass_fields__.items():
                 xml_name = field_def.metadata.get(f"xml_{xml_type}")
                 xml_parser = field_def.metadata.get("xml_parser")
-                if xml_name is None or xml_parser is None:
+                if xml_name is None or xml_name == "" or xml_parser is None:
                     continue
                 xml_value = xml_parser(getattr(member, field_name))
                 if xml_value is not None:
@@ -796,7 +796,7 @@ class MetadataAttribute(BaseMetadata):
             "xml_parser": int_to_str,
             "xml_create": "attributeId",
             "xml_read": "attributeId",
-            "xml_update": "attributeId",
+            "xml_update": "",
             "xml_delete": "attributeId",
         },
     )
@@ -816,10 +816,10 @@ class MetadataAttribute(BaseMetadata):
         metadata={
             "validator": nullable_int_or_none,
             "xml_parser": int_to_str,
-            "xml_create": "valueId",
+            "xml_create": "",
             "xml_read": "valueId",
-            "xml_update": "valueId",
-            "xml_delete": "valueId",
+            "xml_update": "",
+            "xml_delete": "",
         },
     )
     value: str | None = field(
