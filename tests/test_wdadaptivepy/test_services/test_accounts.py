@@ -52,7 +52,7 @@ def account_service() -> AccountService:
 
 @pytest.fixture
 def mock_accounts(mocker: MockerFixture, account_service: AccountService) -> ET.Element:
-    """Mock Adaptive's response from exportLevels XML API.
+    """Mock Adaptive's response from exportAccounts XML API.
 
     Args:
         mocker: pytest's mocker
@@ -62,14 +62,14 @@ def mock_accounts(mocker: MockerFixture, account_service: AccountService) -> ET.
         XML Element
 
     """
-    # Create a mock object for the Levels
-    mocked_levels = mocker.MagicMock()
+    # Create a mock object for the Accounts
+    mocked_accounts = mocker.MagicMock()
     mocker.patch.object(
         account_service._AccountService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
         "make_xml_request",
-        mocked_levels,
+        mocked_accounts,
     )
-    return mocked_levels
+    return mocked_accounts
 
 
 @pytest.mark.parametrize(("element", "expected"), tests)
@@ -79,23 +79,23 @@ def test_get_all(
     account_service: AccountService,
     mock_accounts: MagicMock,
 ) -> None:
-    """Tests that wdadaptivepy properly parses Adaptive's exportLevels XML API response.
+    """Tests wdadaptivepy properly parses Adaptive's exportAccounts XML API response.
 
     Args:
-        element: Adaptive's exportLevels XML API response
-        expected: wdadaptivepy MetadataList of Levels
+        element: Adaptive's exportAccounts XML API response
+        expected: wdadaptivepy MetadataList of Accounts
         account_service: wdadaptivepy AccountService
-        mock_accounts: Mocker for Adaptive's exportLevels XML API response
+        mock_accounts: Mocker for Adaptive's exportAccounts XML API response
 
     """
     # Set the mock object to return a specific response
     mock_accounts.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = account_service.get_all()
+    accounts = account_service.get_all()
 
     # Verify that the function returns the expected data
-    assert levels == expected
+    assert accounts == expected
 
 
 @pytest.mark.parametrize(
@@ -108,7 +108,7 @@ def test_get_all_with_errors(  # noqa: PLR0913
     index_with_error: int,
     key_with_error: str,
     account_service: AccountService,
-    mock_levels: MagicMock,
+    mock_accounts: MagicMock,
 ) -> None:
     """Tests that wdadaptivepy properly parses Adaptive's exportAccounts API response.
 
@@ -118,16 +118,16 @@ def test_get_all_with_errors(  # noqa: PLR0913
         index_with_error: the item in the MetadataList that shouldn't match
         key_with_error: the key for the property in that item that should't match
         account_service: wdadaptivepy AccountService
-        mock_levels: Mocker for Adaptive's exportAccounts XML API response
+        mock_accounts: Mocker for Adaptive's exportAccounts XML API response
 
     """
     # Set the mock object to return a specific response
-    mock_levels.return_value = element
+    mock_accounts.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = account_service.get_all()
+    accounts = account_service.get_all()
 
     # Verify that the function returns the expected data
-    xml_value = getattr(levels[index_with_error], key_with_error, None)
+    xml_value = getattr(accounts[index_with_error], key_with_error, None)
     expected_value = getattr(expected[index_with_error], key_with_error, None)
     assert xml_value != expected_value
