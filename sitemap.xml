@@ -2,214 +2,214 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/getting_started/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/getting_started/ConnectingtoAdaptive/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/getting_started/GetData/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/getting_started/GetDataFromModeledSheet/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/getting_started/Levels.GetAll/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/getting_started/Levels.GetAncestors/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/getting_started/installation/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/news/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/news/alpha-release/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/news/beta-release/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/SUMMARY/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/__init__/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/main/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/connectors/__init__/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/connectors/xml_api/__init__/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/connectors/xml_api/constants/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/connectors/xml_api/exceptions/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/connectors/xml_api/xml_api/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/__init__/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/account/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/attribute/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/attribute_value/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/base/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/currency/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/data/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/dimension/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/dimension_value/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/exceptions/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/group/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/level/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/list/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/permission_set/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/time/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/user/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/models/version/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/services/__init__/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/services/accounts/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/services/attribute_values/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/services/attributes/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/services/currencies/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/services/data/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/services/dimension_values/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/services/dimensions/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/services/groups/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/services/levels/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/services/permission_sets/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/services/time/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/services/users/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/reference/wdadaptivepy/services/versions/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/news/archive/2025/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/news/category/release/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
     <url>
          <loc>https://revelwood.github.io/wdadaptivepy/news/category/roadmap/</loc>
-         <lastmod>2025-09-19</lastmod>
+         <lastmod>2025-09-20</lastmod>
     </url>
 </urlset>
