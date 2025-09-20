@@ -4,7 +4,9 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    target-branch: "staging"
   - package-ecosystem: "uv"
     directory: "/"
     schedule:
       interval: "weekly"
+    target-branch: "staging"
