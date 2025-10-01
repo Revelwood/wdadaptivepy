@@ -154,9 +154,9 @@ gitpython==3.1.45 \
     #   mkdocs-git-committers-plugin-2
     #   mkdocs-git-revision-date-localized-plugin
     #   mkdocs-rss-plugin
-griffe==1.12.1 \
-    --hash=sha256:29f5a6114c0aeda7d9c86a570f736883f8a2c5b38b57323d56b3d1c000565567 \
-    --hash=sha256:2d7c12334de00089c31905424a00abcfd931b45b8b516967f224133903d302cc
+griffe==1.14.0 \
+    --hash=sha256:0e9d52832cccf0f7188cfe585ba962d2674b241c01916d780925df34873bceb0 \
+    --hash=sha256:9d2a15c1eca966d68e00517de5d69dd1bc5c9f2335ef6c1775362ba5b8651a13
     # via mkdocstrings-python
 idna==3.10 \
     --hash=sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9 \
