@@ -1003,3 +1003,28 @@ class HierarchialAttributedMetadata(
         BaseHierarchialMetadata.__post_init__(self, parent=parent, children=children)
         BaseAttributtedMetadata.__post_init__(self, attributes=attributes)
         BaseMetadata.__post_init__(self)
+
+
+@dataclass
+class BaseWriteResponse:
+    """Base Class for XML API Write Responses."""
+
+    success: bool
+    messages: dict[str, list[str]]
+    xml: ET.Element
+
+
+@dataclass
+class MetadataWriteSuccessResponse(BaseWriteResponse):
+    """Class for XML API Successful Write Responses."""
+
+    modified: MetadataList
+    all: MetadataList
+
+
+@dataclass
+class MetadataWriteFailureResponse(BaseWriteResponse):
+    """Class for XML API Failed Write Responses."""
+
+    errors: dict[str, MetadataList]
+    all: MetadataList
