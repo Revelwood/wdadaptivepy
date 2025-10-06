@@ -503,8 +503,22 @@ class BaseMetadata:
                     {"id": str(parent.id)},
                 )
                 parent_elements.append(parent_element)
-                if index == 0 or parent.adaptive_parent is None:
+                if (index == 0 or parent.adaptive_parent is None) or (
+                    xml_type == "update"
+                    and parent not in members
+                    and any(
+                        child_memb in parent.adaptive_children for child_memb in members
+                    )
+                ):
                     root_element.append(parent_element)
+                elif (
+                    xml_type == "update"
+                    and parent not in members
+                    and not any(
+                        child_memb in parent.adaptive_children for child_memb in members
+                    )
+                ):
+                    continue
                 else:
                     parent_index = parent_members.index(parent.adaptive_parent)
                     parent_elements[parent_index].append(parent_element)

@@ -197,7 +197,7 @@ sixth_account = Account(
     short_name="Sixth Account",
 )
 seventh_account = Account(
-    id=12346,
+    id=12347,
     code="Seventh_Account_Code",
     name="Seventh Account Name",
     account_type_code="A",
@@ -234,76 +234,105 @@ eighth_account.set_adaptive_attribute(second_account_attribute)
 ninth_account.set_adaptive_attribute(second_account_attribute)
 ninth_account.remove_adaptive_attribute(second_account_attribute)
 
-# update_accounts.append(
-#     (
-#         MetadataList(
-#             [
-#                 eighth_account,
-#                 seventh_account,
-#                 sixth_account,
-#                 ninth_account,
-#                 first_account,
-#                 second_account,
-#                 third_account,
-#                 fourth_account,
-#                 fifth_account,
-#                 sixth_account,
-#             ]
-#         ),
-#         ET.fromstring(
-#             """<accounts>"""
-#             """    <account id="12341" code="First_Account_Code" name="First Account Name" accountTypeCode="A" description="First Account Description" shortName="First Account">"""  # noqa: E501
-#             """        <account id="12342" code="Second_Account_Code" name="Second Account Name" accountTypeCode="A" description="Second Account Description" shortName="Second Account">"""  # noqa: E501
-#             """            <account id="12343" code="Third_Account_Code" name="Third Account Name" accountTypeCode="A" description="Third Account Description" shortName="Third Account">"""  # noqa: E501
-#             """                <account id="12344" code="Fourth_Account_Code" name="Fourth Account Name" accountTypeCode="A" description="Fourth Account Description" shortName="Fourth Account">"""  # noqa: E501
-#             """                    <account id="12345" code="Fifth_Account_Code" name="Fifth Account Name" accountTypeCode="A" description="Fifth Account Description" shortName="Fifth Account">"""  # noqa: E501
-#             """                        <attribute name="First Account Attribute" value="First Account Attribute First Value" />"""  # noqa: E501
-#             """                        <attribute name="Second Account Attribute" value="Second Account Attribute First Value" />"""  # noqa: E501
-#             """                    </account>"""
-#             """                    <account id="12346" code="Sixth_Account_Code" name="Sixth Account Name" accountTypeCode="A" description="Sixth Account Description" shortName="Sixth Account" />"""  # noqa: E501
-#             """                </account>"""
-#             """            </account>"""
-#             """            <account id="12347" code="Seventh_Account_Code" name="Seventh Account Name" accountTypeCode="A" description="Seventh Account Description" shortName="Seventh Account" />"""  # noqa: E501
-#             """        </account>"""
-#             """    </account>"""
-#             """    <account id="12348" code="Eighth_Account_Code" name="Eighth Account Name" accountTypeCode="A" description="Eighth Account Description" shortName="Eighth Account">"""  # noqa: E501
-#             """        <attribute name="First Account Attribute" value="First Account Attribute First Value" />"""  # noqa: E501
-#             """        <attribute name="Second Account Attribute" value="Second Account Attribute First Value" />"""  # noqa: E501
-#             """    </account>"""
-#             """    <account id="12349" code="Ninth Account Name" accountTypeCode="A" description="Ninth Account Description" shortName="Ninth Account">"""  # noqa: E501
-#             """        <attribute name="Second Account Attribute" value="" />"""
-#             """    </account>"""
-#             """</accounts>"""
-#         ),
-#     )
-# )
-# update_accounts.append(
-#     (
-#         MetadataList(
-#             [
-#                 second_account,
-#                 fifth_account,
-#                 ninth_account,
-#             ]
-#         ),
-#         ET.fromstring(
-#             """<accounts>"""
-#             """    <account id="12341">"""
-#             """        <account id="12342" code="Second_Account_Code" name="Second Account Name" accountTypeCode="A" description="Second Account Description" shortName="Second Account" />"""  # noqa: E501
-#             """    </account>"""
-#             """    <account id="12344">"""
-#             """        <account id="12345" code="Fifth_Account_Code" name="Fifth Account Name" accountTypeCode="A" description="Fifth Account Description" shortName="Fifth Account">"""  # noqa: E501
-#             """            <attribute name="First Account Attribute" value="First Account Attribute First Value" />"""  # noqa: E501
-#             """            <attribute name="Second Account Attribute" value="Second Account Attribute First Value" />"""  # noqa: E501
-#             """        </account>"""
-#             """    </account>"""
-#             """    <account id="12349" code="Ninth Account Name" accountTypeCode="A" description="Ninth Account Description" shortName="Ninth Account">"""  # noqa: E501
-#             """        <attribute name="Second Account Attribute" value="" />"""
-#             """    </account>"""
-#             """</accounts>"""
-#         ),
-#     )
-# )
+update_accounts.append(
+    (
+        MetadataList(
+            [
+                eighth_account,
+                seventh_account,
+                sixth_account,
+                ninth_account,
+                first_account,
+                second_account,
+                third_account,
+                fourth_account,
+                fifth_account,
+            ]
+        ),
+        ET.fromstring(
+            """<accounts>"""
+            """    <account id="12348" code="Eighth_Account_Code" name="Eighth Account Name" accountTypeCode="A" description="Eighth Account Description" shortName="Eighth Account">"""  # noqa: E501
+            """        <attribute name="First Account Attribute" value="First Account Attribute First Value" />"""  # noqa: E501
+            """        <attribute name="Second Account Attribute" value="Second Account Attribute First Value" />"""  # noqa: E501
+            """    </account>"""
+            """    <account id="12349" code="Ninth_Account_Code" name="Ninth Account Name" accountTypeCode="A" description="Ninth Account Description" shortName="Ninth Account">"""  # noqa: E501
+            """        <attribute name="Second Account Attribute" value="" />"""
+            """    </account>"""
+            """    <account id="12341" code="First_Account_Code" name="First Account Name" accountTypeCode="A" description="First Account Description" shortName="First Account">"""  # noqa: E501
+            """        <account id="12342" code="Second_Account_Code" name="Second Account Name" accountTypeCode="A" description="Second Account Description" shortName="Second Account">"""  # noqa: E501
+            """            <account id="12343" code="Third_Account_Code" name="Third Account Name" accountTypeCode="A" description="Third Account Description" shortName="Third Account">"""  # noqa: E501
+            """                <account id="12344" code="Fourth_Account_Code" name="Fourth Account Name" accountTypeCode="A" description="Fourth Account Description" shortName="Fourth Account">"""  # noqa: E501
+            """                    <account id="12346" code="Sixth_Account_Code" name="Sixth Account Name" accountTypeCode="A" description="Sixth Account Description" shortName="Sixth Account" />"""  # noqa: E501
+            """                    <account id="12345" code="Fifth_Account_Code" name="Fifth Account Name" accountTypeCode="A" description="Fifth Account Description" shortName="Fifth Account">"""  # noqa: E501
+            """                        <attribute name="First Account Attribute" value="First Account Attribute First Value" />"""  # noqa: E501
+            """                        <attribute name="Second Account Attribute" value="Second Account Attribute First Value" />"""  # noqa: E501
+            """                    </account>"""
+            """                </account>"""
+            """            </account>"""
+            """            <account id="12347" code="Seventh_Account_Code" name="Seventh Account Name" accountTypeCode="A" description="Seventh Account Description" shortName="Seventh Account" />"""  # noqa: E501
+            """        </account>"""
+            """    </account>"""
+            """</accounts>"""
+        ),
+    )
+)
+update_accounts.append(
+    (
+        MetadataList(
+            [
+                second_account,
+                fifth_account,
+                ninth_account,
+            ]
+        ),
+        ET.fromstring(
+            """<accounts>"""
+            """    <account id="12341">"""
+            """        <account id="12342" code="Second_Account_Code" name="Second Account Name" accountTypeCode="A" description="Second Account Description" shortName="Second Account" />"""  # noqa: E501
+            """    </account>"""
+            """    <account id="12344">"""
+            """        <account id="12345" code="Fifth_Account_Code" name="Fifth Account Name" accountTypeCode="A" description="Fifth Account Description" shortName="Fifth Account">"""  # noqa: E501
+            """            <attribute name="First Account Attribute" value="First Account Attribute First Value" />"""  # noqa: E501
+            """            <attribute name="Second Account Attribute" value="Second Account Attribute First Value" />"""  # noqa: E501
+            """        </account>"""
+            """    </account>"""
+            """    <account id="12349" code="Ninth_Account_Code" name="Ninth Account Name" accountTypeCode="A" description="Ninth Account Description" shortName="Ninth Account">"""  # noqa: E501
+            """        <attribute name="Second Account Attribute" value="" />"""
+            """    </account>"""
+            """</accounts>"""
+        ),
+    )
+)
+update_accounts.append(
+    (
+        MetadataList(
+            [
+                third_account,
+            ]
+        ),
+        ET.fromstring(
+            """<accounts>"""
+            """    <account id="12342" >"""
+            """        <account id="12343" code="Third_Account_Code" name="Third Account Name" accountTypeCode="A" description="Third Account Description" shortName="Third Account" />"""  # noqa: E501
+            """    </account>"""
+            """</accounts>"""
+        ),
+    )
+)
+update_accounts.append(
+    (
+        MetadataList(
+            [
+                first_account,
+            ]
+        ),
+        ET.fromstring(
+            """<accounts>"""
+            """    <account id="12341" code="First_Account_Code" name="First Account Name" accountTypeCode="A" description="First Account Description" shortName="First Account" />"""  # noqa: E501
+            """</accounts>"""
+        ),
+    )
+)
 update_accounts.append(
     (
         MetadataList(
