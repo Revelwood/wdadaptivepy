@@ -115,7 +115,7 @@ class AccountService:
         if success_text is None:
             raise ValueError
         success = success_text == "true"
-        messages = response.findall(".//messages")
+        messages = response.findall(".//message")
         returned_messages: dict[str, list[str]] = {}
         for message in messages:
             message_type = message.get("type")
@@ -132,7 +132,14 @@ class AccountService:
         updated_accounts = MetadataList[Account]()
         errored_accounts: dict[str, MetadataList[Account]] = {}
         for returned_account in returned_accounts:
-            if not any(returned_account.id == account.id for account in accounts):
+            if not any(
+                returned_account.id == account.id
+                or (
+                    account.adaptive_parent is not None
+                    and returned_account.id == account.adaptive_parent.id
+                )
+                for account in accounts
+            ):
                 raise RuntimeError
             account_xml = response.find(f".//account[@id='{returned_account.id}']")
             if account_xml is None:
