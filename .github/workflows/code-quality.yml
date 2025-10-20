@@ -1,4 +1,6 @@
 name: Python Code Quality
+permissions:
+  contents: read
 on: [push, pull_request]
 jobs:
   lock_file:
