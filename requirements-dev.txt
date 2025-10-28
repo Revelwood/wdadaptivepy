@@ -403,9 +403,9 @@ pymdown-extensions==10.16.1 \
     # via
     #   mkdocs-material
     #   mkdocstrings
-pyright==1.1.406 \
-    --hash=sha256:1d81fb43c2407bf566e97e57abb01c811973fdb21b2df8df59f870f688bdca71 \
-    --hash=sha256:c4872bc58c9643dac09e8a2e74d472c62036910b3bd37a32813989ef7576ea2c
+pyright==1.1.407 \
+    --hash=sha256:099674dba5c10489832d4a4b2d302636152a9a42d317986c38474c76fe562262 \
+    --hash=sha256:6dd419f54fcc13f03b52285796d65e639786373f433e243f8b94cf93a7444d21
 pytest==8.4.2 \
     --hash=sha256:86c0d0b93306b961d58d62a4db4879f27fe25513d4b969df351abdddb3c30e01 \
     --hash=sha256:872f880de3fc3a5bdc88a11b39c9710c3497a547cfa9320bc3c5e62fbf272e79
