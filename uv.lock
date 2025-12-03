@@ -510,7 +510,7 @@ wheels = [
 
 [[package]]
 name = "mkdocs-rss-plugin"
-version = "1.17.4"
+version = "1.17.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cachecontrol", extra = ["filecache"] },
@@ -519,9 +519,9 @@ dependencies = [
     { name = "requests" },
     { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/15/9b/336d365964d3d5184af14dbe4b69a5a223875af1d8f2d20f9bf046ea50a5/mkdocs_rss_plugin-1.17.4.tar.gz", hash = "sha256:cfd42d250cbf7a73b006cbe291eedb29d32d4d8bf803f7da0e7a98bedcda2ac3", size = 34880, upload-time = "2025-10-10T03:31:14.276Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ea/b8/46c8c504f8eb4c3a8948b32cf2be4feb43645791d6b11c806cec397cd882/mkdocs_rss_plugin-1.17.5.tar.gz", hash = "sha256:dcb24f6392abf1091378f43cea1185a1151624343fa7444799ee765ac7d8d092", size = 568182, upload-time = "2025-11-07T16:09:17.646Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/92/1b/9d3d6f53f0b063789528a5bc8e47a8b8f3eb85b5740d949d149ccc89d685/mkdocs_rss_plugin-1.17.4-py2.py3-none-any.whl", hash = "sha256:c05fdb5a63fdf396f8d05169e45a08388abc3eb6f55ca4d23682039aad0cce50", size = 30545, upload-time = "2025-10-10T03:31:13.13Z" },
+    { url = "https://files.pythonhosted.org/packages/7e/b0/3707701c7dc03b082fec801662c43fc9c8fe7e78d94bf1a7d7d4aec509ed/mkdocs_rss_plugin-1.17.5-py3-none-any.whl", hash = "sha256:c76090a9de68af7566ca6b16bbba8b210680f1d9e35bcba4fc54379e1e5a6c1f", size = 31670, upload-time = "2025-11-07T16:09:15.756Z" },
 ]
 
 [[package]]
