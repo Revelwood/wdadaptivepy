@@ -525,13 +525,6 @@ class BaseMetadata:
                         member_element.extend(children)
                     else:
                         member_element.append(children)
-            for field_name in xml_children:
-                field_def = [
-                    y for x, y in cls.__dataclass_fields__.items() if x == field_name
-                ]
-                if field_def is None:
-                    continue
-                field_def = field_def[0]
             if adaptive_attributes := getattr(member, "adaptive_attributes", None):
                 attributes = MetadataAttribute.to_xml(xml_type, adaptive_attributes)
                 member_element.extend(attributes)
