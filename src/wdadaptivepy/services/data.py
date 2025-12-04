@@ -11,6 +11,7 @@ from wdadaptivepy.models.base import bool_to_str_true_false
 from wdadaptivepy.models.data import (
     AccountFilter,
     CurrencyFilter,
+    DimensionValueFilter,
     ExportDataFilter,
     ExportDataFormat,
     ExportDataRules,
@@ -30,6 +31,7 @@ class DataService:
     Attributes:
         ExportDataAccountsFilter: Adaptive Accounts Filter
         ExportDataCurrencyFilter: Adaptive Currency Filter
+        ExportDataDimensionValueFilter: Adaptive Dimension Value Filter
         ExportDataFilter: Adaptive Data Filter
         ExportDataFormat: Adaptive Data Format
         ExportDataRules: Adaptive  Rules
@@ -48,6 +50,7 @@ class DataService:
         self.__xml_api = xml_api
         self.ExportDataAccountsFilter = AccountFilter
         self.ExportDataCurrencyFilter = CurrencyFilter
+        self.ExportDataDimensionValueFilter = DimensionValueFilter
         self.ExportDataFilter = ExportDataFilter
         self.ExportDataFormat = ExportDataFormat
         self.ExportDataRules = ExportDataRules

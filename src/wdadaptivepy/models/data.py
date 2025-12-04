@@ -235,16 +235,20 @@ class DimensionValueFilter:
     #     metadata={"validator": is_none_or_has_name}
     # )
     dimension_value: DimensionValue | Sequence[DimensionValue] | None = field(
-        metadata={"validator": is_none_or_has_code},
+        metadata={"validator": is_none_or_has_code}, default=None
     )
-    direct_children: bool | None = field(metadata={"validator": is_none_or_is_bool})
-    uncategorized: bool | None = field(metadata={"validator": is_none_or_is_bool})
+    direct_children: bool | None = field(
+        metadata={"validator": is_none_or_is_bool}, default=None
+    )
+    uncategorized: bool | None = field(
+        metadata={"validator": is_none_or_is_bool}, default=None
+    )
     # uncategorized_of_dimension: Optional[bool] = field(
     #     metadata={"validator": is_none_or_is_bool}
     # )
-    uncategorized_of_dimension: Dimension | Sequence[Dimension] | None
+    uncategorized_of_dimension: Dimension | Sequence[Dimension] | None = None
     direct_children_of_dimension: bool | None = field(
-        metadata={"validator": is_none_or_is_bool},
+        metadata={"validator": is_none_or_is_bool}, default=None
     )
 
 
@@ -525,15 +529,15 @@ class ExportDataFilter:
                             if code is None:
                                 error_message = "Expected code value"
                                 raise ValueError(error_message)
-                            name = str_to_str(level.name)
-                            if name is None:
-                                error_message = "Expected name value"
-                                raise ValueError(error_message)
+                            # name = str_to_str(level.name)
+                            # if name is None:
+                            #     error_message = "Expected name value"
+                            #     raise ValueError(error_message)
                             level_element = ET.Element(
                                 "level",
                                 attrib={
                                     "code": code,
-                                    "name": name,
+                                    # "name": name,
                                     "isRollup": is_rollup,
                                     "includeDescendants": include_descendants,
                                 },
@@ -545,15 +549,15 @@ class ExportDataFilter:
                         if code is None:
                             error_message = "Expected code value"
                             raise ValueError(error_message)
-                        name = str_to_str(level.name)
-                        if name is None:
-                            error_message = "Expected name value"
-                            raise ValueError(error_message)
+                        # name = str_to_str(level.name)
+                        # if name is None:
+                        #     error_message = "Expected name value"
+                        #     raise ValueError(error_message)
                         level_element = ET.Element(
                             "level",
                             attrib={
                                 "code": code,
-                                "name": name,
+                                # "name": name,
                                 "isRollup": is_rollup,
                                 "includeDescendants": include_descendants,
                             },
@@ -577,15 +581,15 @@ class ExportDataFilter:
                         if code is None:
                             error_message = "Expected code value"
                             raise ValueError(error_message)
-                        name = str_to_str(level.name)
-                        if name is None:
-                            error_message = "Expected name value"
-                            raise ValueError(error_message)
+                        # name = str_to_str(level.name)
+                        # if name is None:
+                        #     error_message = "Expected name value"
+                        #     raise ValueError(error_message)
                         level_element = ET.Element(
                             "level",
                             attrib={
                                 "code": code,
-                                "name": name,
+                                # "name": name,
                                 "isRollup": is_rollup,
                                 "includeDescendants": include_descendants,
                             },
@@ -597,20 +601,21 @@ class ExportDataFilter:
                     if code is None:
                         error_message = "Expected code value"
                         raise ValueError(error_message)
-                    name = str_to_str(level.name)
-                    if name is None:
-                        error_message = "Expected name value"
-                        raise ValueError(error_message)
+                    # name = str_to_str(level.name)
+                    # if name is None:
+                    #     error_message = "Expected name value"
+                    #     raise ValueError(error_message)
                     level_element = ET.Element(
                         "level",
                         attrib={
                             "code": code,
-                            "name": name,
+                            # "name": name,
                             "isRollup": is_rollup,
                             "includeDescendants": include_descendants,
                         },
                     )
                     levels_element.append(level_element)
+            filters_element.append(levels_element)
 
         start = str_to_str(self.time.start.code)
         if start is None:
@@ -620,18 +625,18 @@ class ExportDataFilter:
         if end is None:
             error_message = "Expected end value"
             raise ValueError(error_message)
-        time_span_element = ET.Element("timeSpan", attrib={"start": start, "end": end})
-        if self.time.stratum is not None:
-            stratum = str_to_str(self.time.stratum.code)
-            if stratum is not None:
-                time_span_element.attrib["stratum"] = stratum
-        filters_element.append(time_span_element)
 
         if self.dimension_values is not None:
             dimension_values_element = ET.Element("dimensionValues")
             if isinstance(self.dimension_values, Sequence):
                 for dimension_value_filter in self.dimension_values:
-                    if isinstance(
+                    if isinstance(dimension_value_filter.dimension_value, Sequence):
+                        for dimension_value in dimension_value_filter.dimension_value:
+                            dimension_value_element = ET.Element(
+                                "dimensionValue", attrib={"id": str(dimension_value.id)}
+                            )
+                            dimension_values_element.append(dimension_value_element)
+                    elif isinstance(
                         dimension_value_filter.uncategorized_of_dimension,
                         Sequence,
                     ):
@@ -676,6 +681,23 @@ class ExportDataFilter:
                                 dimension_name
                             )
                         dimension_values_element.append(dimension_value_element)
+            elif isinstance(self.dimension_values, DimensionValueFilter) and isinstance(
+                self.dimension_values.dimension_value, Sequence
+            ):
+                for dimension_value in self.dimension_values.dimension_value:
+                    dimension_value_element = ET.Element(
+                        "dimensionValue",
+                        attrib={"id": str(dimension_value.id)},
+                    )
+                    dimension_values_element.append(dimension_value_element)
+            filters_element.append(dimension_values_element)
+
+        time_span_element = ET.Element("timeSpan", attrib={"start": start, "end": end})
+        if self.time.stratum is not None:
+            stratum = str_to_str(self.time.stratum.code)
+            if stratum is not None:
+                time_span_element.attrib["stratum"] = stratum
+        filters_element.append(time_span_element)
 
         return filters_element
 
