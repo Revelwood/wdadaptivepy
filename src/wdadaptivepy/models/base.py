@@ -352,7 +352,7 @@ class BaseMetadata:
         super().__setattr__(name, validator(value))
 
     @classmethod
-    def __parse_xml_to_metadata(
+    def __parse_xml_to_metadata(  # NOQA: PLR0912
         cls: type[Self],
         xml_element: ET.Element,
         xml_tag: str,
