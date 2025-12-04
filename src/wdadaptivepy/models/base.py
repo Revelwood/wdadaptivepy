@@ -352,7 +352,82 @@ class BaseMetadata:
         super().__setattr__(name, validator(value))
 
     @classmethod
-    def from_xml(  # NOQA: PLR0912
+    def __parse_xml_to_metadata(
+        cls: type[Self],
+        xml_element: ET.Element,
+        xml_tag: str,
+        xml_children: dict | None,
+        parent: Self | None,
+        processed_xml_elements: list[ET.Element],
+    ) -> MetadataList[Self]:
+        processed_xml_elements.append(xml_element)
+        metadata_data = {
+            field_name: xml_element.get(field_def.metadata.get("xml_read"))
+            for field_name, field_def in cls.__dataclass_fields__.items()
+            if field_def.metadata.get("xml_read") in xml_element.attrib
+        }
+        metadata_member = cls(**metadata_data)
+        metadata_members = MetadataList[Self]([metadata_member])
+        if xml_children:
+            for field_name, data_type in xml_children.items():
+                child_xml_parent_tag = data_type.__dataclass_fields__[
+                    f"_{data_type.__name__}__xml_tags"
+                ].default["xml_read_parent_tag"]
+                child_xml_tag = data_type.__dataclass_fields__[
+                    f"_{data_type.__name__}__xml_tags"
+                ].default["xml_read_tag"]
+                if child_xml_tag is None or child_xml_parent_tag is None:
+                    continue
+                search_xml_tag = (
+                    child_xml_tag
+                    if child_xml_parent_tag == xml_element.tag
+                    else child_xml_parent_tag
+                )
+                children_members = MetadataList()
+                for child_element in xml_element.findall(f"./{search_xml_tag}"):
+                    children_members.extend(data_type.from_xml(child_element))
+                if children_members:
+                    setattr(metadata_member, field_name, children_members)
+        if hasattr(metadata_member, "adaptive_attributes"):
+            adaptive_metadata_instance = MetadataAttribute()
+            for metadata_element in xml_element.findall(
+                f"./{adaptive_metadata_instance.__dataclass_fields__['_MetadataAttribute__xml_tags'].default['xml_read_parent_tag']}",
+            ):
+                adaptive_metadata_members = MetadataAttribute.from_xml(
+                    metadata_element,
+                )
+                for adaptive_metadata_member in adaptive_metadata_members:
+                    set_adaptive_attribute = getattr(
+                        metadata_member,
+                        "set_adaptive_attribute",
+                        None,
+                    )
+                    if set_adaptive_attribute is None:
+                        error_message = "Cannot access set_adaptive_attribute"
+                        raise RuntimeError(error_message)
+                    set_adaptive_attribute(adaptive_metadata_member)
+        if hasattr(metadata_member, "adaptive_parent"):
+            if parent is not None:
+                set_adaptive_parent: Callable | None = getattr(
+                    metadata_member, "set_adaptive_parent", None
+                )
+                if set_adaptive_parent is not None:
+                    set_adaptive_parent(parent)
+            for xml_child_element in xml_element.findall(path=xml_tag):
+                metadata_members.extend(
+                    cls.__parse_xml_to_metadata(
+                        xml_element=xml_child_element,
+                        xml_tag=xml_tag,
+                        xml_children=xml_children,
+                        parent=metadata_member,
+                        processed_xml_elements=processed_xml_elements,
+                    )
+                )
+
+        return metadata_members
+
+    @classmethod
+    def from_xml(
         cls: type[Self],
         xml: ET.Element,
     ) -> MetadataList[Self]:
@@ -383,82 +458,18 @@ class BaseMetadata:
             "xml_read_children"
         ]
         if xml_tag is not None:
+            processed_xml_elements: list[ET.Element] = []
             for xml_element in xml.iter(tag=xml_tag):
-                metadata_data = {
-                    field_name: xml_element.get(field_def.metadata.get("xml_read"))
-                    for field_name, field_def in cls.__dataclass_fields__.items()
-                    if field_def.metadata.get("xml_read") in xml_element.attrib
-                }
-                metadata_member = cls(**metadata_data)
-                if xml_children:
-                    for field_name, data_type in xml_children.items():
-                        child_xml_parent_tag = data_type.__dataclass_fields__[
-                            f"_{data_type.__name__}__xml_tags"
-                        ].default["xml_read_parent_tag"]
-                        child_xml_tag = data_type.__dataclass_fields__[
-                            f"_{data_type.__name__}__xml_tags"
-                        ].default["xml_read_tag"]
-                        if child_xml_tag is None or child_xml_parent_tag is None:
-                            continue
-                        search_xml_tag = (
-                            child_xml_tag
-                            if child_xml_parent_tag == xml_element.tag
-                            else child_xml_parent_tag
+                if xml_element not in processed_xml_elements:
+                    metadata_members.extend(
+                        cls.__parse_xml_to_metadata(
+                            xml_element=xml_element,
+                            xml_tag=xml_tag,
+                            xml_children=xml_children,
+                            parent=None,
+                            processed_xml_elements=processed_xml_elements,
                         )
-                        children_members = MetadataList()
-                        for child_element in xml_element.findall(f"./{search_xml_tag}"):
-                            children_members.extend(data_type.from_xml(child_element))
-                        if children_members:
-                            setattr(metadata_member, field_name, children_members)
-                if hasattr(metadata_member, "adaptive_parent"):
-                    parent_xml_element = xml.find(
-                        path=f'.//{xml_element.tag}[@id="{xml_element.get("id")}"]..',
                     )
-                    if (
-                        parent_xml_element is not None
-                        and parent_xml_element.tag == xml_element.tag
-                    ):
-                        for parent in metadata_members:
-                            if int(getattr(parent, "id", 0)) == int(
-                                parent_xml_element.attrib["id"],
-                            ):
-                                set_adaptive_parent = getattr(
-                                    metadata_member,
-                                    "set_adaptive_parent",
-                                    None,
-                                )
-                                if set_adaptive_parent is None:
-                                    error_message = "Cannot access set_adaptive_parent"
-                                    raise RuntimeError(error_message)
-                                set_adaptive_parent(parent)
-                                break
-                        adaptive_parent = getattr(
-                            metadata_member,
-                            "adaptive_parent",
-                            None,
-                        )
-                        if adaptive_parent is None:
-                            error_message = "Parent not found"
-                            raise ValueError(error_message)
-                if hasattr(metadata_member, "adaptive_attributes"):
-                    adaptive_metadata_instance = MetadataAttribute()
-                    for metadata_element in xml_element.findall(
-                        f"./{adaptive_metadata_instance.__dataclass_fields__['_MetadataAttribute__xml_tags'].default['xml_read_parent_tag']}",
-                    ):
-                        adaptive_metadata_members = MetadataAttribute.from_xml(
-                            metadata_element,
-                        )
-                        for adaptive_metadata_member in adaptive_metadata_members:
-                            set_adaptive_attribute = getattr(
-                                metadata_member,
-                                "set_adaptive_attribute",
-                                None,
-                            )
-                            if set_adaptive_attribute is None:
-                                error_message = "Cannot access set_adaptive_attribute"
-                                raise RuntimeError(error_message)
-                            set_adaptive_attribute(adaptive_metadata_member)
-                metadata_members.append(metadata_member)
 
         return metadata_members
 
