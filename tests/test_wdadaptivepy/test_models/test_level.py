@@ -2,6 +2,7 @@
 
 # import pytest
 
+from wdadaptivepy.models.base import MetadataAttribute
 from wdadaptivepy.models.level import Level
 
 # def test_prevent_empty_level() -> None:
@@ -65,3 +66,18 @@ def test_values_forced_type() -> None:
     assert new_level.id is not None
     assert isinstance(new_level.id, int)
     assert new_level.id == 1
+
+
+def test_remove_attribute_returns_new() -> None:
+    """Test that removing an attribute does not modify the existing Attribute object."""
+    adaptive_attribute = MetadataAttribute(
+        attribute_id=1, name="Test", value_id=2, value="Test Value"
+    )
+    level = Level(id=1)
+    level.set_adaptive_attribute(adaptive_attribute=adaptive_attribute)
+    assert level.adaptive_attributes[0] == adaptive_attribute
+
+    level.remove_adaptive_attribute(adaptive_attribute_id=1)
+    assert level.adaptive_attributes[0] != adaptive_attribute
+    assert level.adaptive_attributes[0].value_id == "0"
+    assert adaptive_attribute.value_id == "2"
