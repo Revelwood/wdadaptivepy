@@ -321,9 +321,9 @@ mkdocstrings==1.0.0 \
     --hash=sha256:351a006dbb27aefce241ade110d3cd040c1145b7a3eb5fd5ac23f03ed67f401a \
     --hash=sha256:4c50eb960bff6e05dfc631f6bc00dfabffbcb29c5ff25f676d64daae05ed82fa
     # via mkdocstrings-python
-mkdocstrings-python==1.19.0 \
-    --hash=sha256:395c1032af8f005234170575cc0c5d4d20980846623b623b35594281be4a3059 \
-    --hash=sha256:917aac66cf121243c11db5b89f66b0ded6c53ec0de5318ff5e22424eb2f2e57c
+mkdocstrings-python==2.0.1 \
+    --hash=sha256:66ecff45c5f8b71bf174e11d49afc845c2dfc7fc0ab17a86b6b337e0f24d8d90 \
+    --hash=sha256:843a562221e6a471fefdd4b45cc6c22d2607ccbad632879234fa9692e9cf7732
 msgpack==1.1.2 \
     --hash=sha256:04fb995247a6e83830b62f0b07bf36540c213f6eac8e851166d8d86d83cbd014 \
     --hash=sha256:180759d89a057eab503cf62eeec0aa61c4ea1200dee709f3a8e9397dbb3b6931 \
