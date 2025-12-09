@@ -105,8 +105,8 @@ for level in levels:
   - [wdadaptivepy PyPI Project](https://pypi.org/project/wdadaptivepy/)
 
 - Workday Adaptive Planning
-  - [Workday Adaptive Planning XML API Documentation](https://doc.workday.com/adaptive-planning/en-us/workday-adaptive-planning-documentation/integration/managing-data-integration/api-documentation/understanding-the-adaptive-planning-rest-api/api-methods/brk1623709249507.html?toc=11.0.4.1.3.0)
-  - [Workday Adaptive Planning JSON API Documentation](https://doc.workday.com/adaptive-planning/en-us/workday-adaptive-planning-documentation/integration/managing-data-integration/api-documentation/json-apis/jyo1644861365611.html?toc=11.0.4.5.1)
+  - [Workday Adaptive Planning XML API Documentation](https://doc.workday.com/adaptive-planning/en-us/workday-adaptive-planning-documentation/integration/managing-data-integration/api-documentation/cbi1623709771566.html?toc=12.1.4.0)
+  - [Workday Adaptive Planning JSON API Documentation](https://doc.workday.com/adaptive-planning/en-us/workday-adaptive-planning-documentation/integration/rest-apis-json-/xng1644865893966.html?toc=12.3.0)
   - [Workday Adaptive Planning API Changelog](https://doc.workday.com/adaptive-planning/en-us/workday-adaptive-planning-documentation/integration/managing-data-integration/api-documentation/understanding-the-adaptive-planning-rest-api/vmo1623708512342.html)
 
 ## Issues
