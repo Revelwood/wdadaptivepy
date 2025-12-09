@@ -406,9 +406,9 @@ pymdown-extensions==10.18 \
 pyright==1.1.407 \
     --hash=sha256:099674dba5c10489832d4a4b2d302636152a9a42d317986c38474c76fe562262 \
     --hash=sha256:6dd419f54fcc13f03b52285796d65e639786373f433e243f8b94cf93a7444d21
-pytest==9.0.0 \
-    --hash=sha256:8f44522eafe4137b0f35c9ce3072931a788a21ee40a2ed279e817d3cc16ed21e \
-    --hash=sha256:e5ccdf10b0bac554970ee88fc1a4ad0ee5d221f8ef22321f9b7e4584e19d7f96
+pytest==9.0.2 \
+    --hash=sha256:711ffd45bf766d5264d487b917733b453d917afd2b0ad65223959f59089f875b \
+    --hash=sha256:75186651a92bd89611d1d9fc20f0b4345fd827c41ccd5c299a868a05d70edf11
     # via
     #   pytest-cov
     #   pytest-mock
