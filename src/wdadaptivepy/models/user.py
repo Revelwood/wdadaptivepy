@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass, field
 from datetime import datetime
+from functools import partial
 from typing import ClassVar
 
 from wdadaptivepy.models.base import (
@@ -9,6 +10,7 @@ from wdadaptivepy.models.base import (
     bool_or_none,
     bool_to_str_one_zero,
     bool_to_str_true_false,
+    custom_type_or_none,
     datetime_or_none,
     datetime_to_str,
     int_list_or_none,
@@ -46,10 +48,10 @@ class Subscription(Metadata):
         metadata={
             "validator": bool_or_none,
             "xml_parser": bool_to_str_one_zero,
-            "xml_create": "noSubscriptions",
-            "xml_read": "noSubscriptions",
-            "xml_update": "noSubscriptions",
-            "xml_delete": "noSubscriptions",
+            "xml_create": "nosubscriptions",
+            "xml_read": "nosubscriptions",
+            "xml_update": "nosubscriptions",
+            "xml_delete": "nosubscriptions",
         },
     )
     sysem_alerts_and_updates: bool | None = field(
@@ -74,15 +76,15 @@ class Subscription(Metadata):
             "xml_delete": "customerNewsLetter",
         },
     )
-    local_event: bool | None = field(
+    local_events: bool | None = field(
         default=None,
         metadata={
             "validator": bool_or_none,
             "xml_parser": bool_to_str_one_zero,
-            "xml_create": "localEvent",
-            "xml_read": "localEvent",
-            "xml_update": "localEvent",
-            "xml_delete": "localEvent",
+            "xml_create": "localEvents",
+            "xml_read": "localEvents",
+            "xml_update": "localEvents",
+            "xml_delete": "localEvents",
         },
     )
     education_training: bool | None = field(
@@ -164,16 +166,16 @@ class Subscription(Metadata):
     )
     __xml_tags: ClassVar[dict[str, str | dict[str, type]]] = {
         "xml_create_parent_tag": "subscriptions",
-        "xml_create_tag": "subscription",
+        "xml_create_tag": "subscriptions",
         "xml_create_children": {},
         "xml_read_parent_tag": "subscriptions",
-        "xml_read_tag": "subscription",
+        "xml_read_tag": "subscriptions",
         "xml_read_children": {},
         "xml_update_parent_tag": "subscriptions",
-        "xml_update_tag": "subscription",
+        "xml_update_tag": "subscriptions",
         "xml_update_children": {},
         "xml_delete_parent_tag": "subscriptions",
-        "xml_delete_tag": "subscription",
+        "xml_delete_tag": "subscriptions",
         "xml_delete_children": {},
     }
 
@@ -190,6 +192,7 @@ class User(Metadata):
         name: Adaptive User Name
         position: Adaptive User Position
         permission_set_ids: Adaptive User Permission Set IDs
+        group_ids: Adaptive User Group IDs
         alternate_email: Adaptive User Alternate Email
         saml_fed_id: Adaptive User SAML Federation ID
         time_zone: Adaptive User Time Zone
@@ -286,6 +289,17 @@ class User(Metadata):
             "xml_read": "permissionSetIds",
             "xml_update": "permissionSetIds",
             "xml_delete": "permissionSetIds",
+        },
+    )
+    group_ids: list[int] | None = field(
+        default=None,
+        metadata={
+            "validator": int_list_or_none,
+            "xml_parser": int_list_to_str,
+            "xml_create": "groupIds",
+            "xml_read": "groupIds",
+            "xml_update": "groupIds",
+            "xml_delete": "groupIds",
         },
     )
     alternate_email: str | None = field(
@@ -467,8 +481,8 @@ class User(Metadata):
     subscriptions: Subscription | None = field(
         default=None,
         metadata={
-            # "validator": ,
-            # "xml_parser": ,
+            "validator": partial(custom_type_or_none, data_type=Subscription),
+            "xml_parser": None,
             "xml_create": "subscriptions",
             "xml_read": "subscriptions",
             "xml_update": "subscriptions",

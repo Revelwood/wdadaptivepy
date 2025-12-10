@@ -7,7 +7,35 @@ from json import loads
 from typing import Any, ClassVar, Self
 from xml.etree import ElementTree as ET
 
-from wdadaptivepy.models.list import MetadataList
+from wdadaptivepy.models.list import MetadataList, T
+
+
+def custom_type_or_none(value: T | Sequence[T] | None, data_type: type[T]) -> T | None:
+    """Ensure a value is either a given custom Python object or None.
+
+    Args:
+        value: Value to ensure is a custom Python object or None
+        data_type: Custom Python Object to check
+
+    Returns:
+        Instance of custom Python object or None
+
+    Raises:
+        TypeError: Unexpected type
+
+    """
+    if value is None:
+        return None
+    if isinstance(value, data_type):
+        return value
+    if (
+        isinstance(value, Sequence)
+        and len(value) <= 1
+        and all(isinstance(x, data_type) for x in value)
+    ):
+        return value[0]
+    error_message = "Unexpected data type"
+    raise TypeError(error_message)
 
 
 def date_or_none(value: str | datetime | None) -> datetime | None:
@@ -335,6 +363,8 @@ def int_list_or_none(
     if value is None:
         return None
     if isinstance(value, str):
+        if "," in value:
+            return [int(x) for x in value.split(",")]
         return [int(value)]
     if isinstance(value, int):
         return [value]
