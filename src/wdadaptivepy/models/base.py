@@ -38,6 +38,32 @@ def custom_type_or_none(value: T | Sequence[T] | None, data_type: type[T]) -> T 
     raise TypeError(error_message)
 
 
+def metadatalist_or_none(
+    value: Sequence[T] | None, data_type: type[T]
+) -> MetadataList[T] | None:
+    """Ensure a value is either an array of a given custom Python object or None.
+
+    Args:
+        value: Value to ensure is an array of a custom Python object or None
+        data_type: Custom Python Object to check
+
+    Returns:
+        An array of custom Python object instances or None
+
+    Raises:
+        TypeError: Unexpected type
+
+    """
+    if value is None:
+        return None
+    if isinstance(value, Sequence) and all(isinstance(x, data_type) for x in value):
+        if isinstance(value, MetadataList):
+            return value
+        return MetadataList[T](list(value))
+    error_message = "Unexpected data type"
+    raise TypeError(error_message)
+
+
 def date_or_none(value: str | datetime | None) -> datetime | None:
     """Convert a value to either a Python datetime object (date) or none.
 

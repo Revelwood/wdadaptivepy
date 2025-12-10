@@ -1,6 +1,7 @@
 """Tests for wdadaptivepy's service for Adaptive's Times."""
 
 # Code using pytest-mock
+from datetime import datetime
 from unittest.mock import MagicMock
 from xml.etree import ElementTree as ET
 
@@ -44,8 +45,7 @@ p2015 = Period(
     short_name="FY2015",
     stratum_id=3,
     id=15003,
-    # end=datetime(2016, 1, 1),
-    end="2016-01-01",
+    end=datetime(2016, 1, 1),  # NOQA: DTZ001
 )
 
 p2015_q1 = Period(
@@ -54,8 +54,7 @@ p2015_q1 = Period(
     short_name="Q1-FY15",
     stratum_id=2,
     id=60002,
-    # end=datetime(2015, 4, 1),
-    end="2015-04-01",
+    end=datetime(2015, 4, 1),  # NOQA: DTZ001
     parent=p2015,
 )
 p2015_jan = Period(
@@ -64,8 +63,7 @@ p2015_jan = Period(
     short_name="Jan-2015",
     stratum_id=1,
     id=180001,
-    # end=datetime(2015, 2, 1),
-    end="2015-02-01",
+    end=datetime(2015, 2, 1),  # NOQA: DTZ001
     parent=p2015_q1,
 )
 p2015_feb = Period(
@@ -74,8 +72,7 @@ p2015_feb = Period(
     short_name="Feb-2015",
     stratum_id=1,
     id=181001,
-    # end=datetime(2015, 3, 1),
-    end="2015-03-01",
+    end=datetime(2015, 3, 1),  # NOQA: DTZ001
     parent=p2015_q1,
 )
 p2015_mar = Period(
@@ -84,8 +81,7 @@ p2015_mar = Period(
     short_name="Mar-2015",
     stratum_id=1,
     id=182001,
-    # end=datetime(2015, 4, 1),
-    end="2015-04-01",
+    end=datetime(2015, 4, 1),  # NOQA: DTZ001
     parent=p2015_q1,
 )
 p2015_q2 = Period(
@@ -94,8 +90,7 @@ p2015_q2 = Period(
     short_name="Q2-FY15",
     stratum_id=2,
     id=61002,
-    # end=datetime(2015, 7, 1),
-    end="2015-07-01",
+    end=datetime(2015, 7, 1),  # NOQA: DTZ001
     parent=p2015,
 )
 p2015_apr = Period(
@@ -104,8 +99,7 @@ p2015_apr = Period(
     short_name="Apr-2015",
     stratum_id=1,
     id=183001,
-    # end=datetime(2015, 5, 1),
-    end="2015-05-01",
+    end=datetime(2015, 5, 1),  # NOQA: DTZ001
     parent=p2015_q2,
 )
 p2015_may = Period(
@@ -114,8 +108,7 @@ p2015_may = Period(
     short_name="May-2015",
     stratum_id=1,
     id=184001,
-    # end=datetime(2015, 6, 1),
-    end="2015-06-01",
+    end=datetime(2015, 6, 1),  # NOQA: DTZ001
     parent=p2015_q2,
 )
 p2015_jun = Period(
@@ -124,8 +117,7 @@ p2015_jun = Period(
     short_name="Jun-2015",
     stratum_id=1,
     id=185001,
-    # end=datetime(2015, 7, 1),
-    end="2015-07-01",
+    end=datetime(2015, 7, 1),  # NOQA: DTZ001
     parent=p2015_q2,
 )
 p2015_q3 = Period(
@@ -134,8 +126,7 @@ p2015_q3 = Period(
     short_name="Q3-FY15",
     stratum_id=2,
     id=62002,
-    # end=datetime(2015, 10, 1),
-    end="2015-10-01",
+    end=datetime(2015, 10, 1),  # NOQA: DTZ001
     parent=p2015,
 )
 p2015_jul = Period(
@@ -144,8 +135,7 @@ p2015_jul = Period(
     short_name="Jul-2015",
     stratum_id=1,
     id=186001,
-    # end=datetime(2015, 8, 1),
-    end="2015-08-01",
+    end=datetime(2015, 8, 1),  # NOQA: DTZ001
     parent=p2015_q3,
 )
 p2015_aug = Period(
@@ -154,8 +144,7 @@ p2015_aug = Period(
     short_name="Aug-2015",
     stratum_id=1,
     id=187001,
-    # end=datetime(2015, 9, 1),
-    end="2015-09-01",
+    end=datetime(2015, 9, 1),  # NOQA: DTZ001
     parent=p2015_q3,
 )
 p2015_sep = Period(
@@ -164,8 +153,7 @@ p2015_sep = Period(
     short_name="Sep-2015",
     stratum_id=1,
     id=188001,
-    # end=datetime(2015, 10, 1),
-    end="2015-10-01",
+    end=datetime(2015, 10, 1),  # NOQA: DTZ001
     parent=p2015_q3,
 )
 p2015_q4 = Period(
@@ -174,8 +162,7 @@ p2015_q4 = Period(
     short_name="Q4-FY15",
     stratum_id=2,
     id=63002,
-    # end=datetime(2016, 1, 1),
-    end="2016-01-01",
+    end=datetime(2016, 1, 1),  # NOQA: DTZ001
     parent=p2015,
 )
 p2015_oct = Period(
@@ -184,8 +171,7 @@ p2015_oct = Period(
     short_name="Oct-2015",
     stratum_id=1,
     id=189001,
-    # end=datetime(2015, 11, 1),
-    end="2015-11-01",
+    end=datetime(2015, 11, 1),  # NOQA: DTZ001
     parent=p2015_q4,
 )
 p2015_nov = Period(
@@ -194,8 +180,7 @@ p2015_nov = Period(
     short_name="Nov-2015",
     stratum_id=1,
     id=190001,
-    # end=datetime(2015, 12, 1),
-    end="2015-12-01",
+    end=datetime(2015, 12, 1),  # NOQA: DTZ001
     parent=p2015_q4,
 )
 p2015_dec = Period(
@@ -204,8 +189,7 @@ p2015_dec = Period(
     short_name="Dec-2015",
     stratum_id=1,
     id=191001,
-    # end=datetime(2016, 1, 1),
-    end="2016-01-01",
+    end=datetime(2016, 1, 1),  # NOQA: DTZ001
     parent=p2015_q4,
 )
 
@@ -215,8 +199,7 @@ p2016 = Period(
     short_name="FY2016",
     stratum_id=3,
     id=16003,
-    # end=datetime(2017, 1, 1),
-    end="2017-01-01",
+    end=datetime(2017, 1, 1),  # NOQA: DTZ001
 )
 
 p2016_q1 = Period(
@@ -225,8 +208,7 @@ p2016_q1 = Period(
     short_name="Q1-FY16",
     stratum_id=2,
     id=64002,
-    # end=datetime(2016, 4, 1),
-    end="2016-04-01",
+    end=datetime(2016, 4, 1),  # NOQA: DTZ001
     parent=p2016,
 )
 p2016_jan = Period(
@@ -235,8 +217,7 @@ p2016_jan = Period(
     short_name="Jan-2016",
     stratum_id=1,
     id=192001,
-    # end=datetime(2016, 2, 1),
-    end="2016-02-01",
+    end=datetime(2016, 2, 1),  # NOQA: DTZ001
     parent=p2016_q1,
 )
 p2016_feb = Period(
@@ -245,8 +226,7 @@ p2016_feb = Period(
     short_name="Feb-2016",
     stratum_id=1,
     id=193001,
-    # end=datetime(2016, 3, 1),
-    end="2016-03-01",
+    end=datetime(2016, 3, 1),  # NOQA: DTZ001
     parent=p2016_q1,
 )
 p2016_mar = Period(
@@ -255,8 +235,7 @@ p2016_mar = Period(
     short_name="Mar-2016",
     stratum_id=1,
     id=194001,
-    # end=datetime(2016, 4, 1),
-    end="2016-04-01",
+    end=datetime(2016, 4, 1),  # NOQA: DTZ001
     parent=p2016_q1,
 )
 p2016_q2 = Period(
@@ -265,8 +244,7 @@ p2016_q2 = Period(
     short_name="Q2-FY16",
     stratum_id=2,
     id=65002,
-    # end=datetime(2016, 7, 1),
-    end="2016-07-01",
+    end=datetime(2016, 7, 1),  # NOQA: DTZ001
     parent=p2016,
 )
 p2016_apr = Period(
@@ -275,8 +253,7 @@ p2016_apr = Period(
     short_name="Apr-2016",
     stratum_id=1,
     id=195001,
-    # end=datetime(2016, 5, 1),
-    end="2016-05-01",
+    end=datetime(2016, 5, 1),  # NOQA: DTZ001
     parent=p2016_q2,
 )
 p2016_may = Period(
@@ -285,8 +262,7 @@ p2016_may = Period(
     short_name="May-2016",
     stratum_id=1,
     id=196001,
-    # end=datetime(2016, 6, 1),
-    end="2016-06-01",
+    end=datetime(2016, 6, 1),  # NOQA: DTZ001
     parent=p2016_q2,
 )
 p2016_jun = Period(
@@ -295,8 +271,7 @@ p2016_jun = Period(
     short_name="Jun-2016",
     stratum_id=1,
     id=197001,
-    # end=datetime(2016, 7, 1),
-    end="2016-07-01",
+    end=datetime(2016, 7, 1),  # NOQA: DTZ001
     parent=p2016_q2,
 )
 p2016_q3 = Period(
@@ -305,8 +280,7 @@ p2016_q3 = Period(
     short_name="Q3-FY16",
     stratum_id=2,
     id=66002,
-    # end=datetime(2016, 10, 1),
-    end="2016-10-01",
+    end=datetime(2016, 10, 1),  # NOQA: DTZ001
     parent=p2016,
 )
 p2016_jul = Period(
@@ -315,8 +289,7 @@ p2016_jul = Period(
     short_name="Jul-2016",
     stratum_id=1,
     id=198001,
-    # end=datetime(2016, 8, 1),
-    end="2016-08-01",
+    end=datetime(2016, 8, 1),  # NOQA: DTZ001
     parent=p2016_q3,
 )
 p2016_aug = Period(
@@ -325,8 +298,7 @@ p2016_aug = Period(
     short_name="Aug-2016",
     stratum_id=1,
     id=199001,
-    # end=datetime(2016, 9, 1),
-    end="2016-09-01",
+    end=datetime(2016, 9, 1),  # NOQA: DTZ001
     parent=p2016_q3,
 )
 p2016_sep = Period(
@@ -335,8 +307,7 @@ p2016_sep = Period(
     short_name="Sep-2016",
     stratum_id=1,
     id=200001,
-    # end=datetime(2016, 10, 1),
-    end="2016-10-01",
+    end=datetime(2016, 10, 1),  # NOQA: DTZ001
     parent=p2016_q3,
 )
 p2016_q4 = Period(
@@ -345,8 +316,7 @@ p2016_q4 = Period(
     short_name="Q4-FY16",
     stratum_id=2,
     id=67002,
-    # end=datetime(2017, 1, 1),
-    end="2017-01-01",
+    end=datetime(2017, 1, 1),  # NOQA: DTZ001
     parent=p2016,
 )
 p2016_oct = Period(
@@ -355,8 +325,7 @@ p2016_oct = Period(
     short_name="Oct-2016",
     stratum_id=1,
     id=201001,
-    # end=datetime(2016, 11, 1),
-    end="2016-11-01",
+    end=datetime(2016, 11, 1),  # NOQA: DTZ001
     parent=p2016_q4,
 )
 p2016_nov = Period(
@@ -365,8 +334,7 @@ p2016_nov = Period(
     short_name="Nov-2016",
     stratum_id=1,
     id=202001,
-    # end=datetime(2016, 12, 1),
-    end="2016-12-01",
+    end=datetime(2016, 12, 1),  # NOQA: DTZ001
     parent=p2016_q4,
 )
 p2016_dec = Period(
@@ -375,8 +343,7 @@ p2016_dec = Period(
     short_name="Dec-2016",
     stratum_id=1,
     id=203001,
-    # end=datetime(2017, 1, 1),
-    end="2017-01-01",
+    end=datetime(2017, 1, 1),  # NOQA: DTZ001
     parent=p2016_q4,
 )
 

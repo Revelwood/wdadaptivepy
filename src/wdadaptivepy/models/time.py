@@ -1,6 +1,8 @@
 """wdadaptivepy model for Adaptive's Time."""
 
 from dataclasses import dataclass, field
+from datetime import datetime
+from functools import partial
 from typing import ClassVar
 
 from wdadaptivepy.models.base import (
@@ -12,6 +14,7 @@ from wdadaptivepy.models.base import (
     date_to_str,
     int_or_none,
     int_to_str,
+    metadatalist_or_none,
     str_or_none,
     str_to_str,
 )
@@ -153,7 +156,7 @@ class Period(HierchialMetadata):
             "xml_delete": "id",
         },
     )
-    start: str | None = field(
+    start: datetime | None = field(
         default=None,
         metadata={
             "validator": date_or_none,
@@ -164,7 +167,7 @@ class Period(HierchialMetadata):
             "xml_delete": "start",
         },
     )
-    end: str | None = field(
+    end: datetime | None = field(
         default=None,
         metadata={
             "validator": date_or_none,
@@ -200,8 +203,8 @@ class Period(HierchialMetadata):
     locales: MetadataList[TimeLocale] = field(
         default_factory=MetadataList[TimeLocale],
         metadata={
-            # "validator": ,
-            # "xml_parser": ,
+            "validator": partial(metadatalist_or_none, data_type=TimeLocale),
+            "xml_parser": None,
             "xml_create": "locales",
             "xml_read": "locales",
             "xml_update": "locales",
@@ -309,8 +312,8 @@ class Stratum(HierchialMetadata):
     locales: MetadataList[TimeLocale] = field(
         default_factory=MetadataList[TimeLocale],
         metadata={
-            # "validator": ,
-            # "xml_parser": ,
+            "validator": partial(metadatalist_or_none, data_type=TimeLocale),
+            "xml_parser": None,
             "xml_create": "locales",
             "xml_read": "locales",
             "xml_update": "locales",
@@ -395,8 +398,8 @@ class Time(Metadata):
     stratum: MetadataList[Stratum] = field(
         default_factory=MetadataList[Stratum],
         metadata={
-            # "validator": ,
-            # "xml_parser": ,
+            "validator": partial(metadatalist_or_none, data_type=Stratum),
+            "xml_parser": None,
             "xml_create": "stratum",
             "xml_read": "stratum",
             "xml_update": "stratum",
@@ -406,8 +409,8 @@ class Time(Metadata):
     period: MetadataList[Period] = field(
         default_factory=MetadataList[Period],
         metadata={
-            # "validator": ,
-            # "xml_parser": ,
+            "validator": partial(metadatalist_or_none, data_type=Period),
+            "xml_parser": None,
             "xml_create": "period",
             "xml_read": "period",
             "xml_update": "period",
