@@ -2,11 +2,54 @@
 
 from collections.abc import Callable, Sequence
 from dataclasses import InitVar, dataclass, field, fields
+from datetime import datetime
 from json import loads
 from typing import Any, ClassVar, Self
 from xml.etree import ElementTree as ET
 
 from wdadaptivepy.models.list import MetadataList
+
+
+def date_or_none(value: str | datetime | None) -> datetime | None:
+    """Convert a value to either a Python datetime object (date) or none.
+
+    Args:
+        value: Value to convert to date or None
+
+    Returns:
+        Date value or None
+
+    Raises:
+        TypeError: Unexpected type
+
+    """
+    if value is None or isinstance(value, datetime):
+        return value
+    if isinstance(value, str):
+        return datetime.strptime(value, "%Y-%m-%d")  # NOQA: DTZ007
+    error_message = "Unexpected type for date"
+    raise TypeError(error_message)
+
+
+def datetime_or_none(value: str | datetime | None) -> datetime | None:
+    """Convert a value to either a Python datetime object (datetime) or none.
+
+    Args:
+        value: Value to convert to datetime or None
+
+    Returns:
+        Datetime value or None
+
+    Raises:
+        TypeError: Unexpected type
+
+    """
+    if value is None or isinstance(value, datetime):
+        return value
+    if isinstance(value, str):
+        return datetime.strptime(value, "%Y-%m-%d %H:%M:%S.%f")  # NOQA: DTZ007
+    error_message = "Unexpected type for datetime"
+    raise TypeError(error_message)
 
 
 def bool_or_none(value: str | int | bool | None) -> bool | None:  # NOQA: FBT001
@@ -42,6 +85,48 @@ def bool_or_none(value: str | int | bool | None) -> bool | None:  # NOQA: FBT001
         error_message = "Invalid boolean value"
         raise ValueError(error_message)
     error_message = "Unexpected type for boolean"
+    raise TypeError(error_message)
+
+
+def date_to_str(value: datetime | None) -> str | None:
+    """Convert Python datetime (date) to string value.
+
+    Args:
+        value: Value to convert to string
+
+    Returns:
+        String as date or None
+
+    Raises:
+        TypeError: Unexpected type
+
+    """
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.strftime("%Y-%m-%d")
+    error_message = "Unexpected type for date"
+    raise TypeError(error_message)
+
+
+def datetime_to_str(value: datetime | None) -> str | None:
+    """Convert Python datetime (datetime) to string value.
+
+    Args:
+        value: Value to convert to string
+
+    Returns:
+        String as datetime or None
+
+    Raises:
+        TypeError: Unexpected type
+
+    """
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.strftime("%Y-%m-%d %H:%M:%S.%f")
+    error_message = "Unexpected type for datetime"
     raise TypeError(error_message)
 
 

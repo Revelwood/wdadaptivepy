@@ -9,6 +9,8 @@ from wdadaptivepy.models.base import (
     bool_or_none,
     bool_to_str_one_zero,
     bool_to_str_true_false,
+    datetime_or_none,
+    datetime_to_str,
     int_list_or_none,
     int_list_to_str,
     int_or_none,
@@ -421,8 +423,8 @@ class User(Metadata):
     created_date: datetime | None = field(
         default=None,
         metadata={
-            # "validator": ,
-            # "xml_parser": ,
+            "validator": datetime_or_none,
+            "xml_parser": datetime_to_str,
             "xml_create": "createdDate",
             "xml_read": "createdDate",
             "xml_update": "createdDate",
@@ -432,8 +434,8 @@ class User(Metadata):
     last_login: datetime | None = field(
         default=None,
         metadata={
-            # "validator": ,
-            # "xml_parser": ,
+            "validator": datetime_or_none,
+            "xml_parser": datetime_to_str,
             "xml_create": "lastLogin",
             "xml_read": "lastLogin",
             "xml_update": "lastLogin",

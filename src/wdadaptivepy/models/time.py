@@ -8,6 +8,8 @@ from wdadaptivepy.models.base import (
     Metadata,
     bool_or_none,
     bool_to_str_one_zero,
+    date_or_none,
+    date_to_str,
     int_or_none,
     int_to_str,
     str_or_none,
@@ -154,10 +156,8 @@ class Period(HierchialMetadata):
     start: str | None = field(
         default=None,
         metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            # "validator": ,
-            # "xml_parser": ,
+            "validator": date_or_none,
+            "xml_parser": date_to_str,
             "xml_create": "start",
             "xml_read": "start",
             "xml_update": "start",
@@ -167,10 +167,8 @@ class Period(HierchialMetadata):
     end: str | None = field(
         default=None,
         metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            # "validator": ,
-            # "xml_parser": ,
+            "validator": date_or_none,
+            "xml_parser": date_to_str,
             "xml_create": "end",
             "xml_read": "end",
             "xml_update": "end",
