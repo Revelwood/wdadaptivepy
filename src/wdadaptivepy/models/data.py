@@ -230,10 +230,6 @@ class DimensionValueFilter:
 
     """
 
-    #
-    # dimension: Optional[Dimension | Sequence[Dimension]] = field(
-    #     metadata={"validator": is_none_or_has_name}
-    # )
     dimension_value: DimensionValue | Sequence[DimensionValue] | None = field(
         metadata={"validator": is_none_or_has_code}, default=None
     )
@@ -243,9 +239,6 @@ class DimensionValueFilter:
     uncategorized: bool | None = field(
         metadata={"validator": is_none_or_is_bool}, default=None
     )
-    # uncategorized_of_dimension: Optional[bool] = field(
-    #     metadata={"validator": is_none_or_is_bool}
-    # )
     uncategorized_of_dimension: Dimension | Sequence[Dimension] | None = None
     direct_children_of_dimension: bool | None = field(
         metadata={"validator": is_none_or_is_bool}, default=None
@@ -328,7 +321,6 @@ class ExportDataRules:
     include_zero_rows: bool | None = field(
         metadata={"validator": is_none_or_is_bool},
     )
-    # include_rollups: Optional[bool] = field(metadata={"validator":is_none_or_is_bool})
     include_rollup_accounts: bool | None = field(
         metadata={"validator": is_none_or_is_bool},
     )
@@ -529,15 +521,10 @@ class ExportDataFilter:
                             if code is None:
                                 error_message = "Expected code value"
                                 raise ValueError(error_message)
-                            # name = str_to_str(level.name)
-                            # if name is None:
-                            #     error_message = "Expected name value"
-                            #     raise ValueError(error_message)
                             level_element = ET.Element(
                                 "level",
                                 attrib={
                                     "code": code,
-                                    # "name": name,
                                     "isRollup": is_rollup,
                                     "includeDescendants": include_descendants,
                                 },
@@ -549,15 +536,10 @@ class ExportDataFilter:
                         if code is None:
                             error_message = "Expected code value"
                             raise ValueError(error_message)
-                        # name = str_to_str(level.name)
-                        # if name is None:
-                        #     error_message = "Expected name value"
-                        #     raise ValueError(error_message)
                         level_element = ET.Element(
                             "level",
                             attrib={
                                 "code": code,
-                                # "name": name,
                                 "isRollup": is_rollup,
                                 "includeDescendants": include_descendants,
                             },
@@ -581,15 +563,10 @@ class ExportDataFilter:
                         if code is None:
                             error_message = "Expected code value"
                             raise ValueError(error_message)
-                        # name = str_to_str(level.name)
-                        # if name is None:
-                        #     error_message = "Expected name value"
-                        #     raise ValueError(error_message)
                         level_element = ET.Element(
                             "level",
                             attrib={
                                 "code": code,
-                                # "name": name,
                                 "isRollup": is_rollup,
                                 "includeDescendants": include_descendants,
                             },
@@ -601,15 +578,10 @@ class ExportDataFilter:
                     if code is None:
                         error_message = "Expected code value"
                         raise ValueError(error_message)
-                    # name = str_to_str(level.name)
-                    # if name is None:
-                    #     error_message = "Expected name value"
-                    #     raise ValueError(error_message)
                     level_element = ET.Element(
                         "level",
                         attrib={
                             "code": code,
-                            # "name": name,
                             "isRollup": is_rollup,
                             "includeDescendants": include_descendants,
                         },

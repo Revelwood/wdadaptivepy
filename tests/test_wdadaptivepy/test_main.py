@@ -17,17 +17,6 @@ def test_connection_requires_password() -> None:
         AdaptiveConnection(login="test_login")  # pyright: ignore[reportCallIssue]
 
 
-# def test_unsupported_xml_api_version() -> None:
-#     with pytest.raises(ValueError):
-#         AdaptiveConnection(
-#             login="test_login", password="test_password", xml_api_version=20000
-#         )
-#     with pytest.raises(ValueError):
-#         AdaptiveConnection(
-#             login="test_login", password="test_password", xml_api_version=2
-#         )
-
-
 def test_services_existence() -> None:
     """Test that each wdadaptivepy service is properly imported."""
     adaptive = AdaptiveConnection(

@@ -56,9 +56,6 @@ class PermissionSetService:
 
         """
         updated_permission_sets = PermissionSet.to_xml("update", permission_sets)
-        # ET.indent(updated_permission_sets)
-        # with open("test_permission_sets.xml", "w", encoding="utf-8") as fp:
-        #     fp.write(ET.tostring(updated_permission_sets, encoding="unicode"))
         return self.__xml_api.preview_xml_request(
             method="importPermissionSets",
             payload=updated_permission_sets,

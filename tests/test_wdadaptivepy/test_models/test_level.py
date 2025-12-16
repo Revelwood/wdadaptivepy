@@ -1,13 +1,7 @@
 """Tests for wdadaptivepy's model for Adaptive's Level."""
 
-# import pytest
-
 from wdadaptivepy.models.base import MetadataAttribute
 from wdadaptivepy.models.level import Level
-
-# def test_prevent_empty_level() -> None:
-#     with pytest.raises(ValueError):
-#         empty_level = Level()
 
 
 def test_child_inherits_parent_changes() -> None:
@@ -22,13 +16,6 @@ def test_child_inherits_parent_changes() -> None:
     assert child.adaptive_parent == parent
     assert child.adaptive_parent is not None
     assert child.adaptive_parent.name == "new parent"
-
-
-# def test_child_cannot_change_parent_attributes() -> None:
-#     parent = Level(id=1, name="parent")
-#     child = Level(id=2, parent=parent)
-#     with pytest.raises(ValueError):
-#         child.adaptive_parent.name = "new parent"
 
 
 def test_level_from_dict_expansion() -> None:

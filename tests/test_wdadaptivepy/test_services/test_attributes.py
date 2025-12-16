@@ -28,7 +28,6 @@ a13 = Attribute(
     id=13,
     name="AP Eligible",
     attribute_type="account",
-    # attribute_values=MetadataList([av118, av117, av136, av135]),
 )
 
 # TEST 2 # Empty xml returns empty MetadataList

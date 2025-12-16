@@ -81,9 +81,6 @@ class DimensionValueService:
 
         """
         method, payload = self.__build_update_payload(dimension, dimension_values)
-        # ET.indent(updated_dimensions)
-        # with open("test_dimensions.xml", "w", encoding="utf-8") as fp:
-        #     fp.write(ET.tostring(update_dimension, encoding="unicode"))
         return self.__xml_api.preview_xml_request(
             method=method,
             payload=payload,

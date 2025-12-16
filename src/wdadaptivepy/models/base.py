@@ -459,8 +459,6 @@ class BaseMetadata:
         other_attributes = getattr(other, "adaptive_attributes", None)
         return self_attributes == other_attributes
 
-        # return True
-
     def __post_init__(self) -> None:
         """Cleanup BaseMetadata instance."""
 
@@ -590,9 +588,6 @@ class BaseMetadata:
         metadata_members = MetadataList[Self]()
 
         cls_name = cls.__name__
-        # xml_parent_tag = cls.__dataclass_fields__[f"_{cls_name}__xml_tags"].default[
-        #     "xml_read_parent_tag"
-        # ]
         xml_tag = cls.__dataclass_fields__[f"_{cls_name}__xml_tags"].default[
             "xml_read_tag"
         ]

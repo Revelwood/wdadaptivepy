@@ -74,9 +74,6 @@ class VersionService:
 
         """
         updated_versions = Version.to_xml("update", versions)
-        # ET.indent(updated_versions)
-        # with open("test_versions.xml", "w", encoding="utf-8") as fp:
-        #     fp.write(ET.tostring(updated_versions, encoding="unicode"))
         return self.__xml_api.preview_xml_request(
             method="importVersions",
             payload=updated_versions,
