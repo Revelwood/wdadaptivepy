@@ -394,7 +394,7 @@ class ExportDataFilter:
         field(default=None)
     )
 
-    def to_xml_element(self) -> ET.Element:  # NOQA: PLR0912, PLR0915
+    def to_xml_element(self) -> ET.Element:  # NOQA: PLR0912 PLR0915 C901
         """Convert ExportDataFilter to XML Element.
 
         Returns:

@@ -74,7 +74,7 @@ class AttributeService:
             hide_password=hide_password,
         )
 
-    def get(  # NOQA: PLR0912, PLR0913
+    def get(  # NOQA: PLR0912 PLR0913 C901
         self,
         attributes: Sequence[Attribute] = [],
         attribute_ids: Sequence[int] = [],

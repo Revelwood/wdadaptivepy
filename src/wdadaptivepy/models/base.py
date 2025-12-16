@@ -492,7 +492,7 @@ class BaseMetadata:
         super().__setattr__(name, validator(value))
 
     @classmethod
-    def __parse_xml_to_metadata(  # NOQA: PLR0912
+    def __parse_xml_to_metadata(  # NOQA: PLR0912 C901
         cls: type[Self],
         xml_element: ET.Element,
         xml_tag: str,
@@ -611,7 +611,7 @@ class BaseMetadata:
         return metadata_members
 
     @classmethod
-    def to_xml(cls: type[Self], xml_type: str, members: Sequence[Self]) -> ET.Element:  # NOQA: PLR0912, PLR0915
+    def to_xml(cls: type[Self], xml_type: str, members: Sequence[Self]) -> ET.Element:  # NOQA: PLR0912 PLR0915 C901
         """Convert BaseMetadata to XML.
 
         Args:
@@ -853,7 +853,7 @@ class BaseHierarchialMetadata:
         return descendents
 
     @classmethod
-    def get_common_ancestors(cls, members: Sequence[Self]) -> MetadataList[Self]:  # NOQA: PLR0912
+    def get_common_ancestors(cls, members: Sequence[Self]) -> MetadataList[Self]:  # NOQA: PLR0912 C901
         """Retrieve MetadataList of shared ancestors of all given members.
 
         Args:

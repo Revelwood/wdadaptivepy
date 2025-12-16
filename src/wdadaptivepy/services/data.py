@@ -63,7 +63,7 @@ class DataService:
             raise ValueError(error_message)
         return ET.Element("dimension", attrib={"name": dimension.name})
 
-    def get_data(  # NOQA: PLR0915, PLR0912
+    def get_data(  # NOQA: PLR0915 PLR0912 C901
         self,
         version: Version,
         data_filter: ExportDataFilter,
