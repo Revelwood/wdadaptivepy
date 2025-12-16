@@ -39,7 +39,8 @@ def custom_type_or_none(value: T | Sequence[T] | None, data_type: type[T]) -> T 
 
 
 def metadatalist_or_none(
-    value: Sequence[T] | None, data_type: type[T]
+    value: Sequence[T] | None,
+    data_type: type[T],
 ) -> MetadataList[T] | None:
     """Ensure a value is either an array of a given custom Python object or None.
 
