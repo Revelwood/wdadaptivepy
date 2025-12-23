@@ -53,9 +53,6 @@ class GroupService:
 
         """
         updated_groups = Group.to_xml("update", groups)
-        # ET.indent(updated_groups)
-        # with open("test_groups.xml", "w", encoding="utf-8") as fp:
-        #     fp.write(ET.tostring(updated_groups, encoding="unicode"))
         return self.__xml_api.preview_xml_request(
             method="importGroups",
             payload=updated_groups,

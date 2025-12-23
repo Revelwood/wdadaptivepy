@@ -2,11 +2,109 @@
 
 from collections.abc import Callable, Sequence
 from dataclasses import InitVar, dataclass, field, fields
+from datetime import datetime
 from json import loads
 from typing import Any, ClassVar, Self
 from xml.etree import ElementTree as ET
 
-from wdadaptivepy.models.list import MetadataList
+from wdadaptivepy.models.list import MetadataList, T
+
+
+def custom_type_or_none(value: T | Sequence[T] | None, data_type: type[T]) -> T | None:
+    """Ensure a value is either a given custom Python object or None.
+
+    Args:
+        value: Value to ensure is a custom Python object or None
+        data_type: Custom Python Object to check
+
+    Returns:
+        Instance of custom Python object or None
+
+    Raises:
+        TypeError: Unexpected type
+
+    """
+    if value is None:
+        return None
+    if isinstance(value, data_type):
+        return value
+    if (
+        isinstance(value, Sequence)
+        and len(value) <= 1
+        and all(isinstance(x, data_type) for x in value)
+    ):
+        return value[0]
+    error_message = "Unexpected data type"
+    raise TypeError(error_message)
+
+
+def metadatalist_or_none(
+    value: Sequence[T] | None,
+    data_type: type[T],
+) -> MetadataList[T] | None:
+    """Ensure a value is either an array of a given custom Python object or None.
+
+    Args:
+        value: Value to ensure is an array of a custom Python object or None
+        data_type: Custom Python Object to check
+
+    Returns:
+        An array of custom Python object instances or None
+
+    Raises:
+        TypeError: Unexpected type
+
+    """
+    if value is None:
+        return None
+    if isinstance(value, Sequence) and all(isinstance(x, data_type) for x in value):
+        if isinstance(value, MetadataList):
+            return value
+        return MetadataList[T](list(value))
+    error_message = "Unexpected data type"
+    raise TypeError(error_message)
+
+
+def date_or_none(value: str | datetime | None) -> datetime | None:
+    """Convert a value to either a Python datetime object (date) or none.
+
+    Args:
+        value: Value to convert to date or None
+
+    Returns:
+        Date value or None
+
+    Raises:
+        TypeError: Unexpected type
+
+    """
+    if value is None or isinstance(value, datetime):
+        return value
+    if isinstance(value, str):
+        return datetime.strptime(value, "%Y-%m-%d")  # NOQA: DTZ007
+    error_message = "Unexpected type for date"
+    raise TypeError(error_message)
+
+
+def datetime_or_none(value: str | datetime | None) -> datetime | None:
+    """Convert a value to either a Python datetime object (datetime) or none.
+
+    Args:
+        value: Value to convert to datetime or None
+
+    Returns:
+        Datetime value or None
+
+    Raises:
+        TypeError: Unexpected type
+
+    """
+    if value is None or isinstance(value, datetime):
+        return value
+    if isinstance(value, str):
+        return datetime.strptime(value, "%Y-%m-%d %H:%M:%S.%f")  # NOQA: DTZ007
+    error_message = "Unexpected type for datetime"
+    raise TypeError(error_message)
 
 
 def bool_or_none(value: str | int | bool | None) -> bool | None:  # NOQA: FBT001
@@ -42,6 +140,48 @@ def bool_or_none(value: str | int | bool | None) -> bool | None:  # NOQA: FBT001
         error_message = "Invalid boolean value"
         raise ValueError(error_message)
     error_message = "Unexpected type for boolean"
+    raise TypeError(error_message)
+
+
+def date_to_str(value: datetime | None) -> str | None:
+    """Convert Python datetime (date) to string value.
+
+    Args:
+        value: Value to convert to string
+
+    Returns:
+        String as date or None
+
+    Raises:
+        TypeError: Unexpected type
+
+    """
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.strftime("%Y-%m-%d")
+    error_message = "Unexpected type for date"
+    raise TypeError(error_message)
+
+
+def datetime_to_str(value: datetime | None) -> str | None:
+    """Convert Python datetime (datetime) to string value.
+
+    Args:
+        value: Value to convert to string
+
+    Returns:
+        String as datetime or None
+
+    Raises:
+        TypeError: Unexpected type
+
+    """
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.strftime("%Y-%m-%d %H:%M:%S.%f")
+    error_message = "Unexpected type for datetime"
     raise TypeError(error_message)
 
 
@@ -250,6 +390,8 @@ def int_list_or_none(
     if value is None:
         return None
     if isinstance(value, str):
+        if "," in value:
+            return [int(x) for x in value.split(",")]
         return [int(value)]
     if isinstance(value, int):
         return [value]
@@ -317,8 +459,6 @@ class BaseMetadata:
         other_attributes = getattr(other, "adaptive_attributes", None)
         return self_attributes == other_attributes
 
-        # return True
-
     def __post_init__(self) -> None:
         """Cleanup BaseMetadata instance."""
 
@@ -352,7 +492,82 @@ class BaseMetadata:
         super().__setattr__(name, validator(value))
 
     @classmethod
-    def from_xml(  # NOQA: PLR0912
+    def __parse_xml_to_metadata(  # NOQA: PLR0912 C901
+        cls: type[Self],
+        xml_element: ET.Element,
+        xml_tag: str,
+        xml_children: dict | None,
+        parent: Self | None,
+        processed_xml_elements: list[ET.Element],
+    ) -> MetadataList[Self]:
+        processed_xml_elements.append(xml_element)
+        metadata_data = {
+            field_name: xml_element.get(field_def.metadata.get("xml_read"))
+            for field_name, field_def in cls.__dataclass_fields__.items()
+            if field_def.metadata.get("xml_read") in xml_element.attrib
+        }
+        metadata_member = cls(**metadata_data)
+        metadata_members = MetadataList[Self]([metadata_member])
+        if xml_children:
+            for field_name, data_type in xml_children.items():
+                child_xml_parent_tag = data_type.__dataclass_fields__[
+                    f"_{data_type.__name__}__xml_tags"
+                ].default["xml_read_parent_tag"]
+                child_xml_tag = data_type.__dataclass_fields__[
+                    f"_{data_type.__name__}__xml_tags"
+                ].default["xml_read_tag"]
+                if child_xml_tag is None or child_xml_parent_tag is None:
+                    continue
+                search_xml_tag = (
+                    child_xml_tag
+                    if child_xml_parent_tag == xml_element.tag
+                    else child_xml_parent_tag
+                )
+                children_members = MetadataList()
+                for child_element in xml_element.findall(f"./{search_xml_tag}"):
+                    children_members.extend(data_type.from_xml(child_element))
+                if children_members:
+                    setattr(metadata_member, field_name, children_members)
+        if hasattr(metadata_member, "adaptive_attributes"):
+            adaptive_metadata_instance = MetadataAttribute()
+            for metadata_element in xml_element.findall(
+                f"./{adaptive_metadata_instance.__dataclass_fields__['_MetadataAttribute__xml_tags'].default['xml_read_parent_tag']}",
+            ):
+                adaptive_metadata_members = MetadataAttribute.from_xml(
+                    metadata_element,
+                )
+                for adaptive_metadata_member in adaptive_metadata_members:
+                    set_adaptive_attribute = getattr(
+                        metadata_member,
+                        "set_adaptive_attribute",
+                        None,
+                    )
+                    if set_adaptive_attribute is None:
+                        error_message = "Cannot access set_adaptive_attribute"
+                        raise RuntimeError(error_message)
+                    set_adaptive_attribute(adaptive_metadata_member)
+        if hasattr(metadata_member, "adaptive_parent"):
+            if parent is not None:
+                set_adaptive_parent: Callable | None = getattr(
+                    metadata_member, "set_adaptive_parent", None
+                )
+                if set_adaptive_parent is not None:
+                    set_adaptive_parent(parent)
+            for xml_child_element in xml_element.findall(path=xml_tag):
+                metadata_members.extend(
+                    cls.__parse_xml_to_metadata(
+                        xml_element=xml_child_element,
+                        xml_tag=xml_tag,
+                        xml_children=xml_children,
+                        parent=metadata_member,
+                        processed_xml_elements=processed_xml_elements,
+                    )
+                )
+
+        return metadata_members
+
+    @classmethod
+    def from_xml(
         cls: type[Self],
         xml: ET.Element,
     ) -> MetadataList[Self]:
@@ -373,9 +588,6 @@ class BaseMetadata:
         metadata_members = MetadataList[Self]()
 
         cls_name = cls.__name__
-        # xml_parent_tag = cls.__dataclass_fields__[f"_{cls_name}__xml_tags"].default[
-        #     "xml_read_parent_tag"
-        # ]
         xml_tag = cls.__dataclass_fields__[f"_{cls_name}__xml_tags"].default[
             "xml_read_tag"
         ]
@@ -383,87 +595,23 @@ class BaseMetadata:
             "xml_read_children"
         ]
         if xml_tag is not None:
+            processed_xml_elements: list[ET.Element] = []
             for xml_element in xml.iter(tag=xml_tag):
-                metadata_data = {
-                    field_name: xml_element.get(field_def.metadata.get("xml_read"))
-                    for field_name, field_def in cls.__dataclass_fields__.items()
-                    if field_def.metadata.get("xml_read") in xml_element.attrib
-                }
-                metadata_member = cls(**metadata_data)
-                if xml_children:
-                    for field_name, data_type in xml_children.items():
-                        child_xml_parent_tag = data_type.__dataclass_fields__[
-                            f"_{data_type.__name__}__xml_tags"
-                        ].default["xml_read_parent_tag"]
-                        child_xml_tag = data_type.__dataclass_fields__[
-                            f"_{data_type.__name__}__xml_tags"
-                        ].default["xml_read_tag"]
-                        if child_xml_tag is None or child_xml_parent_tag is None:
-                            continue
-                        search_xml_tag = (
-                            child_xml_tag
-                            if child_xml_parent_tag == xml_element.tag
-                            else child_xml_parent_tag
+                if xml_element not in processed_xml_elements:
+                    metadata_members.extend(
+                        cls.__parse_xml_to_metadata(
+                            xml_element=xml_element,
+                            xml_tag=xml_tag,
+                            xml_children=xml_children,
+                            parent=None,
+                            processed_xml_elements=processed_xml_elements,
                         )
-                        children_members = MetadataList()
-                        for child_element in xml_element.findall(f"./{search_xml_tag}"):
-                            children_members.extend(data_type.from_xml(child_element))
-                        if children_members:
-                            setattr(metadata_member, field_name, children_members)
-                if hasattr(metadata_member, "adaptive_parent"):
-                    parent_xml_element = xml.find(
-                        path=f'.//{xml_element.tag}[@id="{xml_element.get("id")}"]..',
                     )
-                    if (
-                        parent_xml_element is not None
-                        and parent_xml_element.tag == xml_element.tag
-                    ):
-                        for parent in metadata_members:
-                            if int(getattr(parent, "id", 0)) == int(
-                                parent_xml_element.attrib["id"],
-                            ):
-                                set_adaptive_parent = getattr(
-                                    metadata_member,
-                                    "set_adaptive_parent",
-                                    None,
-                                )
-                                if set_adaptive_parent is None:
-                                    error_message = "Cannot access set_adaptive_parent"
-                                    raise RuntimeError(error_message)
-                                set_adaptive_parent(parent)
-                                break
-                        adaptive_parent = getattr(
-                            metadata_member,
-                            "adaptive_parent",
-                            None,
-                        )
-                        if adaptive_parent is None:
-                            error_message = "Parent not found"
-                            raise ValueError(error_message)
-                if hasattr(metadata_member, "adaptive_attributes"):
-                    adaptive_metadata_instance = MetadataAttribute()
-                    for metadata_element in xml_element.findall(
-                        f"./{adaptive_metadata_instance.__dataclass_fields__['_MetadataAttribute__xml_tags'].default['xml_read_parent_tag']}",
-                    ):
-                        adaptive_metadata_members = MetadataAttribute.from_xml(
-                            metadata_element,
-                        )
-                        for adaptive_metadata_member in adaptive_metadata_members:
-                            set_adaptive_attribute = getattr(
-                                metadata_member,
-                                "set_adaptive_attribute",
-                                None,
-                            )
-                            if set_adaptive_attribute is None:
-                                error_message = "Cannot access set_adaptive_attribute"
-                                raise RuntimeError(error_message)
-                            set_adaptive_attribute(adaptive_metadata_member)
-                metadata_members.append(metadata_member)
 
         return metadata_members
 
     @classmethod
-    def to_xml(cls: type[Self], xml_type: str, members: Sequence[Self]) -> ET.Element:  # NOQA: PLR0912, PLR0915
+    def to_xml(cls: type[Self], xml_type: str, members: Sequence[Self]) -> ET.Element:  # NOQA: PLR0912 PLR0915 C901
         """Convert BaseMetadata to XML.
 
         Args:
@@ -525,13 +673,6 @@ class BaseMetadata:
                         member_element.extend(children)
                     else:
                         member_element.append(children)
-            for field_name in xml_children:
-                field_def = [
-                    y for x, y in cls.__dataclass_fields__.items() if x == field_name
-                ]
-                if field_def is None:
-                    continue
-                field_def = field_def[0]
             if adaptive_attributes := getattr(member, "adaptive_attributes", None):
                 attributes = MetadataAttribute.to_xml(xml_type, adaptive_attributes)
                 member_element.extend(attributes)
@@ -712,7 +853,7 @@ class BaseHierarchialMetadata:
         return descendents
 
     @classmethod
-    def get_common_ancestors(cls, members: Sequence[Self]) -> MetadataList[Self]:  # NOQA: PLR0912
+    def get_common_ancestors(cls, members: Sequence[Self]) -> MetadataList[Self]:  # NOQA: PLR0912 C901
         """Retrieve MetadataList of shared ancestors of all given members.
 
         Args:

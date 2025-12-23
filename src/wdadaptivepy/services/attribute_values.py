@@ -69,10 +69,6 @@ class AttributeValueService:
 
         """
         method, payload = self.__build_update_payload(attribute, attribute_values)
-        # updated_attributes = Attribute.to_xml("update", attributes)
-        # ET.indent(updated_attributes)
-        # with open("test_attributes.xml", "w", encoding="utf-8") as fp:
-        #     fp.write(ET.tostring(updated_attributes, encoding="unicode"))
         return self.__xml_api.preview_xml_request(
             method=method,
             payload=payload,

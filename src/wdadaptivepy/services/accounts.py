@@ -81,9 +81,6 @@ class AccountService:
 
         """
         updated_accounts = Account.to_xml("update", accounts)
-        # ET.indent(updated_accounts)
-        # with open("test_accounts.xml", "w", encoding="utf-8") as fp:
-        #     fp.write(ET.tostring(updated_accounts, encoding="unicode"))
         return self.__xml_api.preview_xml_request(
             method="importAccounts",
             payload=updated_accounts,

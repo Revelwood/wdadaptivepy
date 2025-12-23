@@ -124,13 +124,18 @@ class XMLApi:
 
         tree = ET.fromstring(text=response.text)  # NOQA: S314
 
-        messages = tree.find(path="messages")
-        if messages is not None:
-            for message in messages.findall(path="message"):
-                if (
-                    "key" in message.attrib
-                    and message.attrib["key"] == "error-authentication-failure"
-                ):
+        messages: list[dict[str, str | None]] = []
+        messages_element = tree.find(path="messages")
+        if messages_element is not None:
+            for message_element in messages_element.findall(path="message"):
+                message = {
+                    "key": message_element.get("key"),
+                    "type": message_element.get("type"),
+                    "text": message_element.text,
+                }
+                if message not in messages:
+                    messages.append(message)
+                if message["key"] == "error-authentication-failure":
                     error_message = (
                         "The provided credentials are either incorrect "
                         "or the associated account does not "
@@ -139,7 +144,7 @@ class XMLApi:
                     raise InvalidCredentialsError(error_message)
         if "success" in tree.attrib and tree.attrib["success"] != "true":
             raise FailedRequestError(
-                message="The API request failed to complete successfully",
+                message=messages,
                 method=method,
             )
 

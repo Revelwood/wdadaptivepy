@@ -1,6 +1,6 @@
 [project]
 name = "wdadaptivepy"
-version = "0.1.0"
+version = "0.1.1"
 description = "Wrapper for Workday Adaptive Planning's API"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -58,63 +58,30 @@ addopts = "-ra -q -vv"
 testpaths = ["tests"]
 
 [build-system]
-requires = ["uv_build>=0.8.9,<0.9.0"]
+requires = ["uv_build>=0.8.9,<0.10.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-name = "wdadaptivepy"
 
 [tool.ruff.lint]
-extend-select = [
-  "ANN",
-  "S",
-  "BLE",
-  "FBT",
-  "B",
-  "A",
-  "COM",
-  "C4",
-  "DTZ",
-  "T10",
-  "EM",
-  "FIX",
-  "FA",
-  "INT",
-  "ISC",
-  "ICN",
-  "LOG",
-  "G",
-  "INP",
-  "PIE",
-  "T20",
-  "PYI",
-  "PT",
-  "Q",
-  "RSE",
-  "RET",
-  "SLF",
-  "SIM",
-  "SLOT",
-  "TID",
-  "TD",
-  "TC",
-  "ARG",
-  "PTH",
-  "FLY",
-  "I",
-  "N",
-  "PERF",
-  "E",
-  "W",
-  "D",
-  "F",
-  "PL",
-  "UP",
-  "RUF",
-  "TRY",
-]
+select = ["ALL"]
 ignore = ["D203", "D213", "COM812"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*.py" = ["S101", "S314"]
-"scripts/*.py" = ["INP001"]
+"docs/.scripts/*.py" = ["INP001"]
+
+[tool.pyright]
+# typeCheckingMode = "strict"
+deprecateTypingAliases = true
+# reportCallInDefaultInitializer = true
+# reportImplicitOverride = true
+reportImplicitStringConcatenation = true
+reportImportCycles = true
+# reportMissingSuperCall = true
+reportPropertyTypeMismatch = true
+# reportUninitializedInstanceVariable = true
+reportUnnecessaryTypeIgnoreComment = true
+# reportUnreachable = true
+# reportUnusedCallResult = true

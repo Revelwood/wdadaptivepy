@@ -68,16 +68,13 @@ class AttributeService:
 
         """
         updated_attributes = Attribute.to_xml("update", attributes)
-        # ET.indent(updated_attributes)
-        # with open("test_attributes.xml", "w", encoding="utf-8") as fp:
-        #     fp.write(ET.tostring(updated_attributes, encoding="unicode"))
         return self.__xml_api.preview_xml_request(
             method="importAttributes",
             payload=updated_attributes,
             hide_password=hide_password,
         )
 
-    def get(  # NOQA: PLR0912, PLR0913
+    def get(  # NOQA: PLR0912 PLR0913 C901
         self,
         attributes: Sequence[Attribute] = [],
         attribute_ids: Sequence[int] = [],
