@@ -1,6 +1,6 @@
 [project]
 name = "wdadaptivepy"
-version = "0.1.0"
+version = "0.1.1"
 description = "Wrapper for Workday Adaptive Planning's API"
 readme = "README.md"
 requires-python = ">=3.12"
