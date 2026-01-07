@@ -69,7 +69,7 @@ class MetadataList(list[T]):
 
             headers += attribute_titles
 
-            with Path(file_path_and_name).open("w") as csvfile:
+            with Path(file_path_and_name).open("w", newline="") as csvfile:
                 csv_writer = csv.DictWriter(csvfile, fieldnames=headers)
                 csv_writer.writeheader()
                 csv_writer.writerows(all_data)
