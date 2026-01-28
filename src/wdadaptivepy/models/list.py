@@ -47,9 +47,10 @@ class MetadataList(list[T]):
                 if adaptive_parent is not None:
                     data = data | {
                         "parent id": adaptive_parent.id,
-                        "parent code": adaptive_parent.code,
                         "parent name": adaptive_parent.name,
                     }
+                    if hasattr(adaptive_parent, "code"):
+                        data = data | {"parent code": adaptive_parent.code}
 
                 adaptive_attributes = getattr(item, "adaptive_attributes", None)
                 if adaptive_attributes is not None:
