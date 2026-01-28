@@ -317,9 +317,9 @@ mkdocs-material-extensions==1.3.1 \
 mkdocs-rss-plugin==1.17.9 \
     --hash=sha256:1c30b192a73a46714c3c5f2f1fbc4b15850ed719106eb241de99891adb7e6258 \
     --hash=sha256:7aaa607d0a19f03343e83f4ee1b193e1d6f5af19b853546878c4b57fe406e0c4
-mkdocstrings==1.0.0 \
-    --hash=sha256:351a006dbb27aefce241ade110d3cd040c1145b7a3eb5fd5ac23f03ed67f401a \
-    --hash=sha256:4c50eb960bff6e05dfc631f6bc00dfabffbcb29c5ff25f676d64daae05ed82fa
+mkdocstrings==1.0.2 \
+    --hash=sha256:41897815a8026c3634fe5d51472c3a569f92ded0ad8c7a640550873eea3b6817 \
+    --hash=sha256:48edd0ccbcb9e30a3121684e165261a9d6af4d63385fc4f39a54a49ac3b32ea8
     # via mkdocstrings-python
 mkdocstrings-python==2.0.1 \
     --hash=sha256:66ecff45c5f8b71bf174e11d49afc845c2dfc7fc0ab17a86b6b337e0f24d8d90 \
