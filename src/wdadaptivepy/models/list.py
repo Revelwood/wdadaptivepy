@@ -4,9 +4,10 @@ import csv
 from dataclasses import asdict
 from os import PathLike
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, Protocol, TypeVar
+from typing import TYPE_CHECKING, Any, ClassVar, Protocol, Self, TypeVar
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from datetime import datetime
 
 
@@ -74,3 +75,48 @@ class MetadataList(list[T]):
                 csv_writer = csv.DictWriter(csvfile, fieldnames=headers)
                 csv_writer.writeheader()
                 csv_writer.writerows(all_data)
+
+    def get_member(self, **kwargs: Any) -> T:  # NOQA: ANN401
+        """Get member from listing of members.
+
+            **kwargs: [TODO:args]
+
+        Returns:
+            [TODO:return]
+
+        """
+        try:
+            return next(item for item in self if self._matches(item, **kwargs))
+        except StopIteration:
+            raise ValueError from None
+
+    def get_members(self, **kwargs: Any) -> Self:  # NOQA: ANN401
+        """Get member from listing of members.
+
+            **kwargs: [TODO:args]
+
+        Returns:
+            [TODO:return]
+
+        """
+        return self.__class__([item for item in self if self._matches(item, **kwargs)])
+
+    def _matches(self, item: T, **kwargs: Any) -> bool:  # NOQA: ANN401
+        for attr, value in kwargs.items():
+            if not hasattr(item, attr):
+                return False
+
+            try:
+                field_def = item.__dataclass_fields__[attr]
+                validator: Callable[[Any], Any] = field_def.metadata.get(
+                    "validator",
+                    lambda x: x,
+                )
+                new_value = validator(value)
+                if getattr(item, attr) != new_value:
+                    return False
+            except KeyError as _:
+                if getattr(item, attr) != value:
+                    return False
+
+        return True
