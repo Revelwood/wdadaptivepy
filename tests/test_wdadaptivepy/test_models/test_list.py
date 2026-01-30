@@ -116,7 +116,7 @@ def test_icontains_get_member() -> None:
     set_second.set_adaptive_parent(adaptive_parent=set_first)
     set_third = Level(id=3, code="3", name="Third")
     levels = MetadataList([set_first, set_second, set_third])
-    found_second = levels.get_member(name__contains="C")
+    found_second = levels.get_member(name__icontains="C")
     assert found_second == set_second
 
 
@@ -237,9 +237,7 @@ def test_adaptive_parent_get_member() -> None:
     set_third = Level(id=3, code="3", name="First")
     set_third.set_adaptive_parent(adaptive_parent=set_second)
     levels = MetadataList([set_first, set_second, set_third])
-    # found_third = levels.get_member(adaptive_parent=Level(id=2, code="2", name="First"))
     found_third = levels.get_member(adaptive_parent=set_second)
-    # found_third = levels.get_member(adaptive_parent=levels.get_member(code="2"))
 
     assert set_third == found_third
 
@@ -254,10 +252,17 @@ def test_adaptive_attribute_get_member() -> None:
     )
     set_third.set_adaptive_attribute(third_attribute)
     levels = MetadataList([set_first, set_second, set_third])
-    # found_third = levels.get_member(
-    #     adaptive_attributes=MetadataAttribute(
-    #         attribute_id=1, name="Test", value_id=2, value="Something"
-    #     )
-    # )
-    found_third = levels.get_member(adaptive_attributes=[third_attribute])
+    found_third = levels.get_member(
+        adaptive_attributes=MetadataList[MetadataAttribute](
+            [
+                MetadataAttribute(
+                    attribute_id=1,
+                    name="Test",
+                    value_id=2,
+                    value="Something",
+                ),
+            ]
+        )
+    )
+    # found_third = levels.get_member(adaptive_attributes=[third_attribute])
     assert set_third == found_third
