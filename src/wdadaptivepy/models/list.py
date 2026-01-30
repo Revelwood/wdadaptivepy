@@ -94,7 +94,7 @@ class MetadataList(list[T]):
                 csv_writer.writeheader()
                 csv_writer.writerows(all_data)
 
-    def get_member(self, **kwargs: Any) -> T:  # NOQA: ANN401
+    def get_member(self, **kwargs: Any) -> T | None:  # NOQA: ANN401
         """Get member from listing of members.
 
             **kwargs: [TODO:args]
@@ -106,7 +106,7 @@ class MetadataList(list[T]):
         try:
             return next(item for item in self if self._matches(item, **kwargs))
         except StopIteration:
-            raise ValueError from None
+            return None
 
     def get_members(self, **kwargs: Any) -> Self:  # NOQA: ANN401
         """Get member from listing of members.
@@ -127,8 +127,7 @@ class MetadataList(list[T]):
                 field_name, op_name = attr, "eq"
 
             if not hasattr(item, field_name):
-                # raise KeyError
-                return False
+                raise KeyError
 
             if op_name not in self._OPERATORS:
                 raise ValueError

@@ -34,7 +34,7 @@ def test_invalid_property_get_member() -> None:
     set_first = Level(id=1)
     set_second = Level(id=2)
     levels = MetadataList([set_first, set_second])
-    with pytest.raises(expected_exception=ValueError, match=r"^$"):
+    with pytest.raises(expected_exception=KeyError):
         levels.get_member(invalid_property="something")
 
 
@@ -43,8 +43,7 @@ def test_no_match_get_member() -> None:
     set_first = Level(id=1)
     set_second = Level(id=2)
     levels = MetadataList([set_first, set_second])
-    with pytest.raises(expected_exception=ValueError, match=r"^$"):
-        levels.get_member(id=3)
+    assert levels.get_member(id=3) is None
 
 
 def test_no_kwarg_get_member() -> None:
@@ -72,8 +71,7 @@ def test_first_match_get_member() -> None:
 def test_empty_list_get_member() -> None:
     """Test that get_member raises expected Exception for empty MetadataList."""
     levels = MetadataList[Level]()
-    with pytest.raises(expected_exception=ValueError, match=r"^$"):
-        levels.get_member(id=1)
+    assert levels.get_member(id=1) is None
 
 
 def test_regex_get_member() -> None:
