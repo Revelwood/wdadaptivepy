@@ -76,6 +76,149 @@ def test_empty_list_get_member() -> None:
         levels.get_member(id=1)
 
 
+def test_regex_get_member() -> None:
+    """Test that regex filter returns member."""
+    set_first = Level(id=1, code="1", name="First")
+    set_second = Level(id=2, code="2", name="Second")
+    set_second.set_adaptive_parent(adaptive_parent=set_first)
+    set_third = Level(id=3, code="3", name="Third")
+    levels = MetadataList([set_first, set_second, set_third])
+    found_second = levels.get_member(name__regex=r".*con.*")
+    assert found_second == set_second
+
+
+def test_endswith_get_member() -> None:
+    """Test that endswith filter returns member."""
+    set_first = Level(id=1, code="1", name="First")
+    set_second = Level(id=2, code="2", name="Second")
+    set_second.set_adaptive_parent(adaptive_parent=set_first)
+    set_third = Level(id=3, code="3", name="Third")
+    levels = MetadataList([set_first, set_second, set_third])
+    found_second = levels.get_member(name__endswith="nd")
+    assert found_second == set_second
+
+
+def test_startswith_get_member() -> None:
+    """Test that endswith filter returns member."""
+    set_first = Level(id=1, code="1", name="First")
+    set_second = Level(id=2, code="2", name="Second")
+    set_second.set_adaptive_parent(adaptive_parent=set_first)
+    set_third = Level(id=3, code="3", name="Third")
+    levels = MetadataList([set_first, set_second, set_third])
+    found_second = levels.get_member(name__startswith="Sec")
+    assert found_second == set_second
+
+
+def test_icontains_get_member() -> None:
+    """Test that icontains filter returns member."""
+    set_first = Level(id=1, code="1", name="First")
+    set_second = Level(id=2, code="2", name="SeCond")
+    set_second.set_adaptive_parent(adaptive_parent=set_first)
+    set_third = Level(id=3, code="3", name="Third")
+    levels = MetadataList([set_first, set_second, set_third])
+    found_second = levels.get_member(name__contains="C")
+    assert found_second == set_second
+
+
+def test_contains_get_member() -> None:
+    """Test that endswith filter returns member."""
+    set_first = Level(id=1, code="1", name="First")
+    set_second = Level(id=2, code="2", name="Second")
+    set_second.set_adaptive_parent(adaptive_parent=set_first)
+    set_third = Level(id=3, code="3", name="Third")
+    levels = MetadataList([set_first, set_second, set_third])
+    found_second = levels.get_member(name__contains="n")
+    assert found_second == set_second
+
+
+def test_isnot_get_member() -> None:
+    """Test that isnot filter returns member."""
+    set_first = Level(id=1, code="1", name="First")
+    set_second = Level(id=2, code="2", name="Second")
+    set_second.set_adaptive_parent(adaptive_parent=set_first)
+    set_third = Level(id=3, code="3", name="Third")
+    levels = MetadataList([set_first, set_second, set_third])
+    found_first = levels.get_member(adaptive_parent__isnot=set_first)
+    assert found_first == set_first
+
+
+def test_is_get_member() -> None:
+    """Test that ist filter returns member."""
+    set_first = Level(id=1, code="1", name="First")
+    set_second = Level(id=2, code="2", name="Second")
+    set_second.set_adaptive_parent(adaptive_parent=set_first)
+    set_third = Level(id=3, code="3", name="Third")
+    levels = MetadataList([set_first, set_second, set_third])
+    found_second = levels.get_member(adaptive_parent__is=set_first)
+    assert found_second == set_second
+
+
+def test_lte_get_member() -> None:
+    """Test that less than or equal to filter returns member."""
+    set_first = Level(id=1, code="1", name="First")
+    set_second = Level(id=2, code="2", name="Second")
+    set_second.set_adaptive_parent(adaptive_parent=set_first)
+    set_third = Level(id=3, code="3", name="Third")
+    levels = MetadataList([set_first, set_second, set_third])
+    found_first = levels.get_member(id__lte=1)
+    assert found_first == set_first
+
+
+def test_lt_get_member() -> None:
+    """Test that less than filter returns member."""
+    set_first = Level(id=1, code="1", name="First")
+    set_second = Level(id=2, code="2", name="Second")
+    set_second.set_adaptive_parent(adaptive_parent=set_first)
+    set_third = Level(id=3, code="3", name="Third")
+    levels = MetadataList([set_first, set_second, set_third])
+    found_first = levels.get_member(id__lt=2)
+    assert found_first == set_first
+
+
+def test_gte_get_member() -> None:
+    """Test that greater than or equal to filter returns member."""
+    set_first = Level(id=1, code="1", name="First")
+    set_second = Level(id=2, code="2", name="Second")
+    set_second.set_adaptive_parent(adaptive_parent=set_first)
+    set_third = Level(id=3, code="3", name="Third")
+    levels = MetadataList([set_first, set_second, set_third])
+    found_third = levels.get_member(id__gte=3)
+    assert found_third == set_third
+
+
+def test_gt_get_member() -> None:
+    """Test that greater than filter returns member."""
+    set_first = Level(id=1, code="1", name="First")
+    set_second = Level(id=2, code="2", name="Second")
+    set_second.set_adaptive_parent(adaptive_parent=set_first)
+    set_third = Level(id=3, code="3", name="Third")
+    levels = MetadataList([set_first, set_second, set_third])
+    found_third = levels.get_member(id__gt=2)
+    assert found_third == set_third
+
+
+def test_neq_get_member() -> None:
+    """Test that not equal filter returns member."""
+    set_first = Level(id=1, code="1", name="First")
+    set_second = Level(id=2, code="2", name="Second")
+    set_second.set_adaptive_parent(adaptive_parent=set_first)
+    set_third = Level(id=3, code="3", name="Third")
+    levels = MetadataList([set_first, set_second, set_third])
+    found_second = levels.get_member(name__neq="First")
+    assert found_second == set_second
+
+
+def test_eq_get_member() -> None:
+    """Test that equal filter returns member."""
+    set_first = Level(id=1, code="1", name="First")
+    set_second = Level(id=2, code="2", name="Second")
+    set_second.set_adaptive_parent(adaptive_parent=set_first)
+    set_third = Level(id=3, code="3", name="Third")
+    levels = MetadataList([set_first, set_second, set_third])
+    found_second = levels.get_member(name__eq="Second")
+    assert found_second == set_second
+
+
 def test_get_members() -> None:
     """Test that get_members returns the matched members."""
     set_first = Level(id=1, code="1", name="First")
@@ -95,8 +238,8 @@ def test_adaptive_parent_get_member() -> None:
     set_third.set_adaptive_parent(adaptive_parent=set_second)
     levels = MetadataList([set_first, set_second, set_third])
     # found_third = levels.get_member(adaptive_parent=Level(id=2, code="2", name="First"))
-    found_third = levels.get_member(adaptive_parent=levels.get_member(code="2"))
-    # found_third = levels.get_member(adaptive_parent=set_second)
+    found_third = levels.get_member(adaptive_parent=set_second)
+    # found_third = levels.get_member(adaptive_parent=levels.get_member(code="2"))
 
     assert set_third == found_third
 
@@ -118,14 +261,3 @@ def test_adaptive_attribute_get_member() -> None:
     # )
     found_third = levels.get_member(adaptive_attributes=[third_attribute])
     assert set_third == found_third
-
-
-def test_advanced_get_member() -> None:
-    """Test that advanced filter returns member."""
-    set_first = Level(id=1, code="1", name="First")
-    set_second = Level(id=2, code="2", name="Second")
-    set_second.set_adaptive_parent(adaptive_parent=set_first)
-    set_third = Level(id=3, code="3", name="Third")
-    levels = MetadataList([set_first, set_second, set_third])
-    found = list(filter(lambda x: "r" in x.name, levels))
-    assert found == [set_first, set_third]
