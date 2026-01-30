@@ -262,5 +262,4 @@ def test_adaptive_attribute_get_member() -> None:
             ]
         )
     )
-    # found_third = levels.get_member(adaptive_attributes=[third_attribute])
     assert set_third == found_third
