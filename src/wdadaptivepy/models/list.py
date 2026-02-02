@@ -95,12 +95,22 @@ class MetadataList(list[T]):
                 csv_writer.writerows(all_data)
 
     def get_member(self, **kwargs: Any) -> T | None:  # NOQA: ANN401
-        """Get member from listing of members.
+        """Get first member from listing of members.
 
-            **kwargs: [TODO:args]
+        Syntax: `field_name=value` or `field_name__operator=value`
+
+        Supported Operators:
+        - __eq, __neq
+        - __is, __isnot
+        - __gt, __gte, __lt, __lte
+        - __contains, __icontains
+        - __startswith, __endswith
+        - __regex
+
+            **kwargs: keys and values to look within MetadataList
 
         Returns:
-            [TODO:return]
+            Metadata Member or None
 
         """
         try:
@@ -109,12 +119,22 @@ class MetadataList(list[T]):
             return None
 
     def get_members(self, **kwargs: Any) -> Self:  # NOQA: ANN401
-        """Get member from listing of members.
+        """Get members from listing of members.
 
-            **kwargs: [TODO:args]
+        Syntax: `field_name=value` or `field_name__operator=value`
+
+        Supported Operators:
+        - __eq, __neq
+        - __is, __isnot
+        - __gt, __gte, __lt, __lte
+        - __contains, __icontains
+        - __startswith, __endswith
+        - __regex
+
+            **kwargs: keys and values to look within MetadataList
 
         Returns:
-            [TODO:return]
+            MetadataList
 
         """
         return self.__class__([item for item in self if self._matches(item, **kwargs)])
