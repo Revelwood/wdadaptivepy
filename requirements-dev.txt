@@ -404,9 +404,9 @@ mkdocstrings==1.0.2 \
     --hash=sha256:41897815a8026c3634fe5d51472c3a569f92ded0ad8c7a640550873eea3b6817 \
     --hash=sha256:48edd0ccbcb9e30a3121684e165261a9d6af4d63385fc4f39a54a49ac3b32ea8
     # via mkdocstrings-python
-mkdocstrings-python==2.0.1 \
-    --hash=sha256:66ecff45c5f8b71bf174e11d49afc845c2dfc7fc0ab17a86b6b337e0f24d8d90 \
-    --hash=sha256:843a562221e6a471fefdd4b45cc6c22d2607ccbad632879234fa9692e9cf7732
+mkdocstrings-python==2.0.2 \
+    --hash=sha256:31241c0f43d85a69306d704d5725786015510ea3f3c4bdfdb5a5731d83cdc2b0 \
+    --hash=sha256:4a32ccfc4b8d29639864698e81cfeb04137bce76bb9f3c251040f55d4b6e1ad8
 msgpack==1.1.2 \
     --hash=sha256:0051fffef5a37ca2cd16978ae4f0aef92f164df86823871b5162812bebecd8e2 \
     --hash=sha256:04fb995247a6e83830b62f0b07bf36540c213f6eac8e851166d8d86d83cbd014 \
