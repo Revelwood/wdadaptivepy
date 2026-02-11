@@ -3,7 +3,7 @@ name = "wdadaptivepy"
 version = "0.1.1"
 description = "Wrapper for Workday Adaptive Planning's API"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 dependencies = ["requests>=2.32.4"]
 authors = [{ name = "Revelwood Labs", email = "labs@revelwood.com" }]
 maintainers = [{ name = "Revelwood Labs", email = "labs@revelwood.com" }]

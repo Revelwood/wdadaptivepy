@@ -7,7 +7,9 @@ from collections.abc import Callable
 from dataclasses import asdict
 from os import PathLike
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, Protocol, Self, TypeVar
+from typing import TYPE_CHECKING, Any, ClassVar, Protocol, TypeVar
+
+from typing_extensions import Self
 
 if TYPE_CHECKING:
     from datetime import datetime
