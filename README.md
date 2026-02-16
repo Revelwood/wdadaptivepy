@@ -78,7 +78,7 @@ simplifies interacting with the Adaptive Planning API via a Pythonic interface.
 
 ### Pre-requisites
 
-- Python 3.12+
+- Python 3.10+
 - Valid credentials (username/password) for an active Workday Adaptive
   Planning account
   - wdadaptivepy will be limited to the access granted to the Adaptive user
