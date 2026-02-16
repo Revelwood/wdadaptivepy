@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- [Python 3.12](https://docs.python.org/3/whatsnew/3.12.html) or greater
+- [Python 3.10](https://docs.python.org/3/whatsnew/3.10.html) or greater
 
 ## Basic Installation
 
