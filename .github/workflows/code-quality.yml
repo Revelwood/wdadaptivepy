@@ -17,13 +17,13 @@ jobs:
       - run: uv export --locked --no-dev --output-file requirements.txt
       - run: |
           if ! git diff --exit-code requirements.txt; then
-            echo "::error file=requirements.txt::requirements.txt is out of date. Run 'uv export --locked --no-dev --output-file requirements.txt' locally and commit the changes."
+            echo "::error file=requirements.txt::requirements.txt is out of date. Run 'uv export --no-emit-project --locked --no-dev --output-file requirements.txt' locally and commit the changes."
             exit 1
           fi
       - run: uv export --locked --output-file requirements-dev.txt
       - run: |
           if ! git diff --exit-code requirements-dev.txt; then
-            echo "::error file=requirements-dev.txt::requirements.txt is out of date. Run 'uv export --locked --output-file requirements-dev.txt' locally and commit the changes."
+            echo "::error file=requirements-dev.txt::requirements-dev.txt is out of date. Run 'uv export --no-emit-project --locked --output-file requirements-dev.txt' locally and commit the changes."
             exit 1
           fi
   linting:
