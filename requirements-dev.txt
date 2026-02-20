@@ -389,9 +389,9 @@ mkdocs==1.6.1 \
     #   mkdocs-material
     #   mkdocs-rss-plugin
     #   mkdocstrings
-mkdocs-autorefs==1.4.3 \
-    --hash=sha256:469d85eb3114801d08e9cc55d102b3ba65917a869b893403b8987b601cf55dc9 \
-    --hash=sha256:beee715b254455c4aa93b6ef3c67579c399ca092259cc41b7d9342573ff1fc75
+mkdocs-autorefs==1.4.4 \
+    --hash=sha256:834ef5408d827071ad1bc69e0f39704fa34c7fc05bc8e1c72b227dfdc5c76089 \
+    --hash=sha256:d54a284f27a7346b9c38f1f852177940c222da508e66edc816a0fa55fc6da197
     # via
     #   mkdocstrings
     #   mkdocstrings-python
