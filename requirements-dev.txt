@@ -123,7 +123,6 @@ colorama==0.4.6 \
     --hash=sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6
     # via
     #   click
-    #   griffecli
     #   mkdocs
     #   mkdocs-material
     #   pytest
@@ -260,17 +259,9 @@ gitpython==3.1.46 \
     #   mkdocs-git-committers-plugin-2
     #   mkdocs-git-revision-date-localized-plugin
     #   mkdocs-rss-plugin
-griffe==2.0.0 \
-    --hash=sha256:5418081135a391c3e6e757a7f3f156f1a1a746cc7b4023868ff7d5e2f9a980aa
-    # via mkdocstrings-python
-griffecli==2.0.0 \
-    --hash=sha256:9f7cd9ee9b21d55e91689358978d2385ae65c22f307a63fb3269acf3f21e643d
-    # via griffe
 griffelib==2.0.0 \
     --hash=sha256:01284878c966508b6d6f1dbff9b6fa607bc062d8261c5c7253cb285b06422a7f
-    # via
-    #   griffe
-    #   griffecli
+    # via mkdocstrings-python
 h11==0.16.0 \
     --hash=sha256:4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1 \
     --hash=sha256:63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86
