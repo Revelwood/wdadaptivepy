@@ -4,7 +4,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from xml.etree import ElementTree as ET
 
-import requests
+import httpx
 
 from wdadaptivepy.connectors.xml_api.constants import (
     BASE_URL,
@@ -115,11 +115,10 @@ class XMLApi:
         call = self.__generate_xml_call(method, payload)
 
         request_headers = {"Content-Type": "application/xml"}
-        response = requests.post(
+        response = httpx.post(
             url=BASE_URL + "v" + str(MINIMUM_VERSION),
-            data=ET.tostring(call),
+            content=ET.tostring(call),
             headers=request_headers,
-            timeout=(10, 30 * 60),
         )
 
         tree = ET.fromstring(text=response.text)  # NOQA: S314
