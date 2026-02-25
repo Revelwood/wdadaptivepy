@@ -284,7 +284,10 @@ class TimeFilter:
     """
 
     start: Period = field(metadata={"validator": has_code})
-    end: Period = field(metadata={"validator": has_code})
+    end: Period | None = field(
+        default=None,
+        metadata={"validator": has_code},
+    )
     stratum: Stratum | None = field(
         default=None,
         metadata={"validator": is_none_or_has_code},
@@ -564,10 +567,13 @@ class ExportDataFilter:
         if start is None:
             error_message = "Expected start value"
             raise ValueError(error_message)
-        end = str_to_str(self.time.end.code)
-        if end is None:
-            error_message = "Expected end value"
-            raise ValueError(error_message)
+        if self.time.end is None:
+            end = None
+        else:
+            end = str_to_str(self.time.end.code)
+            if end is None:
+                error_message = "Expected end value"
+                raise ValueError(error_message)
 
         if self.dimension_values:
             dimension_values_element = ET.Element("dimensionValues")
@@ -601,7 +607,9 @@ class ExportDataFilter:
                     dimension_values_element.append(dimension_value_element)
             filters_element.append(dimension_values_element)
 
-        time_span_element = ET.Element("timeSpan", attrib={"start": start, "end": end})
+        time_span_element = ET.Element("timeSpan", attrib={"start": start})
+        if end is not None:
+            time_span_element.set("end", end)
         if self.time.stratum is not None:
             stratum = str_to_str(self.time.stratum.code)
             if stratum is not None:
