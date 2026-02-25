@@ -1,5 +1,6 @@
 """wdadaptivepy service for Adaptive data."""
 
+import sys
 from collections.abc import Sequence
 from csv import DictReader
 from datetime import datetime
@@ -7,7 +8,10 @@ from io import StringIO
 from typing import TypeVar, cast
 from xml.etree import ElementTree as ET
 
-from typing_extensions import Self
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 from wdadaptivepy.connectors.xml_api.xml_api import XMLApi
 from wdadaptivepy.models.account import Account
