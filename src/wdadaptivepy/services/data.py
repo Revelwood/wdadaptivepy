@@ -1,10 +1,13 @@
 """wdadaptivepy service for Adaptive data."""
 
+from collections.abc import Sequence
 from csv import DictReader
 from datetime import datetime
 from io import StringIO
-from typing import TYPE_CHECKING, Self
+from typing import TypeVar, cast
 from xml.etree import ElementTree as ET
+
+from typing_extensions import Self
 
 from wdadaptivepy.connectors.xml_api.xml_api import XMLApi
 from wdadaptivepy.models.account import Account
@@ -18,6 +21,7 @@ from wdadaptivepy.models.data import (
     ExportDataRules,
     LevelFilter,
     TimeFilter,
+    VersionFilter,
 )
 from wdadaptivepy.models.dimension import Dimension
 from wdadaptivepy.models.dimension_value import DimensionValue
@@ -25,279 +29,771 @@ from wdadaptivepy.models.level import Level
 from wdadaptivepy.models.time import Period, Stratum
 from wdadaptivepy.models.version import Version
 
-if TYPE_CHECKING:
-    from collections.abc import Sequence
+T = TypeVar("T")
 
 
 class DataQuery:
-    def __init__(self) -> None:
-        self._version_filter: Version | None = None
+    """Query builder for Adaptive's export_data API."""
+
+    def __init__(self, xml_api: XMLApi) -> None:
+        """Initialize DataQuery."""
+        self.__xml_api = xml_api
+        self._version_filter = VersionFilter(version=None, is_default=None)
         self._account_filter: list[AccountFilter] = []
         self._time_filter: TimeFilter | None = None
         self._level_filter: list[LevelFilter] = []
         self._dimension_value_filter: list[DimensionValueFilter] = []
         self._returned_dimensions: list[Dimension] = []
-        self._rules: ExportDataRules | None = None
+        self._rules: ExportDataRules = ExportDataRules(
+            include_zero_rows=False,
+            include_rollup_accounts=False,
+            include_rollup_levels=False,
+            mark_invalid_values=False,
+            mark_blanks=False,
+            time_rollups=False,
+            currency=CurrencyFilter(
+                use_corporate=None,
+                use_local=True,
+                override=None,
+            ),
+        )
 
-    def _get_account_filter(
+    def _get_flat_list_obj(
         self,
-        accounts: Account | str | Sequence[Account | str],
-        *,
-        include_descendants: bool,
-    ) -> AccountFilter:
-        if isinstance(accounts, Account):
-            account_search = accounts
-        elif isinstance(accounts, str):
-            account_search = Account(code=accounts)
-        elif isinstance(accounts, Sequence):
-            account_search = []
-            for account in accounts:
-                if isinstance(account, Account):
-                    account_search.append(account)
-                elif isinstance(account, str):
-                    account_search.append(Account(code=account))
-                else:
-                    raise TypeError
-        else:
-            raise TypeError
+        obj: T | Sequence[T],
+    ) -> list[T]:
+        if isinstance(obj, (str, bytes)):
+            return [cast("T", obj)]
+        if isinstance(obj, Sequence):
+            return list(obj)
+        return [obj]
 
-        return AccountFilter(
-            account=account_search,
-            include_descendants=include_descendants,
-        )
-
-    def _get_time_filter(
-        self,
-        start_period: Period | str,
-        end_period: Period | str | None = None,
-        stratum: Stratum | str | None = None,
-    ) -> TimeFilter:
-        if isinstance(start_period, Period):
-            start_period_search = start_period
-        elif isinstance(start_period, str):
-            start_period_search = Period(code=start_period)
-        else:
-            raise TypeError
-
-        if end_period is None or isinstance(end_period, Period):
-            end_period_search = end_period
-        elif isinstance(end_period, str):
-            end_period_search = Period(code=end_period)
-        else:
-            raise TypeError
-
-        if stratum is None or isinstance(stratum, Stratum):
-            stratum_filter = stratum
-        elif isinstance(stratum, str):
-            stratum_filter = Stratum(code=stratum)
-        else:
-            raise TypeError
-
-        return TimeFilter(
-            start=start_period_search,
-            end=end_period_search,
-            stratum=stratum_filter,
-        )
-
-    def _get_levels_filter(
-        self, levels: Level | str | Sequence[Level | str]
-    ) -> LevelFilter:
-        if isinstance(levels, Level):
-            levels_filter = LevelFilter(level=levels)
-        elif isinstance(levels, str):
-            levels_filter = LevelFilter(level=Level(code=levels))
-        elif isinstance(levels, Sequence):
-            level_search = []
-            for level in levels:
-                if isinstance(level, Level):
-                    level_search.append(level)
-                elif isinstance(level, str):
-                    level_search.append(Level(code=level))
-                else:
-                    raise TypeError
-            levels_filter = LevelFilter(level=level_search)
-        else:
-            raise TypeError
-
-        return levels_filter
-
-    def _get_dimension_values_filter(
-        self,
-        dimension_value: DimensionValue
-        | str
-        | Sequence[DimensionValue | str]
-        | None = None,
-        *,
-        dimension: Dimension | str | None = None,
-        direct_children: bool | None = None,
-        uncategorized: bool | None = None,
-        uncategorized_of_dimension: Dimension
-        | str
-        | bool
-        | Sequence[Dimension | str]
-        | None = None,
-        direct_children_of_dimension: Dimension
-        | str
-        | bool
-        | Sequence[Dimension | str]
-        | None = None,
-    ) -> DimensionValueFilter:
-        if isinstance(dimension_values, DimensionValue):
-            dimension_values_filter = DimensionValueFilter(
-                dimension_value=dimension_values
-            )
-        elif isinstance(dimension_values, str):
-            dimension_values_filter = Di
-        elif isinstance(dimension_values, Sequence):
-            dimension_values_search = []
-            for dimension_value in dimension_values:
-                if isinstance(dimension_value, DimensionValue):
-                    dimension_values_search.append(dimension_value)
-                else:
-                    raise TypeError
-            dimension_values_filter = DimensionValueFilter(
-                dimension_value=dimension_values_search,
-            )
-        else:
-            raise TypeError
-
-        return dimension_values_filter
-
-    def _generate_xml(self) -> ET.Element:
-        if self._version_filter is None:
-            raise ValueError
-        if self._version_filter.name is None:
-            raise ValueError
-
-        if not self._account_filter:
-            raise ValueError
-
-        if not self._time_filter:
-            raise ValueError
-
-        data_filter = ExportDataFilter(
-            accounts=self._account_filter,
-            time=self._time_filter,
-            levels=self._level_filter,
-            dimension_values=self._dimension_value_filter,
-        )
-
-        payload: list[ET.Element] = []
-
-        version_element = ET.Element(
-            "version",
-            attrib={"name": self._version_filter.name},
-        )
-
-        payload.append(version_element)
-
-        if self._data_format:
-            format_element = data_format.to_xml_element()
-            payload.append(format_element)
-
-        filter_element = data_filter.to_xml_element()
-        payload.append(filter_element)
-
-        if self._returned_dimensions:
-            dimensions_element = ET.Element("dimensions")
-            for dimension in self._returned_dimensions:
-                dimension_element = self._create_dimension_element(dimension)
-                dimensions_element.append(dimension_element)
-            payload.append(dimensions_element)
-
-        if self.rules is not None:
-            rules_element = rules.to_xml_element()
-            payload.append(rules_element)
-        return payload
-
-    def set_version_filter(self, version: Version | str) -> Self:
-        if self._version_filter is not None:
-            raise ValueError
+    def _get_version_obj(self, version: Version | str) -> Version:
         if isinstance(version, Version):
-            if version.name is None or version.name == "":
+            if not version.name:
                 raise ValueError
-            self._version_filter = version
-        elif isinstance(version, str):
-            self._version_filter = Version(name=version)
+            return version
+        if isinstance(version, str):
+            return Version(name=version)
+        raise TypeError
+
+    def set_version_filter(
+        self,
+        version: Version | str | None = None,
+        *,
+        use_default: bool = False,
+    ) -> Self:
+        """Set the Version for export_data.
+
+        Args:
+            version: Version of the data query.
+            use_default: Use the default Adaptive Version
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        if use_default is True:
+            self._version_filter.version = None
+            self._version_filter.is_default = True
         else:
-            raise TypeError
+            if version is None:
+                raise ValueError
+            self._version_filter.version = self._get_version_obj(version)
+            self._version_filter.is_default = None
 
         return self
+
+    @property
+    def version_filter(self) -> VersionFilter:
+        """Get details of the data query's Version.
+
+        Returns:
+            Version used by Data Query
+
+        """
+        return self._version_filter
+
+    def _get_account_obj(self, account: Account | str) -> Account:
+        if isinstance(account, Account):
+            if not account.code:
+                raise ValueError
+            if account.is_assumption is None:
+                raise ValueError
+            account_obj = account
+        elif isinstance(account, str):
+            account_obj = Account(code=account, is_assumption=False)
+        else:
+            raise TypeError
+        return account_obj
 
     def add_account_filter(
         self,
-        account: Account | str | Sequence[Account | str],
+        accounts: Account | str | Sequence[Account | str],
         *,
         include_descendants: bool = True,
     ) -> Self:
-        self._account_filter.append(
-            self._get_account_filter(
-                accounts=account,
-                include_descendants=include_descendants,
+        """Add an Account filter to the data query.
+
+        Args:
+            accounts: Accounts for the data query
+            include_descendants: Include the accounts' descendants
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        all_accounts = self._get_flat_list_obj(accounts)
+
+        for account in all_accounts:
+            account_obj = self._get_account_obj(account)
+            self._account_filter.append(
+                AccountFilter(
+                    account=account_obj,
+                    include_descendants=include_descendants,
+                )
             )
-        )
         return self
+
+    def clear_account_filter(self) -> Self:
+        """Clear all account filters for the data query.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._account_filter = []
+        return self
+
+    @property
+    def account_filter(self) -> list[AccountFilter]:
+        """Get all account filters for data query.
+
+        Returns:
+            List of account filters for data query.
+
+        """
+        return self._account_filter
+
+    def _get_period_obj(self, period: Period | str) -> Period:
+        if isinstance(period, Period):
+            if not period.code:
+                raise ValueError
+            return period
+        if isinstance(period, str):
+            return Period(code=period)
+        raise TypeError
+
+    def _get_stratum_obj(self, stratum: Stratum | str) -> Stratum:
+        if isinstance(stratum, Stratum):
+            if not stratum.code:
+                raise ValueError
+            return stratum
+        if isinstance(stratum, str):
+            return Stratum(code=stratum)
+        raise TypeError
 
     def set_time_filter(
         self,
         start_period: Period | str,
-        end_period: Period | str | None = None,
+        end_period: Period | str,
         stratum: Stratum | str | None = None,
     ) -> Self:
-        if self._time_filter is not None:
-            raise ValueError
+        """Set the Time filter for the data query.
 
-        self._get_time_filter(
-            start_period=start_period,
-            end_period=end_period,
-            stratum=stratum,
+        Args:
+            start_period: Start Period of the Data Query
+            end_period: End Period of the Data Query
+            stratum: Stratum of the Query
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        start_period_obj = self._get_period_obj(start_period)
+        end_period_obj = self._get_period_obj(end_period)
+
+        stratum_obj = self._get_stratum_obj(stratum) if stratum is not None else None
+
+        self._time_filter = TimeFilter(
+            start=start_period_obj,
+            end=end_period_obj,
+            stratum=stratum_obj,
         )
         return self
 
-    def add_level_filter(self, level: Level | str | Sequence[Level | str]) -> Self:
-        self._level_filter.append(self._get_levels_filter(levels=level))
+    @property
+    def time_filter(self) -> TimeFilter | None:
+        """Get the Time filter of the data query.
+
+        Returns:
+            DataQuery's Time filter
+
+        """
+        return self._time_filter
+
+    def _get_level_obj(self, level: Level | str) -> Level:
+        if isinstance(level, Level):
+            if not level.code:
+                raise ValueError
+            return level
+        if isinstance(level, str):
+            return Level(code=level)
+        raise TypeError
+
+    def add_level_filter(
+        self,
+        levels: Level | str | Sequence[Level | str],
+        *,
+        is_rollup: bool = False,
+        include_descendants: bool = True,
+    ) -> Self:
+        """Add Level to the data query.
+
+        Args:
+            levels: Levels for the data query
+            is_rollup: Flag to include only the data loaded to a Level rollup
+            include_descendants: Include the level's descendants
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        all_levels = self._get_flat_list_obj(levels)
+
+        for level in all_levels:
+            level_obj = self._get_level_obj(level)
+            self._level_filter.append(
+                LevelFilter(
+                    level=level_obj,
+                    is_rollup=is_rollup,
+                    include_descendants=include_descendants,
+                )
+            )
         return self
+
+    @property
+    def level_filter(self) -> list[LevelFilter]:
+        """Get the data query's level filter.
+
+        Returns:
+            List of Level filters.
+
+        """
+        return self._level_filter
+
+    def clear_level_filter(self) -> Self:
+        """Clear the level filters of the data query.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._level_filter = []
+        return self
+
+    def _get_dimension_obj(self, dimension: Dimension | str) -> Dimension:
+        if isinstance(dimension, Dimension):
+            if not dimension.name:
+                raise ValueError
+            return dimension
+        if isinstance(dimension, str):
+            return Dimension(name=dimension)
+        raise TypeError
+
+    def _get_dimension_value_obj(
+        self, dimension_value: DimensionValue | str | int
+    ) -> DimensionValue:
+        if isinstance(dimension_value, DimensionValue):
+            if not dimension_value.code and not dimension_value.id:
+                raise ValueError
+            return dimension_value
+        if isinstance(dimension_value, str):
+            return DimensionValue(code=dimension_value)
+        if isinstance(dimension_value, int):
+            return DimensionValue(id=dimension_value)
+        raise TypeError
 
     def add_dimension_value_filter(
         self,
-        dimension_value: DimensionValue
+        dimension: Dimension | str,
+        dimension_values: DimensionValue
         | str
-        | Sequence[DimensionValue | str]
-        | None = None,
+        | int
+        | Sequence[DimensionValue | str | int],
         *,
-        dimension: Dimension | str | None = None,
         direct_children: bool | None = None,
         uncategorized: bool | None = None,
-        uncategorized_of_dimension: Dimension
-        | str
-        | bool
-        | Sequence[Dimension | str]
-        | None = None,
-        direct_children_of_dimension: Dimension
-        | str
-        | bool
-        | Sequence[Dimension | str]
-        | None = None,
     ) -> Self:
-        self._dimension_value_filter.append(
-            self._get_dimension_values_filter(dimension_values=dimension_value)
-        )
+        """Add filters for Dimension Values.
+
+        Args:
+            dimension: Dimension for the Data Query
+            dimension_values: Dimension Values for the Data Query
+            direct_children: Include only direct children of the dimension values
+            uncategorized: Include only the uncategorized of the dimension value
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        dimension_obj = self._get_dimension_obj(dimension)
+        all_dimension_values = self._get_flat_list_obj(dimension_values)
+
+        for dimension_value in all_dimension_values:
+            dimension_value_obj = self._get_dimension_value_obj(dimension_value)
+            self._dimension_value_filter.append(
+                DimensionValueFilter(
+                    dimension=dimension_obj,
+                    dimension_value=dimension_value_obj,
+                    direct_children=direct_children,
+                    uncategorized=uncategorized,
+                )
+            )
         return self
 
-    def get_data(
+    def add_uncategorized_dimension_filter(
         self,
-    ) -> list[dict[str, str | int | float]]:
-        payload = self._generate_xml()
+        dimensions: Dimension | Sequence[Dimension],
+    ) -> Self:
+        """Add the dimension's uncategorized dimension value as a filter.
 
-        response = self.__xml_api.make_xml_request(
-            method="exportData",
-            payload=payload,
+        Args:
+            dimensions: Adaptive Dimension to include uncategorized value
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        all_dimensions = self._get_flat_list_obj(dimensions)
+
+        for dimension in all_dimensions:
+            dimension_obj = self._get_dimension_obj(dimension)
+            if dimension_obj.id is None:
+                raise ValueError
+            self._dimension_value_filter.append(
+                DimensionValueFilter(uncategorized_of_dimension=dimension_obj)
+            )
+
+        return self
+
+    def add_direct_children_of_dimension_filter(
+        self,
+        dimensions: Dimension | Sequence[Dimension],
+    ) -> Self:
+        """Add the immediate children of a Dimension as a filter.
+
+        Args:
+            dimensions: Adaptive Dimension to include direct children
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        all_dimensions = self._get_flat_list_obj(dimensions)
+
+        for dimension in all_dimensions:
+            dimension_obj = self._get_dimension_obj(dimension)
+            if dimension_obj.id is None:
+                raise ValueError
+            self._dimension_value_filter.append(
+                DimensionValueFilter(
+                    direct_children_of_dimension=dimension_obj,
+                )
+            )
+
+        return self
+
+    @property
+    def dimension_value_filter(self) -> list[DimensionValueFilter]:
+        """Get the dimension value filter of the data query.
+
+        Returns:
+            Dimension Value Filter
+
+        """
+        return self._dimension_value_filter
+
+    def clear_dimension_value_filter(self) -> Self:
+        """Clear the dimension value filter.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._dimension_value_filter = []
+        return self
+
+    def add_returned_dimension(
+        self, dimensions: Dimension | str | Sequence[Dimension | str]
+    ) -> Self:
+        """Add Dimension to include as a column in the returned data.
+
+        Args:
+            dimensions: Adaptive Dimension
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        all_dimensions = self._get_flat_list_obj(dimensions)
+
+        for dimension in all_dimensions:
+            dimension_obj = self._get_dimension_obj(dimension)
+            self._returned_dimensions.append(dimension_obj)
+        return self
+
+    def clear_returned_dimension(self) -> Self:
+        """Clear the Dimensions to include as a column in the returned data.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._returned_dimensions = []
+        return self
+
+    @property
+    def returned_dimensions(self) -> list[str]:
+        """Get the DImensions to include as a column in the returned data.
+
+        Returns:
+            List of Dimension names
+
+        """
+        dimensions: list[str] = []
+        for dimension_value_filter in self._dimension_value_filter:
+            if (
+                dimension_value_filter.dimension is None
+                or not dimension_value_filter.dimension.name
+            ):
+                raise ValueError
+            if dimension_value_filter.dimension.name not in dimensions:
+                dimensions.append(
+                    dimension_value_filter.dimension.name,
+                )
+        for dimension in self._returned_dimensions:
+            if not dimension.name:
+                raise ValueError
+            if dimension.name not in dimensions:
+                dimensions.append(dimension.name)
+        return dimensions
+
+    def include_zero_rows(self) -> Self:
+        """Include rows with zero values in returned data.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.include_zero_rows = True
+        return self
+
+    def exclude_zero_rows(self) -> Self:
+        """Exclude rows with zero values in returned data.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.include_zero_rows = False
+        return self
+
+    def include_rollup_accounts(self) -> Self:
+        """Include accounts that are rollups in the returned data.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.include_rollup_accounts = True
+        return self
+
+    def exclude_rollup_accounts(self) -> Self:
+        """Exclude accounts that are rollups in the returned data.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.include_rollup_accounts = False
+        return self
+
+    def include_rollup_levels(self) -> Self:
+        """Include Levels that are rollups in the returned data.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.include_rollup_levels = True
+        return self
+
+    def exclude_rollup_levels(self) -> Self:
+        """Exclude Levels that are rollups in the returned data.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.include_rollup_levels = False
+        return self
+
+    def mark_invalid_values(self) -> Self:
+        """Mark values that are invalid with a "I".
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.mark_invalid_values = True
+        return self
+
+    def unmark_invalid_values(self) -> Self:
+        """Do not mark values that are invalid.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.mark_invalid_values = False
+        return self
+
+    def mark_blanks(self) -> Self:
+        """Mark blank values with a "B".
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.mark_blanks = True
+        return self
+
+    def unmark_blanks(self) -> Self:
+        """Do not mark values that are blank.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.mark_blanks = False
+        return self
+
+    def include_time_rollups(self) -> Self:
+        """Include time rollups in returned data.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.time_rollups = True
+        return self
+
+    def exclude_time_rollups(self) -> Self:
+        """Exclude time rollups in returned data.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.time_rollups = False
+        return self
+
+    def aggregate_time_periods(self) -> Self:
+        """Aggregate all requested periods into a single period column.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.time_rollups = "single"
+        return self
+
+    def use_corporate_currency(self) -> Self:
+        """Use the Top Level's Currency for all returned data.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.currency.use_corporate = True
+        self._rules.currency.use_local = None
+        self._rules.currency.override = None
+        return self
+
+    def use_local_currency(self) -> Self:
+        """Use each Level's corresponding currency for all returned data.
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.currency.use_corporate = None
+        self._rules.currency.use_local = True
+        self._rules.currency.override = None
+        return self
+
+    def use_override_currency(self, currency: str) -> Self:
+        """Use a specific currency for all returned data.
+
+        Args:
+            currency: Currency to use for all returned data
+
+        Returns:
+            Modified DataQuery object.
+
+        """
+        self._rules.currency.use_corporate = None
+        self._rules.currency.use_local = None
+        self._rules.currency.override = currency
+        return self
+
+    def _validate_version_filter(self) -> None:
+        if self._version_filter.is_default and self._version_filter.version is not None:
+            raise ValueError
+
+        if self._version_filter.version:
+            if self._version_filter.is_default is not None:
+                raise ValueError
+            if not self._version_filter.version.name:
+                raise ValueError
+
+    def _validate_account_filter(self) -> None:
+        if not self._account_filter:
+            raise ValueError
+        for account_filter in self._account_filter:
+            if not account_filter.account:
+                raise ValueError
+            if not account_filter.account.code:
+                raise ValueError
+            if account_filter.account.is_assumption is None:
+                raise ValueError
+
+    def _validate_time_filter(self) -> None:
+        if not self._time_filter:
+            raise ValueError
+        if not self._time_filter.start.code:
+            raise ValueError
+        if not self._time_filter.end.code:
+            raise ValueError
+
+    def _validate_dimension_value_filter(self) -> None:
+        for dvf in self._dimension_value_filter:
+            if dvf.dimension is None:
+                raise ValueError
+            if not dvf.dimension.name:
+                raise ValueError
+
+            has_dimension_value = dvf.dimension_value is not None and (
+                dvf.dimension_value.code is not None
+                or dvf.dimension_value.id is not None
+            )
+            has_direct_children = (
+                dvf.direct_children_of_dimension is not None
+                and dvf.direct_children_of_dimension.id is not None
+            )
+            has_uncategorized = (
+                dvf.uncategorized_of_dimension is not None
+                and dvf.uncategorized_of_dimension.id is not None
+            )
+            if dvf.dimension_value is not None and not has_dimension_value:
+                raise ValueError
+            if dvf.direct_children_of_dimension is not None and not has_direct_children:
+                raise ValueError
+            if dvf.uncategorized_of_dimension is not None and not has_uncategorized:
+                raise ValueError
+
+            if not any([has_dimension_value, has_direct_children, has_uncategorized]):
+                raise ValueError
+
+    def _validate_returned_dimensions(self) -> None:
+        for dimension in self._returned_dimensions:
+            if not dimension.name:
+                raise ValueError
+        for dimension_value_filter in self._dimension_value_filter:
+            if (
+                not dimension_value_filter.dimension
+                or not dimension_value_filter.dimension.name
+            ):
+                raise ValueError
+
+    def _validate_rules(self) -> None:
+        currency = self._rules.currency
+
+        defined_rules = (
+            currency.use_corporate is not None,
+            currency.use_local is not None,
+            currency.override is not None,
+        )
+        if sum(defined_rules) != 1:
+            raise ValueError
+
+        active_rules = (
+            self._rules.currency.use_corporate is True,
+            self._rules.currency.use_local is True,
+            bool(self._rules.currency.override),
+        )
+        if sum(active_rules) != 1:
+            raise ValueError
+
+    def _validate_data_query(self) -> None:
+        self._validate_version_filter()
+        self._validate_account_filter()
+        self._validate_time_filter()
+        self._validate_dimension_value_filter()
+        self._validate_returned_dimensions()
+        self._validate_rules()
+
+    def _generate_xml(self) -> list[ET.Element]:
+        self._validate_data_query()
+
+        payload: list[ET.Element] = []
+
+        payload.append(
+            ExportDataFormat(
+                use_internal_codes=True,
+                use_ids=False,
+                include_unmapped_items=False,
+                include_codes=True,
+                include_names=True,
+                include_display_names=False,
+                display_name_enabled=True,
+            ).to_xml_element()
         )
 
+        payload.append(self._version_filter.to_xml_element())
+
+        if not self._time_filter:
+            raise ValueError
+        payload.append(
+            ExportDataFilter(
+                accounts=self._account_filter,
+                time=self._time_filter,
+                levels=self._level_filter,
+                dimension_values=self._dimension_value_filter,
+            ).to_xml_element()
+        )
+
+        if self.returned_dimensions:
+            dimensions_element = ET.Element("dimensions")
+            for dimension in self.returned_dimensions:
+                dimensions_element.append(
+                    ET.Element("dimension", attrib={"name": dimension})
+                )
+            payload.append(dimensions_element)
+
+        payload.append(self._rules.to_xml_element())
+
+        return payload
+
+    def _parse_response(
+        self,
+        response: ET.Element,
+    ) -> list[dict[str, str | float | int]]:
         received_row_count = -1
         status_element = response.find("status")
-        if status_element:
-            row_count_sent = status_element.attrib["rowCountSent"]
+        if status_element is not None:
+            row_count_sent = status_element.get("status")
             if row_count_sent:
                 received_row_count = int(row_count_sent)
         data_element = response.find("output")
@@ -340,38 +836,23 @@ class DataQuery:
 
         return data
 
-    def get_temp(
-        self,
-    ) -> None:
-        if self._version_filter is None:
-            raise ValueError
+    def get_data(self) -> list[dict[str, str | int | float]]:
+        """Retrieve data from Adaptive.
 
-        if not self._account_filter:
-            raise ValueError
+        Returns:
+            Data from Adaptive
 
-        if not self._time_filter:
-            raise ValueError
+        """
+        payload = self._generate_xml()
 
-        data_filter = ExportDataFilter(
-            accounts=self._account_filter,
-            time=self._time_filter,
-            levels=self._level_filter,
-            dimension_values=self._dimension_value_filter,
+        if not payload:
+            raise ValueError
+        response = self.__xml_api.make_xml_request(
+            method="exportData",
+            payload=payload,
         )
 
-        dimensions_in_results = self._get_returned_dimensions(
-            dimension_values_filter=dimension_values_filter,
-            returned_dimensions=returned_dimensions,
-        )
-
-        unsigned_data = DataService().get_data(
-            version=search_version,
-            data_filter=data_filter,
-            dimensions=dimensions_in_results,
-        )
-
-         if self.sign.debit_credit == True:
-             accounts = self.get_accounts()
+        return self._parse_response(response)
 
 
 class DataService:
@@ -405,6 +886,15 @@ class DataService:
         self.ExportDataRules = ExportDataRules
         self.ExportDataLevelFilter = LevelFilter
         self.ExportDataTimeFilter = TimeFilter
+
+    def query_data(self) -> DataQuery:
+        """Start a data query to retrieve data from Adaptive.
+
+        Returns:
+            DataQuery object
+
+        """
+        return DataQuery(xml_api=self.__xml_api)
 
     def _create_dimension_element(self, dimension: Dimension) -> ET.Element:
         if dimension.name is None:
