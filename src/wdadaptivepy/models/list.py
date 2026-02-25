@@ -3,13 +3,17 @@
 import csv
 import operator
 import re
+import sys
 from collections.abc import Callable
 from dataclasses import asdict
 from os import PathLike
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, Protocol, TypeVar
 
-from typing_extensions import Self
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 if TYPE_CHECKING:
     from datetime import datetime
