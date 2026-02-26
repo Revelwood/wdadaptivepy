@@ -2,7 +2,7 @@
 
 import sys
 from collections.abc import Sequence
-from csv import DictReader
+from csv import DictReader, reader
 from datetime import datetime
 from io import StringIO
 from typing import TypeVar, cast
@@ -794,51 +794,104 @@ class DataQuery:
         self,
         response: ET.Element,
     ) -> list[dict[str, str | float | int]]:
-        received_row_count = -1
-        status_element = response.find("status")
-        if status_element is not None:
-            row_count_sent = status_element.get("status")
-            if row_count_sent:
-                received_row_count = int(row_count_sent)
+        """Parse data from XML.
+
+        It reads like a table of contents for the parsing pipeline.
+
+        """
+        # 1. Extract
+        expected_count, csv_text = self._extract_payload(response)
+        if not csv_text:
+            return []
+
+        # 2. Parse & Validate
+        headers, raw_rows = self._read_csv(csv_text, expected_count)
+        if not headers or not raw_rows:
+            return []
+
+        # 3. Transform
+        base_cols, period_cols = self._categorize_columns(headers)
+        return self._unpivot_data(raw_rows, base_cols, period_cols)
+
+    # --------------------------------------------------------------------------
+    # ISOLATED PIPELINE STEPS (Highly Testable)
+    # --------------------------------------------------------------------------
+
+    def _extract_payload(self, response: ET.Element) -> tuple[int, str | None]:
+        """Extract metadata and raw CSV text from the XML."""
+        expected_count = -1
+        status = response.find("status")
+        if status is not None and "rowCountSent" in status.attrib:
+            expected_count = int(status.attrib["rowCountSent"])
+
         data_element = response.find("output")
-        data: list[dict[str, str | int | float]] = []
-        column_headers: Sequence[str] | None = None
-        if data_element is not None and data_element.text is not None:
-            rows = StringIO(data_element.text.lstrip("\n"))
-            csv_reader = DictReader(rows, lineterminator="\n")
-            column_headers = csv_reader.fieldnames
-            data = list(csv_reader)
-        if received_row_count > -1 and received_row_count != len(data):
-            error_message = (
-                "Inconsistent row counts: expected "
-                f"{received_row_count}, got {len(data)}"
-            )
-            raise RuntimeError(error_message)
+        csv_text = data_element.text if data_element is not None else None
 
-        if column_headers is not None:
-            period_columns = [
-                period
-                for period in column_headers
-                if not (period.endswith((" Name", " Code")))
-            ]
-            parsed_data: list[dict[str, str | int | float]] = []
-            for data_row in data:
-                for period in period_columns:
-                    row: dict[str, str | int | float] = {}
-                    for column in column_headers:
-                        if column in period_columns:
-                            break
-                        row[column] = data_row[column]
-                    row["Period Code"] = period
-                    try:
-                        row["Amount"] = int(data_row[period])
-                    except ValueError:
-                        row["Amount"] = float(data_row[period])
+        return expected_count, csv_text
 
-                    parsed_data.append(row)
-            return parsed_data
+    def _read_csv(
+        self, csv_text: str, expected_count: int
+    ) -> tuple[list[str], list[list[str]]]:
+        """Parse CSV text into lists and validates row counts."""
+        csv_reader = reader(StringIO(csv_text.lstrip("\n")), lineterminator="\n")
 
-        return data
+        try:
+            headers = next(csv_reader)
+        except StopIteration:
+            return [], []
+
+        raw_rows = list(csv_reader)
+
+        if expected_count > -1 and len(raw_rows) != expected_count:
+            raise RuntimeError
+
+        return headers, raw_rows
+
+    def _categorize_columns(
+        self, headers: Sequence[str]
+    ) -> tuple[list[tuple[int, str]], list[tuple[int, str]]]:
+        """Separates column indices into 'base' and 'period' categories."""
+        base_cols: list[tuple[int, str]] = []
+        period_cols: list[tuple[int, str]] = []
+
+        for idx, name in enumerate(headers):
+            if name.endswith((" Name", " Code")):
+                base_cols.append((idx, name))
+            else:
+                period_cols.append((idx, name))
+
+        return base_cols, period_cols
+
+    def _cast_amount(self, raw_amount: str) -> int | float | str:
+        """Safely attempts to cast an amount, falling back to string."""
+        try:
+            return int(raw_amount)
+        except ValueError:
+            try:
+                return float(raw_amount)
+            except ValueError:
+                return raw_amount
+
+    def _unpivot_data(
+        self,
+        raw_rows: list[list[str]],
+        base_cols: list[tuple[int, str]],
+        period_cols: list[tuple[int, str]],
+    ) -> list[dict[str, str | float | int]]:
+        """Melts wide data into long format using high-speed integer indexing."""
+        parsed_data: list[dict[str, str | float | int]] = []
+
+        for row in raw_rows:
+            base_row: dict[str, str | float | int] = {
+                name: row[idx] for idx, name in base_cols
+            }
+            for idx, period_name in period_cols:
+                new_row = base_row.copy()
+                new_row["Period Code"] = period_name
+                new_row["Amount"] = self._cast_amount(row[idx])
+                parsed_data.append(new_row)
+
+        return parsed_data
 
     def get_data(self) -> list[dict[str, str | int | float]]:
         """Retrieve data from Adaptive.
