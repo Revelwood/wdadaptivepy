@@ -573,31 +573,48 @@ class ExportDataFilter:
             dimension_values_element = ET.Element("dimensionValues")
             for dimension_value_filter in self.dimension_values:
                 if dimension_value_filter.dimension_value is not None:
-                    dimension_values_element.append(
-                        ET.Element(
-                            "dimensionValue",
-                            attrib={
-                                "id": str(dimension_value_filter.dimension_value.id)
-                            },
-                        )
+                    dimension_value = dimension_value_filter.dimension_value
+                    dimension_value_element = ET.Element("dimensionValue")
+                    direct_children = bool_to_str_true_false(
+                        dimension_value_filter.direct_children
                     )
+                    if direct_children is not None:
+                        dimension_value_element.attrib["directChildren"] = (
+                            direct_children
+                        )
+                    uncategorized = bool_to_str_true_false(
+                        dimension_value_filter.uncategorized
+                    )
+                    if uncategorized is not None:
+                        dimension_value_element.attrib["uncategorized"] = uncategorized
+                    if dimension_value.id:
+                        dimension_value_element.attrib["id"] = str(dimension_value.id)
+                    elif dimension_value.code:
+                        dimension = dimension_value_filter.dimension
+                        if dimension is None or not dimension.name:
+                            raise ValueError
+                        dimension_value_element.attrib["dimName"] = dimension.name
+                        dimension_value_element.attrib["code"] = dimension_value.code
+                    else:
+                        raise ValueError
+                    dimension_values_element.append(dimension_value_element)
                 elif dimension_value_filter.uncategorized_of_dimension is not None:
                     dimension = dimension_value_filter.uncategorized_of_dimension
                     dimension_value_element = ET.Element("dimensionValue")
                     dimension_name = str_to_str(dimension.name)
                     dimension_id = int_to_str(dimension.id)
-                    if dimension_name is None and dimension_id is None:
-                        error_message = (
-                            "One or more of dimension name "
-                            "or dimension id value expected"
-                        )
-                        raise ValueError(error_message)
                     if dimension_id is not None:
                         dimension_value_element.attrib["uncategorizedOfDimension"] = (
                             dimension_id
                         )
                     elif dimension_name is not None:
                         dimension_value_element.attrib["uncategorized"] = dimension_name
+                    else:
+                        error_message = (
+                            "One or more of dimension name "
+                            "or dimension id value expected"
+                        )
+                        raise ValueError(error_message)
                     dimension_values_element.append(dimension_value_element)
             filters_element.append(dimension_values_element)
 
