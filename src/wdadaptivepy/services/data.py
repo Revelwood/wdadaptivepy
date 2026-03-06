@@ -799,23 +799,16 @@ class DataQuery:
         It reads like a table of contents for the parsing pipeline.
 
         """
-        # 1. Extract
         expected_count, csv_text = self._extract_payload(response)
         if not csv_text:
             return []
 
-        # 2. Parse & Validate
         headers, raw_rows = self._read_csv(csv_text, expected_count)
         if not headers or not raw_rows:
             return []
 
-        # 3. Transform
         base_cols, period_cols = self._categorize_columns(headers)
         return self._unpivot_data(raw_rows, base_cols, period_cols)
-
-    # --------------------------------------------------------------------------
-    # ISOLATED PIPELINE STEPS (Highly Testable)
-    # --------------------------------------------------------------------------
 
     def _extract_payload(self, response: ET.Element) -> tuple[int, str | None]:
         """Extract metadata and raw CSV text from the XML."""
