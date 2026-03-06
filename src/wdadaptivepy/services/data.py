@@ -907,6 +907,7 @@ class DataQuery:
         response = self.__xml_api.make_xml_request(
             method="exportData",
             payload=payload,
+            stream=True,
         )
 
         return self._parse_response(response)
