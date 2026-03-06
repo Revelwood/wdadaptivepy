@@ -793,7 +793,7 @@ class DataQuery:
     def _parse_response(
         self,
         response: ET.Element,
-    ) -> list[dict[str, str | float | int]]:
+    ) -> list[dict[str, str | float | int | None]]:
         """Parse data from XML.
 
         It reads like a table of contents for the parsing pipeline.
@@ -855,27 +855,26 @@ class DataQuery:
 
         return base_cols, period_cols
 
-    def _cast_amount(self, raw_amount: str) -> int | float | str:
-        """Safely attempts to cast an amount, falling back to string."""
+    def _cast_amount(self, raw_amount: str) -> int | float | None:
+        """Cast string amount to number."""
+        if raw_amount == "B":
+            return None
         try:
             return int(raw_amount)
         except ValueError:
-            try:
-                return float(raw_amount)
-            except ValueError:
-                return raw_amount
+            return float(raw_amount)
 
     def _unpivot_data(
         self,
         raw_rows: list[list[str]],
         base_cols: list[tuple[int, str]],
         period_cols: list[tuple[int, str]],
-    ) -> list[dict[str, str | float | int]]:
+    ) -> list[dict[str, str | float | int | None]]:
         """Melts wide data into long format using high-speed integer indexing."""
-        parsed_data: list[dict[str, str | float | int]] = []
+        parsed_data: list[dict[str, str | float | int | None]] = []
 
         for row in raw_rows:
-            base_row: dict[str, str | float | int] = {
+            base_row: dict[str, str | float | int | None] = {
                 name: row[idx] for idx, name in base_cols
             }
             for idx, period_name in period_cols:
@@ -886,7 +885,7 @@ class DataQuery:
 
         return parsed_data
 
-    def get_data(self) -> list[dict[str, str | int | float]]:
+    def get_data(self) -> list[dict[str, str | int | float | None]]:
         """Retrieve data from Adaptive.
 
         Returns:
