@@ -599,6 +599,369 @@ def test_data_query_exceptions(
             ),
             id="test_dimension_value_filter_multiple_different_dimension",
         ),
+        pytest.param(
+            lambda q: (
+                q.set_version_filter("Actuals")
+                .set_time_filter("01/2026", "03/2026")
+                .add_account_filter("Assets")
+                .add_returned_dimension("Vendor")
+            ),
+            ET.fromstring(
+                '<call callerName="wdadaptivepy" method="exportData">'
+                '  <credentials login="" password="" />'
+                '  <format displayNameEnabled="true" includeCodes="true" includeDisplayNames="false" includeNames="true" includeUnmappedItems="false" useIds="false" useInternalCodes="true" />'  # noqa: E501
+                '  <version name="Actuals" />'
+                "  <filters>"
+                "    <accounts>"
+                '      <account code="Assets" includeDescendants="true" isAssumption="false" />'  # noqa: E501
+                "    </accounts>"
+                '    <timeSpan end="03/2026" start="01/2026" />'
+                "  </filters>"
+                "  <dimensions>"
+                '    <dimension name="Vendor" />'
+                "  </dimensions>"
+                '  <rules includeRollupAccounts="false" includeRollupLevels="false" includeZeroRows="false" markBlanks="false" markInvalidValues="false" timeRollups="false">'  # noqa: E501
+                '    <currency useLocal="true" />'
+                "  </rules>"
+                "</call>"
+            ),
+            id="test_dimension_value_filter_returned_dimension",
+        ),
+        pytest.param(
+            lambda q: (
+                q.set_version_filter("Actuals")
+                .set_time_filter("01/2026", "03/2026")
+                .add_account_filter("Assets")
+                .add_returned_dimension(["Customer", "Vendor"])
+            ),
+            ET.fromstring(
+                '<call callerName="wdadaptivepy" method="exportData">'
+                '  <credentials login="" password="" />'
+                '  <format displayNameEnabled="true" includeCodes="true" includeDisplayNames="false" includeNames="true" includeUnmappedItems="false" useIds="false" useInternalCodes="true" />'  # noqa: E501
+                '  <version name="Actuals" />'
+                "  <filters>"
+                "    <accounts>"
+                '      <account code="Assets" includeDescendants="true" isAssumption="false" />'  # noqa: E501
+                "    </accounts>"
+                '    <timeSpan end="03/2026" start="01/2026" />'
+                "  </filters>"
+                "  <dimensions>"
+                '    <dimension name="Customer" />'
+                '    <dimension name="Vendor" />'
+                "  </dimensions>"
+                '  <rules includeRollupAccounts="false" includeRollupLevels="false" includeZeroRows="false" markBlanks="false" markInvalidValues="false" timeRollups="false">'  # noqa: E501
+                '    <currency useLocal="true" />'
+                "  </rules>"
+                "</call>"
+            ),
+            id="test_dimension_value_filter_returned_dimensions",
+        ),
+        pytest.param(
+            lambda q: (
+                q.set_version_filter("Actuals")
+                .set_time_filter("01/2026", "03/2026")
+                .add_account_filter("Assets")
+                .add_returned_dimension(["Customer", "Vendor"])
+                .add_returned_dimension("Project")
+            ),
+            ET.fromstring(
+                '<call callerName="wdadaptivepy" method="exportData">'
+                '  <credentials login="" password="" />'
+                '  <format displayNameEnabled="true" includeCodes="true" includeDisplayNames="false" includeNames="true" includeUnmappedItems="false" useIds="false" useInternalCodes="true" />'  # noqa: E501
+                '  <version name="Actuals" />'
+                "  <filters>"
+                "    <accounts>"
+                '      <account code="Assets" includeDescendants="true" isAssumption="false" />'  # noqa: E501
+                "    </accounts>"
+                '    <timeSpan end="03/2026" start="01/2026" />'
+                "  </filters>"
+                "  <dimensions>"
+                '    <dimension name="Customer" />'
+                '    <dimension name="Vendor" />'
+                '    <dimension name="Project" />'
+                "  </dimensions>"
+                '  <rules includeRollupAccounts="false" includeRollupLevels="false" includeZeroRows="false" markBlanks="false" markInvalidValues="false" timeRollups="false">'  # noqa: E501
+                '    <currency useLocal="true" />'
+                "  </rules>"
+                "</call>"
+            ),
+            id="test_dimension_value_filter_multiple_returned_dimension",
+        ),
+        pytest.param(
+            lambda q: (
+                q.set_version_filter("Actuals")
+                .set_time_filter("01/2026", "03/2026")
+                .add_account_filter("Assets")
+                .include_rollup_accounts()
+            ),
+            ET.fromstring(
+                '<call callerName="wdadaptivepy" method="exportData">'
+                '  <credentials login="" password="" />'
+                '  <format displayNameEnabled="true" includeCodes="true" includeDisplayNames="false" includeNames="true" includeUnmappedItems="false" useIds="false" useInternalCodes="true" />'  # noqa: E501
+                '  <version name="Actuals" />'
+                "  <filters>"
+                "    <accounts>"
+                '      <account code="Assets" includeDescendants="true" isAssumption="false" />'  # noqa: E501
+                "    </accounts>"
+                '    <timeSpan end="03/2026" start="01/2026" />'
+                "  </filters>"
+                '  <rules includeRollupAccounts="true" includeRollupLevels="false" includeZeroRows="false" markBlanks="false" markInvalidValues="false" timeRollups="false">'  # noqa: E501
+                '    <currency useLocal="true" />'
+                "  </rules>"
+                "</call>"
+            ),
+            id="test_include_rollup_accounts",
+        ),
+        pytest.param(
+            lambda q: (
+                q.set_version_filter("Actuals")
+                .set_time_filter("01/2026", "03/2026")
+                .add_account_filter("Assets")
+                .include_rollup_levels()
+            ),
+            ET.fromstring(
+                '<call callerName="wdadaptivepy" method="exportData">'
+                '  <credentials login="" password="" />'
+                '  <format displayNameEnabled="true" includeCodes="true" includeDisplayNames="false" includeNames="true" includeUnmappedItems="false" useIds="false" useInternalCodes="true" />'  # noqa: E501
+                '  <version name="Actuals" />'
+                "  <filters>"
+                "    <accounts>"
+                '      <account code="Assets" includeDescendants="true" isAssumption="false" />'  # noqa: E501
+                "    </accounts>"
+                '    <timeSpan end="03/2026" start="01/2026" />'
+                "  </filters>"
+                '  <rules includeRollupAccounts="false" includeRollupLevels="true" includeZeroRows="false" markBlanks="false" markInvalidValues="false" timeRollups="false">'  # noqa: E501
+                '    <currency useLocal="true" />'
+                "  </rules>"
+                "</call>"
+            ),
+            id="test_include_rollup_levels",
+        ),
+        pytest.param(
+            lambda q: (
+                q.set_version_filter("Actuals")
+                .set_time_filter("01/2026", "03/2026")
+                .add_account_filter("Assets")
+                .include_zero_rows()
+            ),
+            ET.fromstring(
+                '<call callerName="wdadaptivepy" method="exportData">'
+                '  <credentials login="" password="" />'
+                '  <format displayNameEnabled="true" includeCodes="true" includeDisplayNames="false" includeNames="true" includeUnmappedItems="false" useIds="false" useInternalCodes="true" />'  # noqa: E501
+                '  <version name="Actuals" />'
+                "  <filters>"
+                "    <accounts>"
+                '      <account code="Assets" includeDescendants="true" isAssumption="false" />'  # noqa: E501
+                "    </accounts>"
+                '    <timeSpan end="03/2026" start="01/2026" />'
+                "  </filters>"
+                '  <rules includeRollupAccounts="false" includeRollupLevels="false" includeZeroRows="true" markBlanks="false" markInvalidValues="false" timeRollups="false">'  # noqa: E501
+                '    <currency useLocal="true" />'
+                "  </rules>"
+                "</call>"
+            ),
+            id="test_include_zero_rows",
+        ),
+        pytest.param(
+            lambda q: (
+                q.set_version_filter("Actuals")
+                .set_time_filter("01/2026", "03/2026")
+                .add_account_filter("Assets")
+                .mark_blanks()
+            ),
+            ET.fromstring(
+                '<call callerName="wdadaptivepy" method="exportData">'
+                '  <credentials login="" password="" />'
+                '  <format displayNameEnabled="true" includeCodes="true" includeDisplayNames="false" includeNames="true" includeUnmappedItems="false" useIds="false" useInternalCodes="true" />'  # noqa: E501
+                '  <version name="Actuals" />'
+                "  <filters>"
+                "    <accounts>"
+                '      <account code="Assets" includeDescendants="true" isAssumption="false" />'  # noqa: E501
+                "    </accounts>"
+                '    <timeSpan end="03/2026" start="01/2026" />'
+                "  </filters>"
+                '  <rules includeRollupAccounts="false" includeRollupLevels="false" includeZeroRows="false" markBlanks="true" markInvalidValues="false" timeRollups="false">'  # noqa: E501
+                '    <currency useLocal="true" />'
+                "  </rules>"
+                "</call>"
+            ),
+            id="test_mark_blanks",
+        ),
+        pytest.param(
+            lambda q: (
+                q.set_version_filter("Actuals")
+                .set_time_filter("01/2026", "03/2026")
+                .add_account_filter("Assets")
+                .mark_invalid_values()
+            ),
+            ET.fromstring(
+                '<call callerName="wdadaptivepy" method="exportData">'
+                '  <credentials login="" password="" />'
+                '  <format displayNameEnabled="true" includeCodes="true" includeDisplayNames="false" includeNames="true" includeUnmappedItems="false" useIds="false" useInternalCodes="true" />'  # noqa: E501
+                '  <version name="Actuals" />'
+                "  <filters>"
+                "    <accounts>"
+                '      <account code="Assets" includeDescendants="true" isAssumption="false" />'  # noqa: E501
+                "    </accounts>"
+                '    <timeSpan end="03/2026" start="01/2026" />'
+                "  </filters>"
+                '  <rules includeRollupAccounts="false" includeRollupLevels="false" includeZeroRows="false" markBlanks="false" markInvalidValues="true" timeRollups="false">'  # noqa: E501
+                '    <currency useLocal="true" />'
+                "  </rules>"
+                "</call>"
+            ),
+            id="test_include_rollup_accounts",
+        ),
+        pytest.param(
+            lambda q: (
+                q.set_version_filter("Actuals")
+                .set_time_filter("01/2026", "03/2026")
+                .add_account_filter("Assets")
+                .include_time_rollups()
+            ),
+            ET.fromstring(
+                '<call callerName="wdadaptivepy" method="exportData">'
+                '  <credentials login="" password="" />'
+                '  <format displayNameEnabled="true" includeCodes="true" includeDisplayNames="false" includeNames="true" includeUnmappedItems="false" useIds="false" useInternalCodes="true" />'  # noqa: E501
+                '  <version name="Actuals" />'
+                "  <filters>"
+                "    <accounts>"
+                '      <account code="Assets" includeDescendants="true" isAssumption="false" />'  # noqa: E501
+                "    </accounts>"
+                '    <timeSpan end="03/2026" start="01/2026" />'
+                "  </filters>"
+                '  <rules includeRollupAccounts="false" includeRollupLevels="false" includeZeroRows="false" markBlanks="false" markInvalidValues="false" timeRollups="true">'  # noqa: E501
+                '    <currency useLocal="true" />'
+                "  </rules>"
+                "</call>"
+            ),
+            id="test_include_time_rollups",
+        ),
+        pytest.param(
+            lambda q: (
+                q.set_version_filter("Actuals")
+                .set_time_filter("01/2026", "03/2026")
+                .add_account_filter("Assets")
+                .exclude_time_rollups()
+            ),
+            ET.fromstring(
+                '<call callerName="wdadaptivepy" method="exportData">'
+                '  <credentials login="" password="" />'
+                '  <format displayNameEnabled="true" includeCodes="true" includeDisplayNames="false" includeNames="true" includeUnmappedItems="false" useIds="false" useInternalCodes="true" />'  # noqa: E501
+                '  <version name="Actuals" />'
+                "  <filters>"
+                "    <accounts>"
+                '      <account code="Assets" includeDescendants="true" isAssumption="false" />'  # noqa: E501
+                "    </accounts>"
+                '    <timeSpan end="03/2026" start="01/2026" />'
+                "  </filters>"
+                '  <rules includeRollupAccounts="false" includeRollupLevels="false" includeZeroRows="false" markBlanks="false" markInvalidValues="false" timeRollups="false">'  # noqa: E501
+                '    <currency useLocal="true" />'
+                "  </rules>"
+                "</call>"
+            ),
+            id="test_exclude_time_rollups",
+        ),
+        pytest.param(
+            lambda q: (
+                q.set_version_filter("Actuals")
+                .set_time_filter("01/2026", "03/2026")
+                .add_account_filter("Assets")
+                .aggregate_time_periods()
+            ),
+            ET.fromstring(
+                '<call callerName="wdadaptivepy" method="exportData">'
+                '  <credentials login="" password="" />'
+                '  <format displayNameEnabled="true" includeCodes="true" includeDisplayNames="false" includeNames="true" includeUnmappedItems="false" useIds="false" useInternalCodes="true" />'  # noqa: E501
+                '  <version name="Actuals" />'
+                "  <filters>"
+                "    <accounts>"
+                '      <account code="Assets" includeDescendants="true" isAssumption="false" />'  # noqa: E501
+                "    </accounts>"
+                '    <timeSpan end="03/2026" start="01/2026" />'
+                "  </filters>"
+                '  <rules includeRollupAccounts="false" includeRollupLevels="false" includeZeroRows="false" markBlanks="false" markInvalidValues="false" timeRollups="single">'  # noqa: E501
+                '    <currency useLocal="true" />'
+                "  </rules>"
+                "</call>"
+            ),
+            id="test_aggregate_time_periods",
+        ),
+        pytest.param(
+            lambda q: (
+                q.set_version_filter("Actuals")
+                .set_time_filter("01/2026", "03/2026")
+                .add_account_filter("Assets")
+                .use_corporate_currency()
+            ),
+            ET.fromstring(
+                '<call callerName="wdadaptivepy" method="exportData">'
+                '  <credentials login="" password="" />'
+                '  <format displayNameEnabled="true" includeCodes="true" includeDisplayNames="false" includeNames="true" includeUnmappedItems="false" useIds="false" useInternalCodes="true" />'  # noqa: E501
+                '  <version name="Actuals" />'
+                "  <filters>"
+                "    <accounts>"
+                '      <account code="Assets" includeDescendants="true" isAssumption="false" />'  # noqa: E501
+                "    </accounts>"
+                '    <timeSpan end="03/2026" start="01/2026" />'
+                "  </filters>"
+                '  <rules includeRollupAccounts="false" includeRollupLevels="false" includeZeroRows="false" markBlanks="false" markInvalidValues="false" timeRollups="false">'  # noqa: E501
+                '    <currency useCorporate="true" />'
+                "  </rules>"
+                "</call>"
+            ),
+            id="test_use_corporate_currency",
+        ),
+        pytest.param(
+            lambda q: (
+                q.set_version_filter("Actuals")
+                .set_time_filter("01/2026", "03/2026")
+                .add_account_filter("Assets")
+                .use_local_currency()
+            ),
+            ET.fromstring(
+                '<call callerName="wdadaptivepy" method="exportData">'
+                '  <credentials login="" password="" />'
+                '  <format displayNameEnabled="true" includeCodes="true" includeDisplayNames="false" includeNames="true" includeUnmappedItems="false" useIds="false" useInternalCodes="true" />'  # noqa: E501
+                '  <version name="Actuals" />'
+                "  <filters>"
+                "    <accounts>"
+                '      <account code="Assets" includeDescendants="true" isAssumption="false" />'  # noqa: E501
+                "    </accounts>"
+                '    <timeSpan end="03/2026" start="01/2026" />'
+                "  </filters>"
+                '  <rules includeRollupAccounts="false" includeRollupLevels="false" includeZeroRows="false" markBlanks="false" markInvalidValues="false" timeRollups="false">'  # noqa: E501
+                '    <currency useLocal="true" />'
+                "  </rules>"
+                "</call>"
+            ),
+            id="test_use_corporate_currency",
+        ),
+        pytest.param(
+            lambda q: (
+                q.set_version_filter("Actuals")
+                .set_time_filter("01/2026", "03/2026")
+                .add_account_filter("Assets")
+                .use_override_currency("GBP")
+            ),
+            ET.fromstring(
+                '<call callerName="wdadaptivepy" method="exportData">'
+                '  <credentials login="" password="" />'
+                '  <format displayNameEnabled="true" includeCodes="true" includeDisplayNames="false" includeNames="true" includeUnmappedItems="false" useIds="false" useInternalCodes="true" />'  # noqa: E501
+                '  <version name="Actuals" />'
+                "  <filters>"
+                "    <accounts>"
+                '      <account code="Assets" includeDescendants="true" isAssumption="false" />'  # noqa: E501
+                "    </accounts>"
+                '    <timeSpan end="03/2026" start="01/2026" />'
+                "  </filters>"
+                '  <rules includeRollupAccounts="false" includeRollupLevels="false" includeZeroRows="false" markBlanks="false" markInvalidValues="false" timeRollups="false">'  # noqa: E501
+                '    <currency override="GBP" />'
+                "  </rules>"
+                "</call>"
+            ),
+            id="test_override_currency",
+        ),
     ],
 )
 def test_data_query_request_xml(
