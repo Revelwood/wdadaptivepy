@@ -34,21 +34,3 @@ The recommended way to install `wdadaptivepy` is via [uv](https://github.com/ast
     source .venv/bin/activate # Windows should be `.venv\Scripts\activate`
     pip install wdadaptivepy
     ```
-
-## Additional Features
-
-### Workday Authentication
-
-`wdadaptivepy` supports authenticating via Workday, but it requires an additional package.
-
-=== "uv"
-
-    ```sh
-    uv add wdadaptivepy[workday]
-    ```
-
-=== "pip"
-
-    ```sh
-    pip install wdadaptivepy[workday]
-    ```
