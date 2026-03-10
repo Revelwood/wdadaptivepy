@@ -2,7 +2,7 @@
 
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import TypeVar
+from typing import Literal, TypeVar
 from xml.etree import ElementTree as ET
 
 from wdadaptivepy.models.account import Account
@@ -11,6 +11,7 @@ from wdadaptivepy.models.dimension import Dimension
 from wdadaptivepy.models.dimension_value import DimensionValue
 from wdadaptivepy.models.level import Level
 from wdadaptivepy.models.time import Period, Stratum
+from wdadaptivepy.models.version import Version
 
 T = TypeVar("T")
 
@@ -168,6 +169,79 @@ def is_string(value: T | Sequence[T]) -> None:
         raise TypeError(error_message)
 
 
+def has_id(value: T | Sequence[T]) -> None:
+    """Validate that a value has an ID.
+
+    Args:
+        value: Value to validate has an ID
+
+    Raises:
+        KeyError: Missing key
+        ValueError: Unexpected value
+
+    """
+    if isinstance(value, Sequence):
+        for item in value:
+            has_code(item)
+    if not hasattr(value, "id"):
+        error_message = "Filter value missing id"
+        raise KeyError(error_message)
+    id = getattr(value, "id", None)  # noqa: A001
+    if id in [None, 0]:
+        error_message = "Filter value must have an ID"
+        raise ValueError(error_message)
+
+
+def is_none_bool_or_single(value: T | Sequence[T]) -> None:
+    """Validate that a value is none, a boolean, or "single".
+
+    Args:
+        value: Value to validate
+
+    Raises:
+        KeyError: Missing key
+        ValueError: Unexpected value
+
+    """
+    if isinstance(value, bool | None):
+        return
+    if value == "single":
+        return
+    raise ValueError
+
+
+@dataclass
+class VersionFilter:
+    """Adaptive Version Filter.
+
+    Attributes:
+        version: Adaptive Version
+        is_default: Use the default Adaptive Version
+
+    """
+
+    version: Version | None = field(metadata={"validator": is_none_or_has_name})
+    is_default: bool | None = field(default=None, metadata={"validator": is_bool})
+
+    def to_xml_element(self) -> ET.Element:
+        """Convert Version Filter to XML Element.
+
+        Returns:
+            XML Element
+
+        Raises:
+            ValueError: Unexpected value
+
+        """
+        if self.is_default:
+            return ET.Element("version", attrib={"isDefault": "true"})
+        if not self.version:
+            raise ValueError
+        if not self.version.name:
+            raise ValueError
+        return ET.Element("version", attrib={"name": self.version.name})
+
+
 @dataclass
 class AccountFilter:
     """Adaptive Account Filter.
@@ -178,7 +252,7 @@ class AccountFilter:
 
     """
 
-    account: Account | Sequence[Account] = field(metadata={"validator": has_code})
+    account: Account = field(metadata={"validator": has_code})
     include_descendants: bool = field(default=False, metadata={"validator": is_bool})
 
 
@@ -193,7 +267,7 @@ class LevelFilter:
 
     """
 
-    level: Level | Sequence[Level] = field(metadata={"validator": has_code_and_name})
+    level: Level = field(metadata={"validator": has_code_and_name})
     is_rollup: bool = field(default=False, metadata={"validator": is_bool})
     include_descendants: bool = field(default=False, metadata={"validator": is_bool})
 
@@ -230,7 +304,10 @@ class DimensionValueFilter:
 
     """
 
-    dimension_value: DimensionValue | Sequence[DimensionValue] | None = field(
+    dimension: Dimension | None = field(
+        metadata={"validator": is_none_or_has_name}, default=None
+    )
+    dimension_value: DimensionValue | None = field(
         metadata={"validator": is_none_or_has_code}, default=None
     )
     direct_children: bool | None = field(
@@ -239,9 +316,11 @@ class DimensionValueFilter:
     uncategorized: bool | None = field(
         metadata={"validator": is_none_or_is_bool}, default=None
     )
-    uncategorized_of_dimension: Dimension | Sequence[Dimension] | None = None
-    direct_children_of_dimension: bool | None = field(
-        metadata={"validator": is_none_or_is_bool}, default=None
+    uncategorized_of_dimension: Dimension | None = field(
+        metadata={"validator": has_id}, default=None
+    )
+    direct_children_of_dimension: Dimension | None = field(
+        metadata={"validator": has_id}, default=None
     )
 
 
@@ -331,8 +410,10 @@ class ExportDataRules:
         metadata={"validator": is_none_or_is_bool},
     )
     mark_blanks: bool | None = field(metadata={"validator": is_none_or_is_bool})
-    time_rollups: bool | None = field(metadata={"validator": is_none_or_is_bool})
-    currency: CurrencyFilter | None = field(default=None)
+    time_rollups: bool | Literal["single"] | None = field(
+        metadata={"validator": is_none_bool_or_single}
+    )
+    currency: CurrencyFilter = field(default_factory=CurrencyFilter)
 
     def to_xml_element(self) -> ET.Element:
         """Convert ExportDataRules to XML Element.
@@ -363,12 +444,14 @@ class ExportDataRules:
         if mark_blanks is not None:
             rules_element.attrib["markBlanks"] = mark_blanks
 
-        time_rollups = bool_to_str_true_false(self.time_rollups)
-        if time_rollups is not None:
-            rules_element.attrib["timeRollups"] = time_rollups
+        if isinstance(self.time_rollups, str):
+            rules_element.attrib["timeRollups"] = self.time_rollups
+        else:
+            time_rollups = bool_to_str_true_false(self.time_rollups)
+            if time_rollups:
+                rules_element.attrib["timeRollups"] = time_rollups
 
-        if self.currency is not None:
-            rules_element.append(self.currency.to_xml_element())
+        rules_element.append(self.currency.to_xml_element())
 
         return rules_element
 
@@ -385,13 +468,11 @@ class ExportDataFilter:
 
     """
 
-    accounts: AccountFilter | Sequence[AccountFilter]
+    accounts: Sequence[AccountFilter]
     time: TimeFilter
-    levels: LevelFilter | Sequence[LevelFilter] | None = field(
-        default=None,
-    )
-    dimension_values: DimensionValueFilter | Sequence[DimensionValueFilter] | None = (
-        field(default=None)
+    levels: Sequence[LevelFilter] = field(default_factory=list[LevelFilter])
+    dimension_values: Sequence[DimensionValueFilter] = field(
+        default_factory=list[DimensionValueFilter]
     )
 
     def to_xml_element(self) -> ET.Element:  # NOQA: PLR0912 PLR0915 C901
@@ -407,146 +488,36 @@ class ExportDataFilter:
         filters_element = ET.Element("filters")
 
         accounts_element = ET.Element("accounts")
-        if isinstance(self.accounts, Sequence):
-            for account_filter in self.accounts:
-                include_descendants = bool_to_str_true_false(
-                    account_filter.include_descendants,
-                )
-                if include_descendants is None:
-                    error_message = "Expected include_descendants value"
-                    raise ValueError(error_message)
-                if isinstance(account_filter.account, Sequence):
-                    for account in account_filter.account:
-                        code = str_to_str(account.code)
-                        if code is None:
-                            error_message = "Expected code value"
-                            raise ValueError(error_message)
-                        is_assumption = bool_to_str_true_false(account.is_assumption)
-                        if is_assumption is None:
-                            error_message = "Expected is_assumption value"
-                            raise ValueError(error_message)
-                        account_element = ET.Element(
-                            "account",
-                            attrib={
-                                "code": code,
-                                "isAssumption": is_assumption,
-                                "includeDescendants": include_descendants,
-                            },
-                        )
-                        accounts_element.append(account_element)
-                else:
-                    account = account_filter.account
-                    code = str_to_str(account.code)
-                    if code is None:
-                        error_message = "Expected code value"
-                        raise ValueError(error_message)
-                    is_assumption = bool_to_str_true_false(account.is_assumption)
-                    if is_assumption is None:
-                        error_message = "Expected is_assumption value"
-                        raise ValueError(error_message)
-                    account_element = ET.Element(
-                        "account",
-                        attrib={
-                            "code": code,
-                            "isAssumption": is_assumption,
-                            "includeDescendants": include_descendants,
-                        },
-                    )
-                    accounts_element.append(account_element)
-        else:
-            account_filter = self.accounts
+        for account_filter in self.accounts:
             include_descendants = bool_to_str_true_false(
                 account_filter.include_descendants,
             )
             if include_descendants is None:
                 error_message = "Expected include_descendants value"
                 raise ValueError(error_message)
-            if isinstance(account_filter.account, Sequence):
-                for account in account_filter.account:
-                    code = str_to_str(account.code)
-                    if code is None:
-                        error_message = "Expected code value"
-                        raise ValueError(error_message)
-                    is_assumption = bool_to_str_true_false(account.is_assumption)
-                    if is_assumption is None:
-                        error_message = "Expected is_assumption value"
-                        raise ValueError(error_message)
-                    account_element = ET.Element(
-                        "account",
-                        attrib={
-                            "code": code,
-                            "isAssumption": is_assumption,
-                            "includeDescendants": include_descendants,
-                        },
-                    )
-                    accounts_element.append(account_element)
-            else:
-                account = account_filter.account
-                code = str_to_str(account.code)
-                if code is None:
-                    error_message = "Expected code value"
-                    raise ValueError(error_message)
-                is_assumption = bool_to_str_true_false(account.is_assumption)
-                if is_assumption is None:
-                    error_message = "Expected is_assumption value"
-                    raise ValueError(error_message)
-                account_element = ET.Element(
-                    "account",
-                    attrib={
-                        "code": code,
-                        "isAssumption": is_assumption,
-                        "includeDescendants": include_descendants,
-                    },
-                )
-                accounts_element.append(account_element)
+            account = account_filter.account
+            code = str_to_str(account.code)
+            if code is None:
+                error_message = "Expected code value"
+                raise ValueError(error_message)
+            is_assumption = bool_to_str_true_false(account.is_assumption)
+            if is_assumption is None:
+                error_message = "Expected is_assumption value"
+                raise ValueError(error_message)
+            account_element = ET.Element(
+                "account",
+                attrib={
+                    "code": code,
+                    "isAssumption": is_assumption,
+                    "includeDescendants": include_descendants,
+                },
+            )
+            accounts_element.append(account_element)
         filters_element.append(accounts_element)
 
-        if self.levels is not None:
+        if self.levels:
             levels_element = ET.Element("levels")
-            if isinstance(self.levels, Sequence):
-                for level_filter in self.levels:
-                    is_rollup = bool_to_str_true_false(level_filter.is_rollup)
-                    if is_rollup is None:
-                        error_message = "Expected is_rollup value"
-                        raise ValueError(error_message)
-                    include_descendants = bool_to_str_true_false(
-                        level_filter.include_descendants,
-                    )
-                    if include_descendants is None:
-                        error_message = "Expected include_descendants value"
-                        raise ValueError(error_message)
-                    if isinstance(level_filter.level, Sequence):
-                        for level in level_filter.level:
-                            code = str_to_str(level.code)
-                            if code is None:
-                                error_message = "Expected code value"
-                                raise ValueError(error_message)
-                            level_element = ET.Element(
-                                "level",
-                                attrib={
-                                    "code": code,
-                                    "isRollup": is_rollup,
-                                    "includeDescendants": include_descendants,
-                                },
-                            )
-                            levels_element.append(level_element)
-                    else:
-                        level = level_filter.level
-                        code = str_to_str(level.code)
-                        if code is None:
-                            error_message = "Expected code value"
-                            raise ValueError(error_message)
-                        level_element = ET.Element(
-                            "level",
-                            attrib={
-                                "code": code,
-                                "isRollup": is_rollup,
-                                "includeDescendants": include_descendants,
-                            },
-                        )
-                        levels_element.append(level_element)
-            else:
-                level_filter = self.levels
+            for level_filter in self.levels:
                 is_rollup = bool_to_str_true_false(level_filter.is_rollup)
                 if is_rollup is None:
                     error_message = "Expected is_rollup value"
@@ -598,69 +569,52 @@ class ExportDataFilter:
             error_message = "Expected end value"
             raise ValueError(error_message)
 
-        if self.dimension_values is not None:
+        if self.dimension_values:
             dimension_values_element = ET.Element("dimensionValues")
-            if isinstance(self.dimension_values, Sequence):
-                for dimension_value_filter in self.dimension_values:
-                    if isinstance(dimension_value_filter.dimension_value, Sequence):
-                        for dimension_value in dimension_value_filter.dimension_value:
-                            dimension_value_element = ET.Element(
-                                "dimensionValue", attrib={"id": str(dimension_value.id)}
-                            )
-                            dimension_values_element.append(dimension_value_element)
-                    elif isinstance(
-                        dimension_value_filter.uncategorized_of_dimension,
-                        Sequence,
-                    ):
-                        for (
-                            dimension
-                        ) in dimension_value_filter.uncategorized_of_dimension:
-                            dimension_value_element = ET.Element("dimensionValue")
-                            dimension_name = str_to_str(dimension.name)
-                            dimension_id = int_to_str(dimension.id)
-                            if dimension_name is None and dimension_id is None:
-                                error_message = (
-                                    "One or more of dimension name or "
-                                    "dimension id value expected"
-                                )
-                                raise ValueError(error_message)
-                            if dimension_id is not None:
-                                dimension_value_element.attrib[
-                                    "uncategorizedOfDimension"
-                                ] = dimension_id
-                            elif dimension_name is not None:
-                                dimension_value_element.attrib["uncategorized"] = (
-                                    dimension_name
-                                )
-                            dimension_values_element.append(dimension_value_element)
-                    elif dimension_value_filter.uncategorized_of_dimension is not None:
-                        dimension = dimension_value_filter.uncategorized_of_dimension
-                        dimension_value_element = ET.Element("dimensionValue")
-                        dimension_name = str_to_str(dimension.name)
-                        dimension_id = int_to_str(dimension.id)
-                        if dimension_name is None and dimension_id is None:
-                            error_message = (
-                                "One or more of dimension name "
-                                "or dimension id value expected"
-                            )
-                            raise ValueError(error_message)
-                        if dimension_id is not None:
-                            dimension_value_element.attrib[
-                                "uncategorizedOfDimension"
-                            ] = dimension_id
-                        elif dimension_name is not None:
-                            dimension_value_element.attrib["uncategorized"] = (
-                                dimension_name
-                            )
-                        dimension_values_element.append(dimension_value_element)
-            elif isinstance(self.dimension_values, DimensionValueFilter) and isinstance(
-                self.dimension_values.dimension_value, Sequence
-            ):
-                for dimension_value in self.dimension_values.dimension_value:
-                    dimension_value_element = ET.Element(
-                        "dimensionValue",
-                        attrib={"id": str(dimension_value.id)},
+            for dimension_value_filter in self.dimension_values:
+                if dimension_value_filter.dimension_value is not None:
+                    dimension_value = dimension_value_filter.dimension_value
+                    dimension_value_element = ET.Element("dimensionValue")
+                    direct_children = bool_to_str_true_false(
+                        dimension_value_filter.direct_children
                     )
+                    if direct_children is not None:
+                        dimension_value_element.attrib["directChildren"] = (
+                            direct_children
+                        )
+                    uncategorized = bool_to_str_true_false(
+                        dimension_value_filter.uncategorized
+                    )
+                    if uncategorized is not None:
+                        dimension_value_element.attrib["uncategorized"] = uncategorized
+                    if dimension_value.id:
+                        dimension_value_element.attrib["id"] = str(dimension_value.id)
+                    elif dimension_value.code:
+                        dimension = dimension_value_filter.dimension
+                        if dimension is None or not dimension.name:
+                            raise ValueError
+                        dimension_value_element.attrib["dimName"] = dimension.name
+                        dimension_value_element.attrib["code"] = dimension_value.code
+                    else:
+                        raise ValueError
+                    dimension_values_element.append(dimension_value_element)
+                elif dimension_value_filter.uncategorized_of_dimension is not None:
+                    dimension = dimension_value_filter.uncategorized_of_dimension
+                    dimension_value_element = ET.Element("dimensionValue")
+                    dimension_name = str_to_str(dimension.name)
+                    dimension_id = int_to_str(dimension.id)
+                    if dimension_id is not None:
+                        dimension_value_element.attrib["uncategorizedOfDimension"] = (
+                            dimension_id
+                        )
+                    elif dimension_name is not None:
+                        dimension_value_element.attrib["uncategorized"] = dimension_name
+                    else:
+                        error_message = (
+                            "One or more of dimension name "
+                            "or dimension id value expected"
+                        )
+                        raise ValueError(error_message)
                     dimension_values_element.append(dimension_value_element)
             filters_element.append(dimension_values_element)
 
