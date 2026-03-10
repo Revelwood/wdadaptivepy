@@ -78,7 +78,7 @@ simplifies interacting with the Adaptive Planning API via a Pythonic interface.
 
 ### Pre-requisites
 
-- Python 3.12+
+- Python 3.10+
 - Valid credentials (username/password) for an active Workday Adaptive
   Planning account
   - wdadaptivepy will be limited to the access granted to the Adaptive user
@@ -90,17 +90,33 @@ simplifies interacting with the Adaptive Planning API via a Pythonic interface.
 
 ## Example Usage
 
+### Retrieving Levels
+
 ```python
 from wdadaptivepy import AdaptiveConnection
 
 
 adaptive = AdaptiveConnection(username="YOUR_ADAPTIVE@USER.NAME", password="Y0urP@$$w0rd!")
 
-# Update Level names containing " - OLD"
 levels = adaptive.levels.get_all()
-for level in levels:
-    level.name.replace(" - OLD", " - NEW")
-# adaptive.levels.update(levels)  # Not currently implemented
+```
+
+### Retrieving Data
+
+```python
+from wdadaptivepy import AdaptiveConnection
+
+
+adaptive = AdaptiveConnection(username="YOUR_ADAPTIVE@USER.NAME", password="Y0urP@$$w0rd!")
+
+query = (
+    adaptive.data.query_data()
+    .add_account_filter(accounts="Revenue")
+    .add_level_filter(levels="Total Company")
+    .set_version_filter(version="Default Version")
+    .set_time_filter(start_period="01/2023", end_period="01/2023")
+)
+data = query.get_data()
 ```
 
 ## Documentatation

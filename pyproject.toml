@@ -1,10 +1,10 @@
 [project]
 name = "wdadaptivepy"
-version = "0.1.1"
+version = "0.2.0"
 description = "Wrapper for Workday Adaptive Planning's API"
 readme = "README.md"
-requires-python = ">=3.12"
-dependencies = ["requests>=2.32.4"]
+requires-python = ">=3.10"
+dependencies = ["httpx>=0.28.1"]
 authors = [{ name = "Revelwood Labs", email = "labs@revelwood.com" }]
 maintainers = [{ name = "Revelwood Labs", email = "labs@revelwood.com" }]
 license = { file = "LICENSE" }
@@ -25,7 +25,7 @@ classifiers = [
   "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
   "Natural Language :: English",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.10",
   "Topic :: Office/Business :: Financial",
 ]
 
@@ -55,10 +55,11 @@ dev = [
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = "-ra -q -vv"
+pythonpath = ["src"]
 testpaths = ["tests"]
 
 [build-system]
-requires = ["uv_build>=0.8.9,<0.10.0"]
+requires = ["uv_build>=0.8.9,<0.11.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
@@ -77,7 +78,7 @@ ignore = ["D203", "D213", "COM812"]
 deprecateTypingAliases = true
 # reportCallInDefaultInitializer = true
 # reportImplicitOverride = true
-reportImplicitStringConcatenation = true
+# reportImplicitStringConcatenation = true  # conflicts with ruff's ISC003
 reportImportCycles = true
 # reportMissingSuperCall = true
 reportPropertyTypeMismatch = true

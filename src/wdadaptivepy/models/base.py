@@ -1,11 +1,17 @@
 """wdadaptivepy base model for Adaptive's metadata."""
 
+import sys
 from collections.abc import Callable, Sequence
 from dataclasses import InitVar, dataclass, field, fields
 from datetime import datetime
 from json import loads
-from typing import Any, ClassVar, Self
+from typing import Any, ClassVar
 from xml.etree import ElementTree as ET
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 from wdadaptivepy.models.list import MetadataList, T
 

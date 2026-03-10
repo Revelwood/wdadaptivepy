@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- [Python 3.12](https://docs.python.org/3/whatsnew/3.12.html) or greater
+- [Python 3.10](https://docs.python.org/3/whatsnew/3.10.html) or greater
 
 ## Basic Installation
 
@@ -33,22 +33,4 @@ The recommended way to install `wdadaptivepy` is via [uv](https://github.com/ast
     python3 -m venv .venv  # or `python -m venv .venv`
     source .venv/bin/activate # Windows should be `.venv\Scripts\activate`
     pip install wdadaptivepy
-    ```
-
-## Additional Features
-
-### Workday Authentication
-
-`wdadaptivepy` supports authenticating via Workday, but it requires an additional package.
-
-=== "uv"
-
-    ```sh
-    uv add wdadaptivepy[workday]
-    ```
-
-=== "pip"
-
-    ```sh
-    pip install wdadaptivepy[workday]
     ```
