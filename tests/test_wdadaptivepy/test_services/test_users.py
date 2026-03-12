@@ -1,6 +1,7 @@
 """Tests for wdadaptivepy's service for Adaptive's Users."""
 
 # Code using pytest-mock
+from datetime import datetime
 from unittest.mock import MagicMock
 from xml.etree import ElementTree as ET
 
@@ -12,6 +13,7 @@ from wdadaptivepy.models import (
     MetadataList,
     User,
 )
+from wdadaptivepy.models.user import Subscription
 from wdadaptivepy.services import UserService
 
 tests: list[tuple[ET.Element, MetadataList[User]]] = []
@@ -22,10 +24,45 @@ u19 = User(
     id=19,
     guid="B9ADBCB81AA2F9BAE040307F02092C2E",
     login="analytica@fakecompany.com",
-    email="analytica@fakecompany.com",
+    email="",
     name="Anna Analyzer",
     permission_set_ids=[3],
     time_zone="US/Pacific",
+    position="Implementer",
+    homepage="Welcome",
+    created_date=datetime(  # NOQA: DTZ001
+        year=2020,
+        month=6,
+        day=26,
+        hour=7,
+        minute=56,
+        second=0,
+        microsecond=0,
+    ),
+    last_login=datetime(  # NOQA: DTZ001
+        year=2020,
+        month=6,
+        day=26,
+        hour=8,
+        minute=48,
+        second=34,
+        microsecond=0,
+    ),
+    failed_attempts=0,
+    locked=False,
+    subscriptions=Subscription(
+        no_subscriptions=False,
+        customer_news_letter=False,
+        customer_webinars=False,
+        education_training=False,
+        local_events=False,
+        partner_news_letter=False,
+        partner_webinars=False,
+        new_products_and_enhancements=False,
+        surveys=False,
+        sysem_alerts_and_updates=True,
+        user_groups=False,
+    ),
 )
 u123 = User(
     id=123,
@@ -34,7 +71,44 @@ u123 = User(
     email="randomuser@fakecompany.com",
     name="J. Random User",
     permission_set_ids=[2],
+    group_ids=[304, 1, 101, 102],
     time_zone="US/Pacific",
+    alternate_email="randomuser@fakecompany.com",
+    position="Director FP&A",
+    homepage="Welcome",
+    created_date=datetime(  # NOQA: DTZ001
+        year=2020,
+        month=6,
+        day=26,
+        hour=7,
+        minute=56,
+        second=0,
+        microsecond=0,
+    ),
+    last_login=datetime(  # NOQA: DTZ001
+        year=2024,
+        month=7,
+        day=19,
+        hour=4,
+        minute=56,
+        second=32,
+        microsecond=0,
+    ),
+    failed_attempts=0,
+    locked=False,
+    subscriptions=Subscription(
+        no_subscriptions=False,
+        customer_news_letter=False,
+        customer_webinars=False,
+        education_training=False,
+        local_events=False,
+        partner_news_letter=False,
+        partner_webinars=False,
+        new_products_and_enhancements=False,
+        surveys=False,
+        sysem_alerts_and_updates=True,
+        user_groups=False,
+    ),
 )
 
 # TEST 1 ######################################################################
@@ -50,8 +124,12 @@ xml2 = ET.fromstring("""<?xml version='1.0' encoding='UTF-8'?>
 <response success="true">
 <output>
    <users seqNo="55">
-     <user id="19" guid="B9ADBCB81AA2F9BAE040307F02092C2E" login="analytica@fakecompany.com" email="analytica@fakecompany.com" name="Anna Analyzer" permissionSetIds="3" timeZone="US/Pacific"/>
-     <user id="123" guid="AAFF5218D55ABB9234660001BEC117A9" login="randomuser@fakecompany.com" email="randomuser@fakecompany.com" name="J. Random User" permissionSetIds="2" timeZone="US/Pacific"/>
+      <user id="19" login="analytica@fakecompany.com" email="" name="Anna Analyzer" permissionSetIds="3" guid="B9ADBCB81AA2F9BAE040307F02092C2E" timeZone="US/Pacific" position="Implementer" homepage="Welcome" createdDate="2020-06-26 07:56:00.0" lastLogin="2020-06-26 08:48:34.0" failedAttempts="0" locked="false">
+        <subscriptions nosubscriptions="0" customerNewsLetter="0" customerWebinars="0" educationTraining="0" localEvents="0" partnerNewsLetter="0" partnerWebinars="0" newProductsAndEnhancements="0" surveys="0" systemAlertsAndUpdates="1" userGroups="0" />
+      </user>
+      <user id="123" login="randomuser@fakecompany.com" email="randomuser@fakecompany.com" name="J. Random User" permissionSetIds="2" guid="AAFF5218D55ABB9234660001BEC117A9" timeZone="US/Pacific" groupIds="304,1,101,102" alternateEmail="randomuser@fakecompany.com" position="Director FP&amp;A" homepage="Welcome" createdDate="2020-06-26 07:56:00.0" lastLogin="2024-07-19 04:56:32.0" failedAttempts="0" locked="false">
+        <subscriptions nosubscriptions="0" customerNewsLetter="0" customerWebinars="0" educationTraining="0" localEvents="0" partnerNewsLetter="0" partnerWebinars="0" newProductsAndEnhancements="0" surveys="0" systemAlertsAndUpdates="1" userGroups="0" />
+      </user>
    </users>
 </output>
 </response> """)  # noqa: E501

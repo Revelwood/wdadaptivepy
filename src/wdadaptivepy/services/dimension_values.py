@@ -81,9 +81,6 @@ class DimensionValueService:
 
         """
         method, payload = self.__build_update_payload(dimension, dimension_values)
-        # ET.indent(updated_dimensions)
-        # with open("test_dimensions.xml", "w", encoding="utf-8") as fp:
-        #     fp.write(ET.tostring(update_dimension, encoding="unicode"))
         return self.__xml_api.preview_xml_request(
             method=method,
             payload=payload,
@@ -109,7 +106,7 @@ class DimensionValueService:
         update_dimension.extend(DimensionValue.to_xml("update", dimension_values))
         return "updateDimensions", update_dimensions
 
-    def __find_dimension(self, dimension: Dimension | int | str) -> Dimension:  # NOQA: PLR0912
+    def __find_dimension(self, dimension: Dimension | int | str) -> Dimension:  # NOQA: PLR0912 C901
         search_dimension = None
         if isinstance(dimension, Dimension):
             search_dimension = dimension

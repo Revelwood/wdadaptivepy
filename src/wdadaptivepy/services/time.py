@@ -77,9 +77,6 @@ class TimeService:
 
         """
         updated_times = Time.to_xml("update", times)
-        # ET.indent(updated_times)
-        # with open("test_time.xml", "w", encoding="utf-8") as fp:
-        #     fp.write(ET.tostring(updated_times, encoding="unicode"))
         return self.__xml_api.preview_xml_request(
             method="importTime",
             payload=updated_times,

@@ -13,7 +13,7 @@ class FailedRequestError(Exception):
 
     """
 
-    def __init__(self, message: str, method: str) -> None:
+    def __init__(self, message: list[dict[str, str | None]], method: str) -> None:
         """Generate Exception for unsuccessful XML API calls.
 
         Args:
@@ -21,5 +21,8 @@ class FailedRequestError(Exception):
             method: Adaptive XML API name
 
         """
-        super().__init__(message, method)
+        error_message = "The API request failed to complete successfully"
+        if message:
+            error_message = str(message)
+        super().__init__(error_message, method)
         self.method = method

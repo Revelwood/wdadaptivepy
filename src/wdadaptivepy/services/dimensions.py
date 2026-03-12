@@ -77,9 +77,6 @@ class DimensionService:
 
         """
         updated_dimensions = Dimension.to_xml("update", dimensions)
-        # ET.indent(updated_dimensions)
-        # with open("test_dimensions.xml", "w", encoding="utf-8") as fp:
-        #     fp.write(ET.tostring(updated_dimensions, encoding="unicode"))
         return self.__xml_api.preview_xml_request(
             method="importDimensions",
             payload=updated_dimensions,

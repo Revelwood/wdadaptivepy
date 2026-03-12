@@ -74,9 +74,6 @@ class UserService:
 
         """
         updated_users = User.to_xml("update", users)
-        # ET.indent(updated_users)
-        # with open("test_users.xml", "w", encoding="utf-8") as fp:
-        #     fp.write(ET.tostring(updated_users, encoding="unicode"))
         return self.__xml_api.preview_xml_request(
             method="importUsers",
             payload=updated_users,

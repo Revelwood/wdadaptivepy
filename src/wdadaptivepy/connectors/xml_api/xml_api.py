@@ -4,7 +4,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from xml.etree import ElementTree as ET
 
-import requests
+import httpx
 
 from wdadaptivepy.connectors.xml_api.constants import (
     BASE_URL,
@@ -42,11 +42,15 @@ class XMLApi:
         self,
         method: str,
         payload: ET.Element | Sequence[ET.Element] | None,
+        *,
+        stream: bool = False,
     ) -> ET.Element:
         call = ET.Element(
             "call",
             attrib={"method": method, "callerName": self.caller_name},
         )
+        if stream:
+            call.attrib["stream"] = "true"
         credentials = ET.Element(
             "credentials",
             attrib={
@@ -97,12 +101,15 @@ class XMLApi:
         self,
         method: str,
         payload: ET.Element | Sequence[ET.Element] | None,
+        *,
+        stream: bool = False,
     ) -> ET.Element:
         """Send API call to Adaptive.
 
         Args:
             method: Adaptive XML API name
             payload:Body of XML API call
+            stream: Stream XML response
 
         Returns:
             XML Element of API response
@@ -112,25 +119,29 @@ class XMLApi:
             FailedRequestError: Exception indicating the API request was unsuccessful
 
         """
-        call = self.__generate_xml_call(method, payload)
+        call = self.__generate_xml_call(method, payload, stream=stream)
 
         request_headers = {"Content-Type": "application/xml"}
-        response = requests.post(
+        response = httpx.post(
             url=BASE_URL + "v" + str(MINIMUM_VERSION),
-            data=ET.tostring(call),
+            content=ET.tostring(call),
             headers=request_headers,
-            timeout=(10, 30 * 60),
         )
 
         tree = ET.fromstring(text=response.text)  # NOQA: S314
 
-        messages = tree.find(path="messages")
-        if messages is not None:
-            for message in messages.findall(path="message"):
-                if (
-                    "key" in message.attrib
-                    and message.attrib["key"] == "error-authentication-failure"
-                ):
+        messages: list[dict[str, str | None]] = []
+        messages_element = tree.find(path="messages")
+        if messages_element is not None:
+            for message_element in messages_element.findall(path="message"):
+                message = {
+                    "key": message_element.get("key"),
+                    "type": message_element.get("type"),
+                    "text": message_element.text,
+                }
+                if message not in messages:
+                    messages.append(message)
+                if message["key"] == "error-authentication-failure":
                     error_message = (
                         "The provided credentials are either incorrect "
                         "or the associated account does not "
@@ -139,7 +150,7 @@ class XMLApi:
                     raise InvalidCredentialsError(error_message)
         if "success" in tree.attrib and tree.attrib["success"] != "true":
             raise FailedRequestError(
-                message="The API request failed to complete successfully",
+                message=messages,
                 method=method,
             )
 

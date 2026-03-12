@@ -56,9 +56,6 @@ class CurrencyService:
 
         """
         updated_currencies = Currency.to_xml("update", currencies)
-        # ET.indent(updated_currencies)
-        # with open("test_currencies.xml", "w", encoding="utf-8") as fp:
-        #     fp.write(ET.tostring(updated_currencies, encoding="unicode"))
         return self.__xml_api.preview_xml_request(
             method="importCurrencies",
             payload=updated_currencies,

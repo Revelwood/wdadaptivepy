@@ -67,9 +67,6 @@ class LevelService:
 
         """
         updated_levels = Level.to_xml("update", levels)
-        # ET.indent(updated_levels)
-        # with open("test_levels.xml", "w", encoding="utf-8") as fp:
-        #     fp.write(ET.tostring(updated_levels, encoding="unicode"))
         return self.__xml_api.preview_xml_request(
             method="importLevels",
             payload=updated_levels,

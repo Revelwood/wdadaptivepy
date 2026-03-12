@@ -15,10 +15,3 @@ def test_connection_requires_password() -> None:
     """Test that wdadaptivepy requires an Adaptive password value."""
     with pytest.raises(TypeError):
         XMLApi(login="test_login")  # pyright: ignore[reportCallIssue]
-
-
-# def test_unsupported_xml_api_version() -> None:
-#     with pytest.raises(ValueError):
-#         XMLApi(login="test_login", password="test_password", version=20000)
-#     with pytest.raises(ValueError):
-#         XMLApi(login="test_login", password="test_password", version=2)
