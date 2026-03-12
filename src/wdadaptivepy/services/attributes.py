@@ -5,9 +5,9 @@ from xml.etree import ElementTree as ET
 
 from wdadaptivepy.connectors.xml_api.xml_api import XMLApi
 from wdadaptivepy.models.attribute import Attribute
-from wdadaptivepy.models.base import bool_to_str_true_false
 from wdadaptivepy.models.dimension import Dimension
 from wdadaptivepy.models.list import MetadataList
+from wdadaptivepy.utils.parsers import bool_to_str_true_false
 
 
 class AttributeService:
@@ -25,7 +25,7 @@ class AttributeService:
             xml_api: wdadaptivepy XMLApi
 
         """
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self.Attribute = Attribute
 
     def get_all(self, *, display_name_enabled: bool = True) -> MetadataList[Attribute]:
@@ -45,7 +45,7 @@ class AttributeService:
             },
         )
 
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportAttributes",
             payload=include,
         )
@@ -68,7 +68,7 @@ class AttributeService:
 
         """
         updated_attributes = Attribute.to_xml("update", attributes)
-        return self.__xml_api.preview_xml_request(
+        return self._xml_api.preview_xml_request(
             method="importAttributes",
             payload=updated_attributes,
             hide_password=hide_password,
@@ -157,7 +157,7 @@ class AttributeService:
             },
         )
 
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportAttributes",
             payload=include,
         )

@@ -6,12 +6,16 @@ from typing import Literal, TypeVar
 from xml.etree import ElementTree as ET
 
 from wdadaptivepy.models.account import Account
-from wdadaptivepy.models.base import bool_to_str_true_false, int_to_str, str_to_str
 from wdadaptivepy.models.dimension import Dimension
 from wdadaptivepy.models.dimension_value import DimensionValue
 from wdadaptivepy.models.level import Level
 from wdadaptivepy.models.time import Period, Stratum
 from wdadaptivepy.models.version import Version
+from wdadaptivepy.utils.parsers import (
+    bool_to_str_true_false,
+    int_to_str,
+    str_to_str,
+)
 
 T = TypeVar("T")
 

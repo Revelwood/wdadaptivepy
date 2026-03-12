@@ -498,7 +498,7 @@ def mock_time(
     # Create a mock object for the Times
     mocked_levels = mocker.MagicMock()
     mocker.patch.object(
-        time_service._TimeService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+        time_service._xml_api,  # noqa: SLF001
         "make_xml_request",
         mocked_levels,
     )

@@ -4,9 +4,9 @@ from collections.abc import Sequence
 from xml.etree import ElementTree as ET
 
 from wdadaptivepy.connectors.xml_api.xml_api import XMLApi
-from wdadaptivepy.models.base import bool_to_str_true_false
 from wdadaptivepy.models.list import MetadataList
 from wdadaptivepy.models.user import User
+from wdadaptivepy.utils.parsers import bool_to_str_true_false
 
 
 class UserService:
@@ -24,7 +24,7 @@ class UserService:
             xml_api: wdadaptivepy XMLApi
 
         """
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self.User = User
 
     def get_all(
@@ -51,7 +51,7 @@ class UserService:
             },
         )
 
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportUsers",
             payload=include,
         )
@@ -74,7 +74,7 @@ class UserService:
 
         """
         updated_users = User.to_xml("update", users)
-        return self.__xml_api.preview_xml_request(
+        return self._xml_api.preview_xml_request(
             method="importUsers",
             payload=updated_users,
             hide_password=hide_password,

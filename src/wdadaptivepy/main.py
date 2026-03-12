@@ -59,7 +59,7 @@ class AdaptiveConnection:
 
     def __post_init__(self) -> None:
         """Clean up AdaptiveConnection instance."""
-        self.__xml_api = XMLApi(
+        self._xml_api = XMLApi(
             login=self.login,
             password=self.password,
             locale=self.locale,
@@ -68,19 +68,19 @@ class AdaptiveConnection:
             version=self.xml_api_version,
         )
 
-        self.accounts = AccountService(xml_api=self.__xml_api)
-        self.attributes = AttributeService(xml_api=self.__xml_api)
-        self.attribute_values = AttributeValueService(xml_api=self.__xml_api)
-        self.currencies = CurrencyService(xml_api=self.__xml_api)
-        self.data = DataService(xml_api=self.__xml_api)
-        self.dimensions = DimensionService(xml_api=self.__xml_api)
-        self.dimension_values = DimensionValueService(xml_api=self.__xml_api)
-        self.groups = GroupService(xml_api=self.__xml_api)
-        self.levels = LevelService(xml_api=self.__xml_api)
-        self.permission_sets = PermissionSetService(xml_api=self.__xml_api)
-        self.time = TimeService(xml_api=self.__xml_api)
-        self.users = UserService(xml_api=self.__xml_api)
-        self.versions = VersionService(xml_api=self.__xml_api)
+        self.accounts = AccountService(xml_api=self._xml_api)
+        self.attributes = AttributeService(xml_api=self._xml_api)
+        self.attribute_values = AttributeValueService(xml_api=self._xml_api)
+        self.currencies = CurrencyService(xml_api=self._xml_api)
+        self.data = DataService(xml_api=self._xml_api)
+        self.dimensions = DimensionService(xml_api=self._xml_api)
+        self.dimension_values = DimensionValueService(xml_api=self._xml_api)
+        self.groups = GroupService(xml_api=self._xml_api)
+        self.levels = LevelService(xml_api=self._xml_api)
+        self.permission_sets = PermissionSetService(xml_api=self._xml_api)
+        self.time = TimeService(xml_api=self._xml_api)
+        self.users = UserService(xml_api=self._xml_api)
+        self.versions = VersionService(xml_api=self._xml_api)
 
     def __setattr__(self, name: str, value: Any, /) -> None:  # NOQA: ANN401
         """Force data to appropriate data type.
@@ -93,9 +93,9 @@ class AdaptiveConnection:
             RuntimeError: Unexpected value
 
         """
-        if getattr(self, "_AdaptiveConnection__xml_api", None):
-            if getattr(self.__xml_api, name.removeprefix("xml_api_"), None):
-                setattr(self.__xml_api, name.removeprefix("xml_api_"), value)
-            if getattr(self.__xml_api, name, None):
-                setattr(self.__xml_api, name, value)
+        if getattr(self, "_AdaptiveConnection_xml_api", None):
+            if getattr(self._xml_api, name.removeprefix("xml_api_"), None):
+                setattr(self._xml_api, name.removeprefix("xml_api_"), value)
+            if getattr(self._xml_api, name, None):
+                setattr(self._xml_api, name, value)
         super().__setattr__(name, value)

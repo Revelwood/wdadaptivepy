@@ -1,29 +1,36 @@
 """wdadaptivepy model for Adaptive's Users."""
 
-from dataclasses import dataclass, field
 from datetime import datetime
 from functools import partial
-from typing import ClassVar
+from typing import Annotated, ClassVar
+
+from pydantic import BeforeValidator
 
 from wdadaptivepy.models.base import (
+    ClassXMLMetadata,
+    FieldMetadata,
+    FieldXMLMetadata,
     Metadata,
-    bool_or_none,
+)
+from wdadaptivepy.utils.parsers import (
     bool_to_str_one_zero,
     bool_to_str_true_false,
+    datetime_to_str,
+    int_list_to_str,
+    int_to_str,
+    str_to_str,
+)
+from wdadaptivepy.utils.validators import (
+    bool_or_none,
     custom_type_or_none,
     datetime_or_none,
-    datetime_to_str,
     int_list_or_none,
-    int_list_to_str,
     int_or_none,
-    int_to_str,
     nullable_int_or_none,
     str_or_none,
-    str_to_str,
 )
 
 
-@dataclass(eq=False)
 class Subscription(Metadata):
     """wdadaptivepy model for Adaptive's Subscriptions.
 
@@ -39,148 +46,161 @@ class Subscription(Metadata):
         partner_webinars: Adaptive Subscription Partner Webinars
         user_groups: Adaptive Subscription User Groups
         surveys: Adaptive Subscription Surveys
-        __xml_tags: wdadaptivepy XML tags
 
     """
 
-    no_subscriptions: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_one_zero,
-            "xml_create": "nosubscriptions",
-            "xml_read": "nosubscriptions",
-            "xml_update": "nosubscriptions",
-            "xml_delete": "nosubscriptions",
-        },
-    )
-    sysem_alerts_and_updates: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_one_zero,
-            "xml_create": "systemAlertsAndUpdates",
-            "xml_read": "systemAlertsAndUpdates",
-            "xml_update": "systemAlertsAndUpdates",
-            "xml_delete": "systemAlertsAndUpdates",
-        },
-    )
-    customer_news_letter: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_one_zero,
-            "xml_create": "customerNewsLetter",
-            "xml_read": "customerNewsLetter",
-            "xml_update": "customerNewsLetter",
-            "xml_delete": "customerNewsLetter",
-        },
-    )
-    local_events: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_one_zero,
-            "xml_create": "localEvents",
-            "xml_read": "localEvents",
-            "xml_update": "localEvents",
-            "xml_delete": "localEvents",
-        },
-    )
-    education_training: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_one_zero,
-            "xml_create": "educationTraining",
-            "xml_read": "educationTraining",
-            "xml_update": "educationTraining",
-            "xml_delete": "educationTraining",
-        },
-    )
-    customer_webinars: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_one_zero,
-            "xml_create": "customerWebinars",
-            "xml_read": "customerWebinars",
-            "xml_update": "customerWebinars",
-            "xml_delete": "customerWebinars",
-        },
-    )
-    new_products_and_enhancements: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_one_zero,
-            "xml_create": "newProductsAndEnhancements",
-            "xml_read": "newProductsAndEnhancements",
-            "xml_update": "newProductsAndEnhancements",
-            "xml_delete": "newProductsAndEnhancements",
-        },
-    )
-    partner_news_letter: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_one_zero,
-            "xml_create": "partnerNewsLetter",
-            "xml_read": "partnerNewsLetter",
-            "xml_update": "partnerNewsLetter",
-            "xml_delete": "partnerNewsLetter",
-        },
-    )
-    partner_webinars: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_one_zero,
-            "xml_create": "partnerWebinars",
-            "xml_read": "partnerWebinars",
-            "xml_update": "partnerWebinars",
-            "xml_delete": "partnerWebinars",
-        },
-    )
-    user_groups: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_one_zero,
-            "xml_create": "userGroups",
-            "xml_read": "userGroups",
-            "xml_update": "userGroups",
-            "xml_delete": "userGroups",
-        },
-    )
-    surveys: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_one_zero,
-            "xml_create": "surveys",
-            "xml_read": "surveys",
-            "xml_update": "surveys",
-            "xml_delete": "surveys",
-        },
-    )
-    __xml_tags: ClassVar[dict[str, str | dict[str, type]]] = {
-        "xml_create_parent_tag": "subscriptions",
-        "xml_create_tag": "subscriptions",
-        "xml_create_children": {},
-        "xml_read_parent_tag": "subscriptions",
-        "xml_read_tag": "subscriptions",
-        "xml_read_children": {},
-        "xml_update_parent_tag": "subscriptions",
-        "xml_update_tag": "subscriptions",
-        "xml_update_children": {},
-        "xml_delete_parent_tag": "subscriptions",
-        "xml_delete_tag": "subscriptions",
-        "xml_delete_children": {},
-    }
+    no_subscriptions: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="nosubscriptions",
+                    serializer=bool_to_str_one_zero,
+                )
+            ]
+        ),
+    ] = None
+    sysem_alerts_and_updates: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="systemAlertsAndUpdates",
+                    serializer=bool_to_str_one_zero,
+                )
+            ]
+        ),
+    ] = None
+    customer_news_letter: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="customerNewsLetter",
+                    serializer=bool_to_str_one_zero,
+                )
+            ]
+        ),
+    ] = None
+    local_events: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="localEvents",
+                    serializer=bool_to_str_one_zero,
+                )
+            ]
+        ),
+    ] = None
+    education_training: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="educationTraining",
+                    serializer=bool_to_str_one_zero,
+                )
+            ]
+        ),
+    ] = None
+    customer_webinars: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="customerWebinars",
+                    serializer=bool_to_str_one_zero,
+                )
+            ]
+        ),
+    ] = None
+    new_products_and_enhancements: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="newProductsAndEnhancements",
+                    serializer=bool_to_str_one_zero,
+                )
+            ]
+        ),
+    ] = None
+    partner_news_letter: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="partnerNewsLetter",
+                    serializer=bool_to_str_one_zero,
+                )
+            ]
+        ),
+    ] = None
+    partner_webinars: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="partnerWebinars",
+                    serializer=bool_to_str_one_zero,
+                )
+            ]
+        ),
+    ] = None
+    user_groups: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="userGroups",
+                    serializer=bool_to_str_one_zero,
+                )
+            ]
+        ),
+    ] = None
+    surveys: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="surveys",
+                    serializer=bool_to_str_one_zero,
+                )
+            ]
+        ),
+    ] = None
+    _xml_tags: ClassVar[list[ClassXMLMetadata]] = [
+        ClassXMLMetadata(
+            xml_version="default",
+            default_parent_tag="subscriptions",
+            default_tag="subscriptions",
+        )
+    ]
 
 
-@dataclass(eq=False)
 class User(Metadata):
     """wdadaptivepy model for Adaptive's Users.
 
@@ -210,296 +230,340 @@ class User(Metadata):
         failed_attempts: Adaptive User Failed Attempts
         locked: Adaptive User Locked
         subscriptions: Adaptive User Subscriptions
-        __xml_tags: wdadaptivepy XML tags
 
     """
 
-    id: int | None = field(
-        default=None,
-        metadata={
-            "validator": int_or_none,
-            "xml_parser": int_to_str,
-            "xml_create": "",
-            "xml_read": "id",
-            "xml_update": "id",
-            "xml_delete": "id",
-        },
-    )
-    guid: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "guid",
-            "xml_read": "guid",
-            "xml_update": "guid",
-            "xml_delete": "guid",
-        },
-    )
-    login: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "login",
-            "xml_read": "login",
-            "xml_update": "login",
-            "xml_delete": "login",
-        },
-    )
-    email: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "email",
-            "xml_read": "email",
-            "xml_update": "email",
-            "xml_delete": "email",
-        },
-    )
-    name: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "name",
-            "xml_read": "name",
-            "xml_update": "name",
-            "xml_delete": "name",
-        },
-    )
-    position: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "position",
-            "xml_read": "position",
-            "xml_update": "position",
-            "xml_delete": "position",
-        },
-    )
-    permission_set_ids: list[int] | None = field(
-        default=None,
-        metadata={
-            "validator": int_list_or_none,
-            "xml_parser": int_list_to_str,
-            "xml_create": "permissionSetIds",
-            "xml_read": "permissionSetIds",
-            "xml_update": "permissionSetIds",
-            "xml_delete": "permissionSetIds",
-        },
-    )
-    group_ids: list[int] | None = field(
-        default=None,
-        metadata={
-            "validator": int_list_or_none,
-            "xml_parser": int_list_to_str,
-            "xml_create": "groupIds",
-            "xml_read": "groupIds",
-            "xml_update": "groupIds",
-            "xml_delete": "groupIds",
-        },
-    )
-    alternate_email: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "alternateEmail",
-            "xml_read": "alternateEmail",
-            "xml_update": "alternateEmail",
-            "xml_delete": "alternateEmail",
-        },
-    )
-    saml_fed_id: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "samlFedId",
-            "xml_read": "samlFedId",
-            "xml_update": "samlFedId",
-            "xml_delete": "samlFedId",
-        },
-    )
-    time_zone: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "timeZone",
-            "xml_read": "timeZone",
-            "xml_update": "timeZone",
-            "xml_delete": "timeZone",
-        },
-    )
-    homepage: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "homepage",
-            "xml_read": "homepage",
-            "xml_update": "homepage",
-            "xml_delete": "homepage",
-        },
-    )
-    country: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "country",
-            "xml_read": "country",
-            "xml_update": "country",
-            "xml_delete": "country",
-        },
-    )
-    us_state: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "usState",
-            "xml_read": "usState",
-            "xml_update": "usState",
-            "xml_delete": "usState",
-        },
-    )
-    perspective: str | None = field(
-        default=None,
-        metadata={
-            "validator": nullable_int_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "perspective",
-            "xml_read": "perspective",
-            "xml_update": "perspective",
-            "xml_delete": "perspective",
-        },
-    )
-    perspective_name: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "perspectiveName",
-            "xml_read": "perspectiveName",
-            "xml_update": "perspectiveName",
-            "xml_delete": "perspectiveName",
-        },
-    )
-    dashboard: str | None = field(
-        default=None,
-        metadata={
-            "validator": nullable_int_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "dashboard",
-            "xml_read": "dashboard",
-            "xml_update": "dashboard",
-            "xml_delete": "dashboard",
-        },
-    )
-    dashboard_name: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "dashboardName",
-            "xml_read": "dashboardName",
-            "xml_update": "dashboardName",
-            "xml_delete": "dashboardName",
-        },
-    )
-    netsuite_login: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "netsuiteLogin",
-            "xml_read": "netsuiteLogin",
-            "xml_update": "netsuiteLogin",
-            "xml_delete": "netsuiteLogin",
-        },
-    )
-    salesforce_login: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "salesforceLogin",
-            "xml_read": "salesforceLogin",
-            "xml_update": "salesforceLogin",
-            "xml_delete": "salesforceLogin",
-        },
-    )
-    created_date: datetime | None = field(
-        default=None,
-        metadata={
-            "validator": datetime_or_none,
-            "xml_parser": datetime_to_str,
-            "xml_create": "createdDate",
-            "xml_read": "createdDate",
-            "xml_update": "createdDate",
-            "xml_delete": "createdDate",
-        },
-    )
-    last_login: datetime | None = field(
-        default=None,
-        metadata={
-            "validator": datetime_or_none,
-            "xml_parser": datetime_to_str,
-            "xml_create": "lastLogin",
-            "xml_read": "lastLogin",
-            "xml_update": "lastLogin",
-            "xml_delete": "lastLogin",
-        },
-    )
-    failed_attempts: int | None = field(
-        default=None,
-        metadata={
-            "validator": int_or_none,
-            "xml_parser": int_to_str,
-            "xml_create": "failedAttempts",
-            "xml_read": "failedAttempts",
-            "xml_update": "failedAttempts",
-            "xml_delete": "failedAttempts",
-        },
-    )
-    locked: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_true_false,
-            "xml_create": "locked",
-            "xml_read": "locked",
-            "xml_update": "locked",
-            "xml_delete": "locked",
-        },
-    )
-    subscriptions: Subscription | None = field(
-        default=None,
-        metadata={
-            "validator": partial(custom_type_or_none, data_type=Subscription),
-            "xml_parser": None,
-            "xml_create": "subscriptions",
-            "xml_read": "subscriptions",
-            "xml_update": "subscriptions",
-            "xml_delete": "subscriptions",
-        },
-    )
-    __xml_tags: ClassVar[dict[str, str | dict[str, type]]] = {
-        "xml_create_parent_tag": "users",
-        "xml_create_tag": "user",
-        "xml_create_children": {"subscriptions": Subscription},
-        "xml_read_parent_tag": "users",
-        "xml_read_tag": "user",
-        "xml_read_children": {"subscriptions": Subscription},
-        "xml_update_parent_tag": "users",
-        "xml_update_tag": "user",
-        "xml_update_children": {"subscriptions": Subscription},
-        "xml_delete_parent_tag": "users",
-        "xml_delete_tag": "user",
-        "xml_delete_children": {"subscriptions": Subscription},
-    }
+    id: Annotated[
+        int | None,
+        BeforeValidator(int_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="id",
+                    create_tag="",
+                    serializer=int_to_str,
+                )
+            ]
+        ),
+    ] = None
+    guid: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="guid",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    login: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="login",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    email: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="email",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    name: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="name",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    position: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="position",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    permission_set_ids: Annotated[
+        list[int] | None,
+        BeforeValidator(int_list_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="permissionSetIds",
+                    serializer=int_list_to_str,
+                )
+            ]
+        ),
+    ] = None
+    group_ids: Annotated[
+        list[int] | None,
+        BeforeValidator(int_list_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="groupIds",
+                    serializer=int_list_to_str,
+                )
+            ]
+        ),
+    ] = None
+    alternate_email: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="alternateEmail",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    saml_fed_id: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="samlFedId",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    time_zone: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="timeZone",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    homepage: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="homepage",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    country: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="country",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    us_state: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="usState",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    perspective: Annotated[
+        str | None,
+        BeforeValidator(nullable_int_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="perspective",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    perspective_name: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="perspectiveName",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    dashboard: Annotated[
+        str | None,
+        BeforeValidator(nullable_int_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="dashboard",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    dashboard_name: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="dashboardName",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    netsuite_login: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="netsuiteLogin",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    salesforce_login: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="salesforceLogin",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    created_date: Annotated[
+        datetime | None,
+        BeforeValidator(datetime_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="createdDate",
+                    serializer=datetime_to_str,
+                )
+            ]
+        ),
+    ] = None
+    last_login: Annotated[
+        datetime | None,
+        BeforeValidator(datetime_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="lastLogin",
+                    serializer=datetime_to_str,
+                )
+            ]
+        ),
+    ] = None
+    failed_attempts: Annotated[
+        int | None,
+        BeforeValidator(int_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="failedAttempts",
+                    serializer=int_to_str,
+                )
+            ]
+        ),
+    ] = None
+    locked: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="locked",
+                    serializer=bool_to_str_true_false,
+                )
+            ]
+        ),
+    ] = None
+    subscriptions: Annotated[
+        Subscription | None,
+        BeforeValidator(partial(custom_type_or_none, data_type=Subscription)),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="subscriptions",
+                    serializer=None,
+                )
+            ]
+        ),
+    ] = None
+    _xml_tags: ClassVar[list[ClassXMLMetadata]] = [
+        ClassXMLMetadata(
+            xml_version="default",
+            default_parent_tag="users",
+            default_tag="user",
+            default_children={"subscriptions": Subscription},
+        )
+    ]

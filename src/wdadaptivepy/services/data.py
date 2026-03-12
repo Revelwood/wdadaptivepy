@@ -15,7 +15,6 @@ else:
 
 from wdadaptivepy.connectors.xml_api.xml_api import XMLApi
 from wdadaptivepy.models.account import Account
-from wdadaptivepy.models.base import bool_to_str_true_false
 from wdadaptivepy.models.data import (
     AccountFilter,
     CurrencyFilter,
@@ -32,6 +31,7 @@ from wdadaptivepy.models.dimension_value import DimensionValue
 from wdadaptivepy.models.level import Level
 from wdadaptivepy.models.time import Period, Stratum
 from wdadaptivepy.models.version import Version
+from wdadaptivepy.utils.parsers import bool_to_str_true_false
 
 T = TypeVar("T")
 
@@ -927,7 +927,7 @@ class DataService:
             xml_api: wdadaptivepy XMLApi
 
         """
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self.ExportDataAccountsFilter = AccountFilter
         self.ExportDataCurrencyFilter = CurrencyFilter
         self.ExportDataDimensionValueFilter = DimensionValueFilter
@@ -1008,7 +1008,7 @@ class DataService:
             rules_element = rules.to_xml_element()
             payload.append(rules_element)
 
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportData",
             payload=payload,
         )
@@ -1117,7 +1117,7 @@ class DataService:
             },
         )
 
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportConfigurableModelData",
             payload=[version_element, modeled_sheet_element],
         )

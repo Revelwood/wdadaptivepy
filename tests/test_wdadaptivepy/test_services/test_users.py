@@ -173,7 +173,7 @@ def mock_users(
     # Create a mock object for the Users
     mocked_levels = mocker.MagicMock()
     mocker.patch.object(
-        user_service._UserService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+        user_service._xml_api,  # noqa: SLF001
         "make_xml_request",
         mocked_levels,
     )
