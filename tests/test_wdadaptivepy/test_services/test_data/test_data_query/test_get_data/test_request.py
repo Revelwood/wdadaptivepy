@@ -971,7 +971,7 @@ def test_data_query_request_xml(
 ) -> None:
     """Test that appropriate XML request bodies are generated."""
     query_config(query)
-    actual_xml = query._DataQuery__xml_api._XMLApi__generate_xml_call(  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+    actual_xml = query._xml_api._generate_xml_call(  # noqa: SLF001
         "exportData",
         query._generate_xml(),  # noqa: SLF001
     )

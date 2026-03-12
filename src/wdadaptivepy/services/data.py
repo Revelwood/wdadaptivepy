@@ -41,7 +41,7 @@ class DataQuery:
 
     def __init__(self, xml_api: XMLApi) -> None:
         """Initialize DataQuery."""
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self._version_filter = VersionFilter(version=None, is_default=None)
         self._account_filter: list[AccountFilter] = []
         self._time_filter: TimeFilter | None = None
@@ -896,7 +896,7 @@ class DataQuery:
 
         if not payload:
             raise ValueError
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportData",
             payload=payload,
             stream=True,
@@ -944,7 +944,7 @@ class DataService:
             DataQuery object
 
         """
-        return DataQuery(xml_api=self.__xml_api)
+        return DataQuery(xml_api=self._xml_api)
 
     def _create_dimension_element(self, dimension: Dimension) -> ET.Element:
         if dimension.name is None:

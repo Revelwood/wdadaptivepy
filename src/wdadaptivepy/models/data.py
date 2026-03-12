@@ -532,36 +532,20 @@ class ExportDataFilter:
                 if include_descendants is None:
                     error_message = "Expected include_descendants value"
                     raise ValueError(error_message)
-                if isinstance(level_filter.level, Sequence):
-                    for level in level_filter.level:
-                        code = str_to_str(level.code)
-                        if code is None:
-                            error_message = "Expected code value"
-                            raise ValueError(error_message)
-                        level_element = ET.Element(
-                            "level",
-                            attrib={
-                                "code": code,
-                                "isRollup": is_rollup,
-                                "includeDescendants": include_descendants,
-                            },
-                        )
-                        levels_element.append(level_element)
-                else:
-                    level = level_filter.level
-                    code = str_to_str(level.code)
-                    if code is None:
-                        error_message = "Expected code value"
-                        raise ValueError(error_message)
-                    level_element = ET.Element(
-                        "level",
-                        attrib={
-                            "code": code,
-                            "isRollup": is_rollup,
-                            "includeDescendants": include_descendants,
-                        },
-                    )
-                    levels_element.append(level_element)
+                level = level_filter.level
+                code = str_to_str(level.code)
+                if code is None:
+                    error_message = "Expected code value"
+                    raise ValueError(error_message)
+                level_element = ET.Element(
+                    "level",
+                    attrib={
+                        "code": code,
+                        "isRollup": is_rollup,
+                        "includeDescendants": include_descendants,
+                    },
+                )
+                levels_element.append(level_element)
             filters_element.append(levels_element)
 
         start = str_to_str(self.time.start.code)
