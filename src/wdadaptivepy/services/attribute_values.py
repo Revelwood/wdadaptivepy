@@ -6,8 +6,8 @@ from xml.etree import ElementTree as ET
 from wdadaptivepy.connectors.xml_api.xml_api import XMLApi
 from wdadaptivepy.models.attribute import Attribute
 from wdadaptivepy.models.attribute_value import AttributeValue
-from wdadaptivepy.models.base import bool_to_str_true_false
 from wdadaptivepy.models.list import MetadataList
+from wdadaptivepy.utils.parsers import bool_to_str_true_false
 
 
 class AttributeValueService:
@@ -25,7 +25,7 @@ class AttributeValueService:
             xml_api: wdadaptivepy XMLApi
 
         """
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self.AttributeValue = AttributeValue
 
     def get_all(
@@ -44,7 +44,7 @@ class AttributeValueService:
             wdadaptivepy Attribute Values
 
         """
-        _, attribute_values = self.__find_attribute(
+        _, attribute_values = self._find_attribute(
             attribute,
             display_name_enabled=display_name_enabled,
         )
@@ -68,14 +68,14 @@ class AttributeValueService:
             XML API body
 
         """
-        method, payload = self.__build_update_payload(attribute, attribute_values)
-        return self.__xml_api.preview_xml_request(
+        method, payload = self._build_update_payload(attribute, attribute_values)
+        return self._xml_api.preview_xml_request(
             method=method,
             payload=payload,
             hide_password=hide_password,
         )
 
-    def __build_update_payload(
+    def _build_update_payload(
         self,
         attribute: Attribute | int | str,
         attribute_values: Sequence[AttributeValue],
@@ -83,7 +83,7 @@ class AttributeValueService:
         for attribute_value in attribute_values:
             if attribute_value.id is None or attribute_value.id == 0:
                 raise ValueError
-        found_attribute, _ = self.__find_attribute(attribute=attribute)
+        found_attribute, _ = self._find_attribute(attribute=attribute)
         update_attributes = Attribute.to_xml(
             "update",
             [Attribute(id=found_attribute.id)],
@@ -96,7 +96,7 @@ class AttributeValueService:
         )
         return "updateAttributes", update_attributes
 
-    def __find_attribute(
+    def _find_attribute(
         self,
         attribute: Attribute | int | str,
         *,
@@ -109,7 +109,7 @@ class AttributeValueService:
             },
         )
 
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportAttributes",
             payload=include,
         )

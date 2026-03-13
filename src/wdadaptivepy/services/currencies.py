@@ -23,7 +23,7 @@ class CurrencyService:
             xml_api: wdadaptivepy XMLApi
 
         """
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self.Currency = Currency
 
     def get_all(self) -> MetadataList[Currency]:
@@ -33,7 +33,7 @@ class CurrencyService:
             adaptive Currencies
 
         """
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportActiveCurrencies",
             payload=None,
         )
@@ -56,7 +56,7 @@ class CurrencyService:
 
         """
         updated_currencies = Currency.to_xml("update", currencies)
-        return self.__xml_api.preview_xml_request(
+        return self._xml_api.preview_xml_request(
             method="importCurrencies",
             payload=updated_currencies,
             hide_password=hide_password,

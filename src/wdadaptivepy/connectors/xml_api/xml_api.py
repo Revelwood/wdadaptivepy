@@ -38,7 +38,7 @@ class XMLApi:
     caller_name: str = DEFAULT_CALLER_NAME
     version: int = MINIMUM_VERSION
 
-    def __generate_xml_call(
+    def _generate_xml_call(
         self,
         method: str,
         payload: ET.Element | Sequence[ET.Element] | None,
@@ -91,7 +91,7 @@ class XMLApi:
             XML Element of API call
 
         """
-        call = self.__generate_xml_call(method, payload)
+        call = self._generate_xml_call(method, payload)
         credentials = call.find("credentials")
         if hide_password is True and credentials is not None:
             credentials.attrib["password"] = "*" * len(credentials.attrib["password"])
@@ -119,7 +119,7 @@ class XMLApi:
             FailedRequestError: Exception indicating the API request was unsuccessful
 
         """
-        call = self.__generate_xml_call(method, payload, stream=stream)
+        call = self._generate_xml_call(method, payload, stream=stream)
 
         request_headers = {"Content-Type": "application/xml"}
         response = httpx.post(

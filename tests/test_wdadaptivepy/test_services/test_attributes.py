@@ -96,7 +96,7 @@ def mock_attributes(
     # Create a mock object for the Attributes
     mocked_levels = mocker.MagicMock()
     mocker.patch.object(
-        account_service._AttributeService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+        account_service._xml_api,  # noqa: SLF001
         "make_xml_request",
         mocked_levels,
     )

@@ -84,7 +84,7 @@ def mock_groups(
     # Create a mock object for the Groups
     mocked_levels = mocker.MagicMock()
     mocker.patch.object(
-        group_service._GroupService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+        group_service._xml_api,  # noqa: SLF001
         "make_xml_request",
         mocked_levels,
     )

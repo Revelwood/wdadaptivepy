@@ -4,9 +4,9 @@ from collections.abc import Sequence
 from xml.etree import ElementTree as ET
 
 from wdadaptivepy.connectors.xml_api.xml_api import XMLApi
-from wdadaptivepy.models.base import bool_to_str_true_false
 from wdadaptivepy.models.list import MetadataList
 from wdadaptivepy.models.version import Version
+from wdadaptivepy.utils.parsers import bool_to_str_true_false
 
 
 class VersionService:
@@ -24,7 +24,7 @@ class VersionService:
             xml_api: wdadaptivepy XMLApi
 
         """
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self.Version = Version
 
     def get_all(
@@ -51,7 +51,7 @@ class VersionService:
             },
         )
 
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportVersions",
             payload=include,
         )
@@ -74,7 +74,7 @@ class VersionService:
 
         """
         updated_versions = Version.to_xml("update", versions)
-        return self.__xml_api.preview_xml_request(
+        return self._xml_api.preview_xml_request(
             method="importVersions",
             payload=updated_versions,
             hide_password=hide_password,

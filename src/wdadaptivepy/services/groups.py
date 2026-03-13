@@ -23,7 +23,7 @@ class GroupService:
             xml_api: wdadaptivepy XMLApi
 
         """
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self.Group = Group
 
     def get_all(self) -> MetadataList[Group]:
@@ -33,7 +33,7 @@ class GroupService:
             adaptive Groups
 
         """
-        response = self.__xml_api.make_xml_request(method="exportGroups", payload=None)
+        response = self._xml_api.make_xml_request(method="exportGroups", payload=None)
         return MetadataList[Group](Group.from_xml(xml=response))
 
     def preview_update(
@@ -53,7 +53,7 @@ class GroupService:
 
         """
         updated_groups = Group.to_xml("update", groups)
-        return self.__xml_api.preview_xml_request(
+        return self._xml_api.preview_xml_request(
             method="importGroups",
             payload=updated_groups,
             hide_password=hide_password,

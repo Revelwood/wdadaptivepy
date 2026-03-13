@@ -1,18 +1,25 @@
 """wdadaptivepy model for Adaptive's Dimension Values."""
 
-from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import Annotated, ClassVar
+
+from pydantic import BeforeValidator
 
 from wdadaptivepy.models.base import (
+    ClassXMLMetadata,
+    FieldMetadata,
+    FieldXMLMetadata,
     HierarchialAttributedMetadata,
-    int_or_none,
+)
+from wdadaptivepy.utils.parsers import (
     int_to_str,
-    str_or_none,
     str_to_str,
+)
+from wdadaptivepy.utils.validators import (
+    int_or_none,
+    str_or_none,
 )
 
 
-@dataclass(eq=False)
 class DimensionValue(HierarchialAttributedMetadata):
     """wdadaptivepy model for Adaptive's Dimension Values.
 
@@ -23,87 +30,92 @@ class DimensionValue(HierarchialAttributedMetadata):
         display_name: Adaptive Dimension Value Display Name
         short_name: Adaptive Dimension Value Short Name
         description: Adaptive Dimension Value Description
-        __xml_tags: wdadaptivepy XML tags
 
     """
 
-    id: int | None = field(
-        default=None,
-        metadata={
-            "validator": int_or_none,
-            "xml_parser": int_to_str,
-            "xml_create": "",
-            "xml_read": "id",
-            "xml_update": "id",
-            "xml_delete": "id",
-        },
-    )
-    code: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "code",
-            "xml_read": "code",
-            "xml_update": "code",
-            "xml_delete": "code",
-        },
-    )
-    name: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "name",
-            "xml_read": "name",
-            "xml_update": "name",
-            "xml_delete": "name",
-        },
-    )
-    display_name: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "displayName",
-            "xml_read": "displayName",
-            "xml_update": "displayName",
-            "xml_delete": "displayName",
-        },
-    )
-    short_name: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "shortName",
-            "xml_read": "shortName",
-            "xml_update": "shortName",
-            "xml_delete": "shortName",
-        },
-    )
-    description: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "description",
-            "xml_read": "description",
-            "xml_update": "description",
-            "xml_delete": "description",
-        },
-    )
-    __xml_tags: ClassVar[dict[str, str | dict[str, type]]] = {
-        "xml_create_parent_tag": "dimension",
-        "xml_create_tag": "dimensionValue",
-        "xml_create_children": {},
-        "xml_read_parent_tag": "dimension",
-        "xml_read_tag": "dimensionValue",
-        "xml_read_children": {},
-        "xml_update_parent_tag": "dimension",
-        "xml_update_tag": "dimensionValue",
-        "xml_update_children": {},
-        "xml_delete_parent_tag": "dimension",
-        "xml_delete_tag": "dimensionValue",
-        "xml_delete_children": {},
-    }
+    id: Annotated[
+        int | None,
+        BeforeValidator(int_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="id",
+                    create_tag="",
+                    serializer=int_to_str,
+                )
+            ]
+        ),
+    ] = None
+    code: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="code",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    name: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="name",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    display_name: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="displayName",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    short_name: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="shortName",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    description: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="description",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    _xml_tags: ClassVar[list[ClassXMLMetadata]] = [
+        ClassXMLMetadata(
+            xml_version="default",
+            default_parent_tag="dimension",
+            default_tag="dimensionValue",
+        )
+    ]
