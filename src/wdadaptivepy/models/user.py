@@ -4,7 +4,7 @@ from datetime import datetime
 from functools import partial
 from typing import Annotated, ClassVar
 
-from pydantic import BeforeValidator
+from pydantic import AfterValidator, BeforeValidator
 
 from wdadaptivepy.models.base import (
     ClassXMLMetadata,
@@ -23,7 +23,7 @@ from wdadaptivepy.utils.parsers import (
 from wdadaptivepy.utils.validators import (
     bool_or_none,
     custom_type_or_none,
-    datetime_or_none,
+    datetime_tz_or_none,
     int_list_or_none,
     int_or_none,
     nullable_int_or_none,
@@ -496,7 +496,7 @@ class User(Metadata):
     ] = None
     created_date: Annotated[
         datetime | None,
-        BeforeValidator(datetime_or_none),
+        AfterValidator(datetime_tz_or_none),
         FieldMetadata(
             xml=[
                 FieldXMLMetadata(
@@ -509,7 +509,7 @@ class User(Metadata):
     ] = None
     last_login: Annotated[
         datetime | None,
-        BeforeValidator(datetime_or_none),
+        AfterValidator(datetime_tz_or_none),
         FieldMetadata(
             xml=[
                 FieldXMLMetadata(

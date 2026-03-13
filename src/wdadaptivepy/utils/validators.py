@@ -1,7 +1,7 @@
 """wdadaptivepy base model for Adaptive's metadata."""
 
 from collections.abc import Sequence
-from datetime import datetime
+from datetime import datetime, timezone
 
 from wdadaptivepy.models.list import MetadataList, T
 
@@ -58,48 +58,6 @@ def metadatalist_or_none(
             return value
         return MetadataList[T](list(value))
     error_message = "Unexpected data type"
-    raise TypeError(error_message)
-
-
-def date_or_none(value: str | datetime | None) -> datetime | None:
-    """Convert a value to either a Python datetime object (date) or none.
-
-    Args:
-        value: Value to convert to date or None
-
-    Returns:
-        Date value or None
-
-    Raises:
-        TypeError: Unexpected type
-
-    """
-    if value is None or isinstance(value, datetime):
-        return value
-    if isinstance(value, str):
-        return datetime.strptime(value, "%Y-%m-%d")  # NOQA: DTZ007
-    error_message = "Unexpected type for date"
-    raise TypeError(error_message)
-
-
-def datetime_or_none(value: str | datetime | None) -> datetime | None:
-    """Convert a value to either a Python datetime object (datetime) or none.
-
-    Args:
-        value: Value to convert to datetime or None
-
-    Returns:
-        Datetime value or None
-
-    Raises:
-        TypeError: Unexpected type
-
-    """
-    if value is None or isinstance(value, datetime):
-        return value
-    if isinstance(value, str):
-        return datetime.strptime(value, "%Y-%m-%d %H:%M:%S.%f")  # NOQA: DTZ007
-    error_message = "Unexpected type for datetime"
     raise TypeError(error_message)
 
 
@@ -235,3 +193,20 @@ def int_list_or_none(
         return [int(x) for x in value]
     error_message = "unexpected type for integer list"
     raise TypeError(error_message)
+
+
+def datetime_tz_or_none(dt: datetime | None) -> datetime | None:
+    """Ensure a timezone exists on a datetime.
+
+    Args:
+        dt: Datetime value to check for timezone
+
+    Returns:
+        Datetime with timezone
+
+    """
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt

@@ -4,7 +4,7 @@ from datetime import datetime
 from functools import partial
 from typing import Annotated, ClassVar
 
-from pydantic import BeforeValidator, Field
+from pydantic import AfterValidator, BeforeValidator, Field
 
 from wdadaptivepy.models.base import (
     ClassXMLMetadata,
@@ -22,7 +22,7 @@ from wdadaptivepy.utils.parsers import (
 )
 from wdadaptivepy.utils.validators import (
     bool_or_none,
-    date_or_none,
+    datetime_tz_or_none,
     int_or_none,
     metadatalist_or_none,
     str_or_none,
@@ -172,7 +172,7 @@ class Period(HierchialMetadata):
     ] = None
     start: Annotated[
         datetime | None,
-        BeforeValidator(date_or_none),
+        AfterValidator(datetime_tz_or_none),
         FieldMetadata(
             xml=[
                 FieldXMLMetadata(
@@ -185,7 +185,7 @@ class Period(HierchialMetadata):
     ] = None
     end: Annotated[
         datetime | None,
-        BeforeValidator(date_or_none),
+        AfterValidator(datetime_tz_or_none),
         FieldMetadata(
             xml=[
                 FieldXMLMetadata(
