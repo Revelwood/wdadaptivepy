@@ -5,8 +5,8 @@ from xml.etree import ElementTree as ET
 
 from wdadaptivepy.connectors.xml_api.xml_api import XMLApi
 from wdadaptivepy.models.account import Account
-from wdadaptivepy.models.base import bool_to_str_true_false
 from wdadaptivepy.models.list import MetadataList
+from wdadaptivepy.utils.parsers import bool_to_str_true_false
 
 
 class AccountService:
@@ -24,7 +24,7 @@ class AccountService:
             xml_api: Adaptive XMLApi
 
         """
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self.Account = Account
 
     def get_all(
@@ -58,7 +58,7 @@ class AccountService:
             },
         )
 
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportAccounts",
             payload=include,
         )
@@ -81,7 +81,7 @@ class AccountService:
 
         """
         updated_accounts = Account.to_xml("update", accounts)
-        return self.__xml_api.preview_xml_request(
+        return self._xml_api.preview_xml_request(
             method="importAccounts",
             payload=updated_accounts,
             hide_password=hide_password,

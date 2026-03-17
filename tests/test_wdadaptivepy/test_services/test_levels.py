@@ -187,7 +187,7 @@ def mock_levels(mocker: MockerFixture, level_service: LevelService) -> ET.Elemen
     # Create a mock object for the Levels
     mocked_levels = mocker.MagicMock()
     mocker.patch.object(
-        level_service._LevelService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+        level_service._xml_api,  # noqa: SLF001
         "make_xml_request",
         mocked_levels,
     )

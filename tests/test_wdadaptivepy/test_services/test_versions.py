@@ -214,7 +214,7 @@ def mock_versions(
     # Create a mock object for the Versions
     mocked_levels = mocker.MagicMock()
     mocker.patch.object(
-        version_service._VersionService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+        version_service._xml_api,  # noqa: SLF001
         "make_xml_request",
         mocked_levels,
     )

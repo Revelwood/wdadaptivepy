@@ -1,21 +1,28 @@
 """wdadaptivepy model for Adaptive's Levels."""
 
-from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import Annotated, ClassVar
+
+from pydantic import BeforeValidator
 
 from wdadaptivepy.models.base import (
+    ClassXMLMetadata,
+    FieldMetadata,
+    FieldXMLMetadata,
     HierarchialAttributedMetadata,
-    bool_or_none,
+)
+from wdadaptivepy.utils.parsers import (
     bool_to_str_one_zero,
     bool_to_str_true_false,
-    int_or_none,
     int_to_str,
-    str_or_none,
     str_to_str,
+)
+from wdadaptivepy.utils.validators import (
+    bool_or_none,
+    int_or_none,
+    str_or_none,
 )
 
 
-@dataclass(eq=False)
 class Level(HierarchialAttributedMetadata):
     """wdadaptivepy model for Adaptive's Levels.
 
@@ -35,186 +42,209 @@ class Level(HierarchialAttributedMetadata):
         is_linked: Adaptive Level Is Linked
         has_children: Adaptive Level Has Children
         description: Adaptive Level Description
-        __xml_tags: wdadaptivepy XML tags
 
     """
 
-    id: int | None = field(
-        default=None,
-        metadata={
-            "validator": int_or_none,
-            "xml_parser": int_to_str,
-            "xml_create": "",
-            "xml_read": "id",
-            "xml_update": "id",
-            "xml_delete": "id",
-        },
-    )
-    code: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "code",
-            "xml_read": "code",
-            "xml_update": "code",
-            "xml_delete": "code",
-        },
-    )
-    name: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "name",
-            "xml_read": "name",
-            "xml_update": "name",
-            "xml_delete": "name",
-        },
-    )
-    display_name: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "displayName",
-            "xml_read": "displayName",
-            "xml_update": "displayName",
-            "xml_delete": "displayName",
-        },
-    )
-    currency: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "currency",
-            "xml_read": "currency",
-            "xml_update": "currency",
-            "xml_delete": "currency",
-        },
-    )
-    publish_currency: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "publishCurrency",
-            "xml_read": "publishCurrency",
-            "xml_update": "publishCurrency",
-            "xml_delete": "publishCurrency",
-        },
-    )
-    short_name: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "shortName",
-            "xml_read": "shortName",
-            "xml_update": "shortName",
-            "xml_delete": "shortName",
-        },
-    )
-    available_start: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "availableStart",
-            "xml_read": "availableStart",
-            "xml_update": "availableStart",
-            "xml_delete": "availableStart",
-        },
-    )
-    available_end: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "availableEnd",
-            "xml_read": "availableEnd",
-            "xml_update": "availableEnd",
-            "xml_delete": "availableEnd",
-        },
-    )
-    is_importable: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_one_zero,
-            "xml_create": "isImportable",
-            "xml_read": "isImportable",
-            "xml_update": "isImportable",
-            "xml_delete": "isImportable",
-        },
-    )
-    workflow_status: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "workflowStatus",
-            "xml_read": "workflowStatus",
-            "xml_update": "workflowStatus",
-            "xml_delete": "workflowStatus",
-        },
-    )
-    is_elimination: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_one_zero,
-            "xml_create": "isElimination",
-            "xml_read": "isElimination",
-            "xml_update": "isElimination",
-            "xml_delete": "isElimination",
-        },
-    )
-    is_linked: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_one_zero,
-            "xml_create": "isLinked",
-            "xml_read": "isLinked",
-            "xml_update": "isLinked",
-            "xml_delete": "isLinked",
-        },
-    )
-    has_children: bool | None = field(
-        default=None,
-        metadata={
-            "validator": bool_or_none,
-            "xml_parser": bool_to_str_true_false,
-            "xml_create": "hasChildren",
-            "xml_read": "hasChildren",
-            "xml_update": "hasChildren",
-            "xml_delete": "hasChildren",
-        },
-    )
-    description: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "description",
-            "xml_read": "description",
-            "xml_update": "description",
-            "xml_delete": "description",
-        },
-    )
-    __xml_tags: ClassVar[dict[str, str | dict[str, type]]] = {
-        "xml_create_parent_tag": "levels",
-        "xml_create_tag": "level",
-        "xml_create_children": {},
-        "xml_read_parent_tag": "levels",
-        "xml_read_tag": "level",
-        "xml_read_children": {},
-        "xml_update_parent_tag": "levels",
-        "xml_update_tag": "level",
-        "xml_update_children": {},
-        "xml_delete_parent_tag": "levels",
-        "xml_delete_tag": "level",
-        "xml_delete_children": {},
-    }
+    id: Annotated[
+        int | None,
+        BeforeValidator(int_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="id",
+                    create_tag="",
+                    serializer=int_to_str,
+                ),
+            ],
+        ),
+    ] = None
+    code: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="code",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    name: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="name",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    display_name: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="displayName",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    currency: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="currency",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    publish_currency: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="publishCurrency",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    short_name: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="shortName",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    available_start: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="availableStart",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    available_end: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="availableEnd",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    is_importable: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="isImportable",
+                    serializer=bool_to_str_one_zero,
+                )
+            ]
+        ),
+    ] = None
+    workflow_status: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="workflowStatus",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    is_elimination: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="isElimination",
+                    serializer=bool_to_str_one_zero,
+                )
+            ]
+        ),
+    ] = None
+    is_linked: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="isLinked",
+                    serializer=bool_to_str_one_zero,
+                )
+            ]
+        ),
+    ] = None
+    has_children: Annotated[
+        bool | None,
+        BeforeValidator(bool_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="hasChildren",
+                    serializer=bool_to_str_true_false,
+                )
+            ]
+        ),
+    ] = None
+    description: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="description",
+                    serializer=str_to_str,
+                ),
+            ],
+        ),
+    ] = None
+    _xml_tags: ClassVar[list[ClassXMLMetadata]] = [
+        ClassXMLMetadata(
+            xml_version="default",
+            default_parent_tag="levels",
+            default_tag="level",
+        )
+    ]

@@ -65,7 +65,7 @@ def mock_accounts(mocker: MockerFixture, account_service: AccountService) -> ET.
     # Create a mock object for the Accounts
     mocked_accounts = mocker.MagicMock()
     mocker.patch.object(
-        account_service._AccountService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+        account_service._xml_api,  # noqa: SLF001
         "make_xml_request",
         mocked_accounts,
     )

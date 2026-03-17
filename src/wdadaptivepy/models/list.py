@@ -8,7 +8,10 @@ from collections.abc import Callable
 from dataclasses import asdict
 from os import PathLike
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, Protocol, TypeVar
+from typing import TYPE_CHECKING, Any, ClassVar, TypeVar, cast, get_args
+
+from pydantic import BaseModel, BeforeValidator, GetCoreSchemaHandler
+from pydantic_core import core_schema
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -19,22 +22,41 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-class IsDataclass(Protocol):
-    """Class to typehint for Data Class properties.
-
-    Attributes:
-        __dataclass_fields__: Dataclass fields
-
-    """
-
-    __dataclass_fields__: ClassVar[dict[str, Any]]
-
-
-T = TypeVar("T", bound=IsDataclass)
+T = TypeVar("T", bound=BaseModel)
 
 
 class MetadataList(list[T]):
     """wdadaptivepy model for list of Adaptive metadata."""
+
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls,
+        source_type: Any,  # noqa: ANN401
+        handler: GetCoreSchemaHandler,
+    ) -> core_schema.CoreSchema:
+        """Define json serializer for Pydantic.
+
+        Args:
+            source_type: Data Type of values
+            handler: Function to serialize data
+
+        Returns:
+            JSON schema
+
+        """
+        args = get_args(source_type)
+        item_type = args[0] if args else Any
+        list_schema = handler.generate_schema(list[item_type])
+
+        return core_schema.no_info_after_validator_function(
+            cls,
+            list_schema,
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                list,
+                info_arg=False,
+                return_schema=list_schema,  # Ensures inner models get serialized!
+            ),
+        )
 
     _OPERATORS: ClassVar[dict[str, Callable[[Any, Any], bool]]] = {
         "eq": operator.eq,
@@ -159,15 +181,17 @@ class MetadataList(list[T]):
                 raise ValueError
             op_func = self._OPERATORS[op_name]
 
-            try:
-                field_def = item.__dataclass_fields__[field_name]
-                validator: Callable[[Any], Any] = field_def.metadata.get(
-                    "validator",
-                    lambda x: x,
-                )
-                new_value = validator(value)
-            except KeyError as _:
+            field_def = item.__class__.model_fields.get(field_name)
+            if not field_def:
                 new_value = value
+            else:
+                validator = None
+                for field_info in field_def.metadata:
+                    if isinstance(field_info, BeforeValidator):
+                        validator = cast("Callable[[Any], Any]", field_info.func)
+                if not validator:
+                    raise RuntimeError
+                new_value = validator(value)
             if not op_func(getattr(item, field_name), new_value):
                 return False
 

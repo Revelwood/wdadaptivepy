@@ -4,9 +4,9 @@ from collections.abc import Sequence
 from xml.etree import ElementTree as ET
 
 from wdadaptivepy.connectors.xml_api.xml_api import XMLApi
-from wdadaptivepy.models.base import bool_to_str_true_false
 from wdadaptivepy.models.dimension import Dimension
 from wdadaptivepy.models.list import MetadataList
+from wdadaptivepy.utils.parsers import bool_to_str_true_false
 
 
 class DimensionService:
@@ -24,7 +24,7 @@ class DimensionService:
             xml_api: wdadaptivepy XMLApi
 
         """
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self.Dimension = Dimension
 
     def get_all(
@@ -54,7 +54,7 @@ class DimensionService:
             },
         )
 
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportDimensions",
             payload=include,
         )
@@ -77,7 +77,7 @@ class DimensionService:
 
         """
         updated_dimensions = Dimension.to_xml("update", dimensions)
-        return self.__xml_api.preview_xml_request(
+        return self._xml_api.preview_xml_request(
             method="importDimensions",
             payload=updated_dimensions,
             hide_password=hide_password,
@@ -139,7 +139,7 @@ class DimensionService:
             },
         )
 
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportDimensions",
             payload=include,
         )

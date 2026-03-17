@@ -4,9 +4,9 @@ from collections.abc import Sequence
 from xml.etree import ElementTree as ET
 
 from wdadaptivepy.connectors.xml_api.xml_api import XMLApi
-from wdadaptivepy.models.base import bool_to_str_one_zero
 from wdadaptivepy.models.list import MetadataList
 from wdadaptivepy.models.time import Period, Stratum, Time
+from wdadaptivepy.utils.parsers import bool_to_str_one_zero
 
 
 class TimeService:
@@ -26,7 +26,7 @@ class TimeService:
             xml_api: wdadaptivepy XMLApi
 
         """
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self.Time = Time
         self.Period = Period
         self.Stratum = Stratum
@@ -57,7 +57,7 @@ class TimeService:
             },
         )
 
-        response = self.__xml_api.make_xml_request(method="exportTime", payload=options)
+        response = self._xml_api.make_xml_request(method="exportTime", payload=options)
         return MetadataList[Time](Time.from_xml(xml=response))
 
     def preview_update(
@@ -77,7 +77,7 @@ class TimeService:
 
         """
         updated_times = Time.to_xml("update", times)
-        return self.__xml_api.preview_xml_request(
+        return self._xml_api.preview_xml_request(
             method="importTime",
             payload=updated_times,
             hide_password=hide_password,

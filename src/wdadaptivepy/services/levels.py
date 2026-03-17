@@ -4,9 +4,9 @@ from collections.abc import Sequence
 from xml.etree import ElementTree as ET
 
 from wdadaptivepy.connectors.xml_api.xml_api import XMLApi
-from wdadaptivepy.models.base import bool_to_str_true_false
 from wdadaptivepy.models.level import Level
 from wdadaptivepy.models.list import MetadataList
+from wdadaptivepy.utils.parsers import bool_to_str_true_false
 
 
 class LevelService:
@@ -24,7 +24,7 @@ class LevelService:
             xml_api: wdadaptivepy XMLApi
 
         """
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self.Level = Level
 
     def get_all(self, *, display_name_enabled: bool = True) -> MetadataList[Level]:
@@ -44,7 +44,7 @@ class LevelService:
             },
         )
 
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportLevels",
             payload=include,
         )
@@ -67,7 +67,7 @@ class LevelService:
 
         """
         updated_levels = Level.to_xml("update", levels)
-        return self.__xml_api.preview_xml_request(
+        return self._xml_api.preview_xml_request(
             method="importLevels",
             payload=updated_levels,
             hide_password=hide_password,

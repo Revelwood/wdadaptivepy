@@ -23,7 +23,7 @@ class PermissionSetService:
             xml_api: wdadaptivepy XMLApi
 
         """
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self.PermissionSet = PermissionSet
 
     def get_all(self) -> MetadataList[PermissionSet]:
@@ -33,7 +33,7 @@ class PermissionSetService:
             adaptive Permission Sets
 
         """
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportPermissionSets",
             payload=None,
         )
@@ -56,7 +56,7 @@ class PermissionSetService:
 
         """
         updated_permission_sets = PermissionSet.to_xml("update", permission_sets)
-        return self.__xml_api.preview_xml_request(
+        return self._xml_api.preview_xml_request(
             method="importPermissionSets",
             payload=updated_permission_sets,
             hide_password=hide_password,

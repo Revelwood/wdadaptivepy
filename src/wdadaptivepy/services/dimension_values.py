@@ -4,10 +4,10 @@ from collections.abc import Sequence
 from xml.etree import ElementTree as ET
 
 from wdadaptivepy.connectors.xml_api.xml_api import XMLApi
-from wdadaptivepy.models.base import bool_to_str_true_false
 from wdadaptivepy.models.dimension import Dimension
 from wdadaptivepy.models.dimension_value import DimensionValue
 from wdadaptivepy.models.list import MetadataList
+from wdadaptivepy.utils.parsers import bool_to_str_true_false
 
 
 class DimensionValueService:
@@ -25,7 +25,7 @@ class DimensionValueService:
             xml_api: wdadaptivepy XMLApi
 
         """
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self.DimensionValue = DimensionValue
 
     def get_all(
@@ -46,7 +46,7 @@ class DimensionValueService:
             adaptive Dimension Values
 
         """
-        get_dimension = self.__find_dimension(dimension)
+        get_dimension = self._find_dimension(dimension)
         include = ET.Element(
             "include",
             attrib={
@@ -56,7 +56,7 @@ class DimensionValueService:
             },
         )
 
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportDimensions",
             payload=include,
         )
@@ -80,14 +80,14 @@ class DimensionValueService:
             XML API body
 
         """
-        method, payload = self.__build_update_payload(dimension, dimension_values)
-        return self.__xml_api.preview_xml_request(
+        method, payload = self._build_update_payload(dimension, dimension_values)
+        return self._xml_api.preview_xml_request(
             method=method,
             payload=payload,
             hide_password=hide_password,
         )
 
-    def __build_update_payload(
+    def _build_update_payload(
         self,
         dimension: Dimension | int | str,
         dimension_values: Sequence[DimensionValue],
@@ -95,7 +95,7 @@ class DimensionValueService:
         for dimension_value in dimension_values:
             if dimension_value.id is None or dimension_value.id == 0:
                 raise ValueError
-        found_dimension = self.__find_dimension(dimension)
+        found_dimension = self._find_dimension(dimension)
         update_dimensions = Dimension.to_xml(
             "update",
             [Dimension(id=found_dimension.id)],
@@ -106,7 +106,7 @@ class DimensionValueService:
         update_dimension.extend(DimensionValue.to_xml("update", dimension_values))
         return "updateDimensions", update_dimensions
 
-    def __find_dimension(self, dimension: Dimension | int | str) -> Dimension:  # NOQA: PLR0912 C901
+    def _find_dimension(self, dimension: Dimension | int | str) -> Dimension:  # NOQA: PLR0912 C901
         search_dimension = None
         if isinstance(dimension, Dimension):
             search_dimension = dimension
@@ -125,7 +125,7 @@ class DimensionValueService:
                 "displayNameEnabled": str(bool_to_str_true_false(value=True)),
             },
         )
-        dimensions_response = self.__xml_api.make_xml_request(
+        dimensions_response = self._xml_api.make_xml_request(
             method="exportDimensions",
             payload=dimensions_include,
         )
