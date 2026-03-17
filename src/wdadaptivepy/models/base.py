@@ -14,7 +14,10 @@ from pydantic import (
     ConfigDict,
     Field,
     PrivateAttr,
+    SerializerFunctionWrapHandler,
     computed_field,
+    field_serializer,
+    model_serializer,
 )
 
 if sys.version_info >= (3, 11):
@@ -29,6 +32,19 @@ from wdadaptivepy.utils.validators import (
     nullable_int_or_none,
     str_or_none,
 )
+
+
+def remove_empty_elements(data: Any) -> Any:
+    """Recursively removes None, empty lists, and empty dicts."""
+    if isinstance(data, dict):
+        cleaned = {k: remove_empty_elements(v) for k, v in data.items()}
+        return {
+            k: v for k, v in cleaned.items() if v is not None and v != [] and v != {}
+        }
+    elif isinstance(data, list):
+        cleaned = [remove_empty_elements(v) for v in data]
+        return [v for v in cleaned if v is not None and v != [] and v != {}]
+    return data
 
 
 @dataclass(frozen=True)
@@ -639,6 +655,15 @@ class BaseMetadata(BaseModel, ABC):
 
         return members
 
+    @model_serializer(mode="wrap")
+    def clean_empty_fields(
+        self,
+        handler: SerializerFunctionWrapHandler,
+    ) -> dict[str, object]:
+        raw_dict = handler(self)
+
+        return remove_empty_elements(raw_dict)
+
 
 class BaseHierarchialMetadata(BaseModel, ABC):
     """Base class for hierarchial Adaptive metadata.
@@ -678,6 +703,34 @@ class BaseHierarchialMetadata(BaseModel, ABC):
 
         """
         return self._adaptive_parent
+
+    @field_serializer("adaptive_parent", when_used="json", mode="wrap")
+    def strip_parent_data(
+        self,
+        adaptive_parent: Self | None,
+        handler: SerializerFunctionWrapHandler,
+    ) -> None | int | str:
+        raw_adaptive_parent = handler(adaptive_parent)
+        if raw_adaptive_parent is None:
+            return None
+        if self._adaptive_parent is None:
+            return None
+        adaptive_id = self._adaptive_parent.id
+        if adaptive_id is not None:
+            # if adaptive_id := self._adaptive_parent.get("id", None) is not None:
+            # if adaptive_id := getattr(raw_adaptive_parent, "id", None) is not None:
+            return adaptive_id
+        code = self._adaptive_parent.code
+        if code is not None:
+            # if code := self._adaptive_parent.get("code", None) is not None:
+            # if code := getattr(raw_adaptive_parent, "code", None) is not None:
+            return code
+        name = raw_adaptive_parent.name
+        if name is not None:
+            # if name := raw_adaptive_parent.get("name", None) is not None:
+            # if name := getattr(raw_adaptive_parent, "name", None) is not None:
+            return name
+        return None
 
     @property
     def adaptive_children(self) -> MetadataList[Self]:
