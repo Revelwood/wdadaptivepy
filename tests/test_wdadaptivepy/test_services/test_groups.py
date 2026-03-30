@@ -82,13 +82,13 @@ def mock_groups(
 
     """
     # Create a mock object for the Groups
-    mocked_levels = mocker.MagicMock()
+    mocked_groups = mocker.MagicMock()
     mocker.patch.object(
         group_service._GroupService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
         "make_xml_request",
-        mocked_levels,
+        mocked_groups,
     )
-    return mocked_levels
+    return mocked_groups
 
 
 @pytest.mark.parametrize(("element", "expected"), tests)
@@ -111,10 +111,10 @@ def test_get_all(
     mock_groups.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = group_service.get_all()
+    groups = group_service.get_all()
 
     # Verify that the function returns the expected data
-    assert levels == expected
+    assert groups == expected
 
 
 @pytest.mark.parametrize(
@@ -144,9 +144,9 @@ def test_get_all_with_errors(  # noqa: PLR0913
     mock_groups.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = group_service.get_all()
+    groups = group_service.get_all()
 
     # Verify that the function returns the expected data
-    xml_value = getattr(levels[index_with_error], key_with_error, None)
+    xml_value = getattr(groups[index_with_error], key_with_error, None)
     expected_value = getattr(expected[index_with_error], key_with_error, None)
     assert xml_value != expected_value
