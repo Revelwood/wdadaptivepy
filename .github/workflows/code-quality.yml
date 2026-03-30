@@ -104,7 +104,7 @@ jobs:
           MKDOCS_GIT_COMMITTERS_APIKEY: ${{ secrets.MKDOCS_GIT_COMMITTERS_APIKEY }}
   security:
     name: Security Scan
-    needs: [lint, typecheck]
+    needs: [linting, type_consistency]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
