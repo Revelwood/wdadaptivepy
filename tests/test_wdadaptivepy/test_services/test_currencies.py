@@ -99,13 +99,13 @@ def mock_currencies(
 
     """
     # Create a mock object for the Currencies
-    mocked_levels = mocker.MagicMock()
+    mocked_currencies = mocker.MagicMock()
     mocker.patch.object(
         currency_service._CurrencyService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
         "make_xml_request",
-        mocked_levels,
+        mocked_currencies,
     )
-    return mocked_levels
+    return mocked_currencies
 
 
 @pytest.mark.parametrize(("element", "expected"), tests)
@@ -128,10 +128,10 @@ def test_get_all(
     mock_currencies.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = currency_service.get_all()
+    currencies = currency_service.get_all()
 
     # Verify that the function returns the expected data
-    assert levels == expected
+    assert currencies == expected
 
 
 @pytest.mark.parametrize(
@@ -161,9 +161,9 @@ def test_get_all_with_errors(  # noqa: PLR0913
     mock_currencies.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = currency_service.get_all()
+    currencies = currency_service.get_all()
 
     # Verify that the function returns the expected data
-    xml_value = getattr(levels[index_with_error], key_with_error, None)
+    xml_value = getattr(currencies[index_with_error], key_with_error, None)
     expected_value = getattr(expected[index_with_error], key_with_error, None)
     assert xml_value != expected_value
