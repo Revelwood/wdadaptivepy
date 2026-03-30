@@ -175,13 +175,13 @@ def mock_dimensions(
 
     """
     # Create a mock object for the Dimensions
-    mocked_levels = mocker.MagicMock()
+    mocked_dimensions = mocker.MagicMock()
     mocker.patch.object(
         dimension_service._DimensionService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
         "make_xml_request",
-        mocked_levels,
+        mocked_dimensions,
     )
-    return mocked_levels
+    return mocked_dimensions
 
 
 @pytest.mark.parametrize(("element", "expected"), tests)
@@ -204,10 +204,10 @@ def test_get_all(
     mock_dimensions.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = dimension_service.get_all()
+    dimensions = dimension_service.get_all()
 
     # Verify that the function returns the expected data
-    assert levels == expected
+    assert dimensions == expected
 
 
 @pytest.mark.parametrize(
@@ -237,9 +237,9 @@ def test_get_all_with_errors(  # noqa: PLR0913
     mock_dimensions.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = dimension_service.get_all()
+    dimensions = dimension_service.get_all()
 
     # Verify that the function returns the expected data
-    xml_value = getattr(levels[index_with_error], key_with_error, None)
+    xml_value = getattr(dimensions[index_with_error], key_with_error, None)
     expected_value = getattr(expected[index_with_error], key_with_error, None)
     assert xml_value != expected_value
