@@ -826,7 +826,7 @@ class DataQuery:
         self, csv_text: str, expected_count: int
     ) -> tuple[list[str], list[list[str]]]:
         """Parse CSV text into lists and validates row counts."""
-        csv_reader = reader(StringIO(csv_text.lstrip("\n")), lineterminator="\n")
+        csv_reader = reader(StringIO(csv_text.strip("\n")), lineterminator="\n")
 
         try:
             headers = next(csv_reader)
@@ -1023,7 +1023,7 @@ class DataService:
         data: list[dict[str, str | int | float]] = []
         column_headers: Sequence[str] | None = None
         if data_element is not None and data_element.text is not None:
-            rows = StringIO(data_element.text.lstrip("\n"))
+            rows = StringIO(data_element.text.strip("\n"))
             csv_reader = DictReader(rows, lineterminator="\n")
             column_headers = csv_reader.fieldnames
             data = list(csv_reader)
@@ -1124,7 +1124,7 @@ class DataService:
         data = response.find("output/data")
         sheet_data: list[dict[str, str | int | float | datetime]] = []
         if data is not None and data.text is not None:
-            rows = StringIO(data.text.lstrip("\n"))
+            rows = StringIO(data.text.strip("\n"))
             csv_reader = DictReader(rows, lineterminator="\n")
             sheet_data = list(csv_reader)
 
