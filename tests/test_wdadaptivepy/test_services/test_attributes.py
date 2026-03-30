@@ -94,13 +94,13 @@ def mock_attributes(
 
     """
     # Create a mock object for the Attributes
-    mocked_levels = mocker.MagicMock()
+    mocked_attributes = mocker.MagicMock()
     mocker.patch.object(
         account_service._AttributeService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
         "make_xml_request",
-        mocked_levels,
+        mocked_attributes,
     )
-    return mocked_levels
+    return mocked_attributes
 
 
 @pytest.mark.parametrize(("element", "expected"), tests)
@@ -123,10 +123,10 @@ def test_get_all(
     mock_attributes.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = account_service.get_all()
+    attributes = account_service.get_all()
 
     # Verify that the function returns the expected data
-    assert levels == expected
+    assert attributes == expected
 
 
 @pytest.mark.parametrize(
@@ -139,7 +139,7 @@ def test_get_all_with_errors(  # noqa: PLR0913
     index_with_error: int,
     key_with_error: str,
     attribute_service: AttributeService,
-    mock_levels: MagicMock,
+    mock_attributes: MagicMock,
 ) -> None:
     """Tests that wdadaptivepy properly parses Adaptive's exportAttributes API response.
 
@@ -149,16 +149,16 @@ def test_get_all_with_errors(  # noqa: PLR0913
         index_with_error: the item in the MetadataList that shouldn't match
         key_with_error: the key for the property in that item that should't match
         attribute_service: wdadaptivepy AttributeService
-        mock_levels: Mocker for Adaptive's exportAttributes XML API response
+        mock_attributes: Mocker for Adaptive's exportAttributes XML API response
 
     """
     # Set the mock object to return a specific response
-    mock_levels.return_value = element
+    mock_attributes.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = attribute_service.get_all()
+    attributes = attribute_service.get_all()
 
     # Verify that the function returns the expected data
-    xml_value = getattr(levels[index_with_error], key_with_error, None)
+    xml_value = getattr(attributes[index_with_error], key_with_error, None)
     expected_value = getattr(expected[index_with_error], key_with_error, None)
     assert xml_value != expected_value
