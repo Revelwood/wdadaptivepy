@@ -81,13 +81,13 @@ def mock_permission_sets(
 
     """
     # Create a mock object for the PermissionSets
-    mocked_levels = mocker.MagicMock()
+    mocked_permission_sets = mocker.MagicMock()
     mocker.patch.object(
         permission_set_service._PermissionSetService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
         "make_xml_request",
-        mocked_levels,
+        mocked_permission_sets,
     )
-    return mocked_levels
+    return mocked_permission_sets
 
 
 @pytest.mark.parametrize(("element", "expected"), tests)
@@ -110,10 +110,10 @@ def test_get_all(
     mock_permission_sets.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = permission_set_service.get_all()
+    permission_sets = permission_set_service.get_all()
 
     # Verify that the function returns the expected data
-    assert levels == expected
+    assert permission_sets == expected
 
 
 @pytest.mark.parametrize(
@@ -143,9 +143,9 @@ def test_get_all_with_errors(  # noqa: PLR0913
     mock_permission_sets.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = permission_set_service.get_all()
+    permission_sets = permission_set_service.get_all()
 
     # Verify that the function returns the expected data
-    xml_value = getattr(levels[index_with_error], key_with_error, None)
+    xml_value = getattr(permission_sets[index_with_error], key_with_error, None)
     expected_value = getattr(expected[index_with_error], key_with_error, None)
     assert xml_value != expected_value
