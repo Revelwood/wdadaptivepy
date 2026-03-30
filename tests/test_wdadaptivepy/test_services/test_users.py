@@ -60,7 +60,7 @@ u19 = User(
         partner_webinars=False,
         new_products_and_enhancements=False,
         surveys=False,
-        sysem_alerts_and_updates=True,
+        system_alerts_and_updates=True,
         user_groups=False,
     ),
 )
@@ -106,7 +106,7 @@ u123 = User(
         partner_webinars=False,
         new_products_and_enhancements=False,
         surveys=False,
-        sysem_alerts_and_updates=True,
+        system_alerts_and_updates=True,
         user_groups=False,
     ),
 )

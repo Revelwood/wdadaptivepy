@@ -29,7 +29,7 @@ class Subscription(Metadata):
 
     Attributes:
         no_subscriptions: Adaptive Subscription No Subscriptions
-        sysem_alerts_and_updates: Adaptive Subscription System Alerts and Updates
+        system_alerts_and_updates: Adaptive Subscription System Alerts and Updates
         customer_news_letter: Adaptive Subscription Custom News Letter
         local_event: Adaptive Subscription Local Event
         education_training: Adaptive Subscription Education Training
@@ -54,7 +54,7 @@ class Subscription(Metadata):
             "xml_delete": "nosubscriptions",
         },
     )
-    sysem_alerts_and_updates: bool | None = field(
+    system_alerts_and_updates: bool | None = field(
         default=None,
         metadata={
             "validator": bool_or_none,
