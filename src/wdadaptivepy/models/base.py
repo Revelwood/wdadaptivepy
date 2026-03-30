@@ -742,7 +742,7 @@ class BaseMetadata:
 
 
 @dataclass(eq=False)
-class BaseHierarchialMetadata:
+class BaseHierarchicalMetadata:
     """Base class for hierarchial Adaptive metadata.
 
     Attributes:
@@ -1088,7 +1088,7 @@ class Metadata(BaseMetadata):
 
 
 @dataclass(eq=False)
-class HierarchicalMetadata(BaseHierarchialMetadata, BaseMetadata):
+class HierarchicalMetadata(BaseHierarchicalMetadata, BaseMetadata):
     """Calss for Hierarchial Adaptive Metadata."""
 
     def __post_init__(
@@ -1103,7 +1103,7 @@ class HierarchicalMetadata(BaseHierarchialMetadata, BaseMetadata):
             children: Adaptive children
 
         """
-        BaseHierarchialMetadata.__post_init__(self, parent=parent, children=children)
+        BaseHierarchicalMetadata.__post_init__(self, parent=parent, children=children)
         BaseMetadata.__post_init__(self)
 
 
@@ -1127,7 +1127,7 @@ class AttributedMetadata(BaseAttributtedMetadata, BaseMetadata):
 
 @dataclass(eq=False)
 class HierarchialAttributedMetadata(
-    BaseHierarchialMetadata,
+    BaseHierarchicalMetadata,
     BaseAttributtedMetadata,
     BaseMetadata,
 ):
@@ -1147,6 +1147,6 @@ class HierarchialAttributedMetadata(
             children: Adaptive children
 
         """
-        BaseHierarchialMetadata.__post_init__(self, parent=parent, children=children)
+        BaseHierarchicalMetadata.__post_init__(self, parent=parent, children=children)
         BaseAttributtedMetadata.__post_init__(self, attributes=attributes)
         BaseMetadata.__post_init__(self)
