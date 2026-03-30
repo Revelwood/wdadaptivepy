@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 
 from wdadaptivepy.models.base import (
-    HierchialMetadata,
+    HierarchicalMetadata,
     int_or_none,
     int_to_str,
     str_or_none,
@@ -13,7 +13,7 @@ from wdadaptivepy.models.base import (
 
 
 @dataclass(eq=False)
-class AttributeValue(HierchialMetadata):
+class AttributeValue(HierarchicalMetadata):
     """wdadaptivepy model for Adaptive's Attribute Values.
 
     Attributes:

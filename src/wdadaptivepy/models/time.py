@@ -6,7 +6,7 @@ from functools import partial
 from typing import ClassVar
 
 from wdadaptivepy.models.base import (
-    HierchialMetadata,
+    HierarchicalMetadata,
     Metadata,
     bool_or_none,
     bool_to_str_one_zero,
@@ -83,7 +83,7 @@ class TimeLocale(Metadata):
 
 
 @dataclass(eq=False)
-class Period(HierchialMetadata):
+class Period(HierarchicalMetadata):
     """wdadaptivepy model for Adaptive's Periods.
 
     Attributes:
@@ -228,7 +228,7 @@ class Period(HierchialMetadata):
 
 
 @dataclass(eq=False)
-class Stratum(HierchialMetadata):
+class Stratum(HierarchicalMetadata):
     """wdadaptivepy model for Adaptive's Stratum.
 
     Attributes:

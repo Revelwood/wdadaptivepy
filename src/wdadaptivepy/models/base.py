@@ -1088,7 +1088,7 @@ class Metadata(BaseMetadata):
 
 
 @dataclass(eq=False)
-class HierchialMetadata(BaseHierarchialMetadata, BaseMetadata):
+class HierarchicalMetadata(BaseHierarchialMetadata, BaseMetadata):
     """Calss for Hierarchial Adaptive Metadata."""
 
     def __post_init__(
