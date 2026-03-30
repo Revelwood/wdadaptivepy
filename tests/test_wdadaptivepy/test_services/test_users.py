@@ -171,13 +171,13 @@ def mock_users(
 
     """
     # Create a mock object for the Users
-    mocked_levels = mocker.MagicMock()
+    mocked_users = mocker.MagicMock()
     mocker.patch.object(
         user_service._UserService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
         "make_xml_request",
-        mocked_levels,
+        mocked_users,
     )
-    return mocked_levels
+    return mocked_users
 
 
 @pytest.mark.parametrize(("element", "expected"), tests)
@@ -200,10 +200,10 @@ def test_get_all(
     mock_users.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = user_service.get_all()
+    users = user_service.get_all()
 
     # Verify that the function returns the expected data
-    assert levels == expected
+    assert users == expected
 
 
 @pytest.mark.parametrize(
@@ -233,9 +233,9 @@ def test_get_all_with_errors(  # noqa: PLR0913
     mock_users.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = user_service.get_all()
+    users = user_service.get_all()
 
     # Verify that the function returns the expected data
-    xml_value = getattr(levels[index_with_error], key_with_error, None)
+    xml_value = getattr(users[index_with_error], key_with_error, None)
     expected_value = getattr(expected[index_with_error], key_with_error, None)
     assert xml_value != expected_value
