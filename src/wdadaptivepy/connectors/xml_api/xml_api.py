@@ -123,7 +123,7 @@ class XMLApi:
 
         request_headers = {"Content-Type": "application/xml"}
         response = httpx.post(
-            url=BASE_URL + "v" + str(MINIMUM_VERSION),
+            url=BASE_URL + "v" + str(self.version),
             content=ET.tostring(call),
             headers=request_headers,
         )

@@ -142,7 +142,7 @@ def test_get_all_with_errors(  # noqa: PLR0913
     index_with_error: int,
     key_with_error: str,
     attribute_value_service: AttributeValueService,
-    mock_levels: MagicMock,
+    mock_attribute_values: MagicMock,
 ) -> None:
     """Tests that wdadaptivepy properly parses the exportAttributeValues API response.
 
@@ -152,16 +152,16 @@ def test_get_all_with_errors(  # noqa: PLR0913
         index_with_error: the item in the MetadataList that shouldn't match
         key_with_error: the key for the property in that item that should't match
         attribute_value_service: wdadaptivepy AttributeValueService
-        mock_levels: Mocker for Adaptive's exportAttributeValues XML API response
+        mock_attribute_values: Mocker for Adaptive's exportAttributeValues API response
 
     """
     # Set the mock object to return a specific response
-    mock_levels.return_value = element
+    mock_attribute_values.return_value = element
 
     # Call the function that downloads data from the external service
-    levels = attribute_value_service.get_all(a13)
+    attribute_values = attribute_value_service.get_all(a13)
 
     # Verify that the function returns the expected data
-    xml_value = getattr(levels[index_with_error], key_with_error, None)
+    xml_value = getattr(attribute_values[index_with_error], key_with_error, None)
     expected_value = getattr(expected[index_with_error], key_with_error, None)
     assert xml_value != expected_value
