@@ -1,7 +1,7 @@
 """Tests for wdadaptivepy's service for Adaptive's Users."""
 
 # Code using pytest-mock
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import MagicMock
 from xml.etree import ElementTree as ET
 
@@ -30,7 +30,7 @@ u19 = User(
     time_zone="US/Pacific",
     position="Implementer",
     homepage="Welcome",
-    created_date=datetime(  # NOQA: DTZ001
+    created_date=datetime(
         year=2020,
         month=6,
         day=26,
@@ -38,8 +38,9 @@ u19 = User(
         minute=56,
         second=0,
         microsecond=0,
+        tzinfo=timezone.utc,
     ),
-    last_login=datetime(  # NOQA: DTZ001
+    last_login=datetime(
         year=2020,
         month=6,
         day=26,
@@ -47,6 +48,7 @@ u19 = User(
         minute=48,
         second=34,
         microsecond=0,
+        tzinfo=timezone.utc,
     ),
     failed_attempts=0,
     locked=False,
@@ -76,7 +78,7 @@ u123 = User(
     alternate_email="randomuser@fakecompany.com",
     position="Director FP&A",
     homepage="Welcome",
-    created_date=datetime(  # NOQA: DTZ001
+    created_date=datetime(
         year=2020,
         month=6,
         day=26,
@@ -84,8 +86,9 @@ u123 = User(
         minute=56,
         second=0,
         microsecond=0,
+        tzinfo=timezone.utc,
     ),
-    last_login=datetime(  # NOQA: DTZ001
+    last_login=datetime(
         year=2024,
         month=7,
         day=19,
@@ -93,6 +96,7 @@ u123 = User(
         minute=56,
         second=32,
         microsecond=0,
+        tzinfo=timezone.utc,
     ),
     failed_attempts=0,
     locked=False,
@@ -173,7 +177,7 @@ def mock_users(
     # Create a mock object for the Users
     mocked_levels = mocker.MagicMock()
     mocker.patch.object(
-        user_service._UserService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+        user_service._xml_api,  # noqa: SLF001
         "make_xml_request",
         mocked_levels,
     )

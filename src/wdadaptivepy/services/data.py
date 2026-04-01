@@ -15,7 +15,6 @@ else:
 
 from wdadaptivepy.connectors.xml_api.xml_api import XMLApi
 from wdadaptivepy.models.account import Account
-from wdadaptivepy.models.base import bool_to_str_true_false
 from wdadaptivepy.models.data import (
     AccountFilter,
     CurrencyFilter,
@@ -32,6 +31,7 @@ from wdadaptivepy.models.dimension_value import DimensionValue
 from wdadaptivepy.models.level import Level
 from wdadaptivepy.models.time import Period, Stratum
 from wdadaptivepy.models.version import Version
+from wdadaptivepy.utils.parsers import bool_to_str_true_false
 
 T = TypeVar("T")
 
@@ -41,7 +41,7 @@ class DataQuery:
 
     def __init__(self, xml_api: XMLApi) -> None:
         """Initialize DataQuery."""
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self._version_filter = VersionFilter(version=None, is_default=None)
         self._account_filter: list[AccountFilter] = []
         self._time_filter: TimeFilter | None = None
@@ -826,7 +826,7 @@ class DataQuery:
         self, csv_text: str, expected_count: int
     ) -> tuple[list[str], list[list[str]]]:
         """Parse CSV text into lists and validates row counts."""
-        csv_reader = reader(StringIO(csv_text.lstrip("\n")), lineterminator="\n")
+        csv_reader = reader(StringIO(csv_text.strip("\n")), lineterminator="\n")
 
         try:
             headers = next(csv_reader)
@@ -896,7 +896,7 @@ class DataQuery:
 
         if not payload:
             raise ValueError
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportData",
             payload=payload,
             stream=True,
@@ -927,7 +927,7 @@ class DataService:
             xml_api: wdadaptivepy XMLApi
 
         """
-        self.__xml_api = xml_api
+        self._xml_api = xml_api
         self.ExportDataAccountsFilter = AccountFilter
         self.ExportDataCurrencyFilter = CurrencyFilter
         self.ExportDataDimensionValueFilter = DimensionValueFilter
@@ -944,7 +944,7 @@ class DataService:
             DataQuery object
 
         """
-        return DataQuery(xml_api=self.__xml_api)
+        return DataQuery(xml_api=self._xml_api)
 
     def _create_dimension_element(self, dimension: Dimension) -> ET.Element:
         if dimension.name is None:
@@ -1008,7 +1008,7 @@ class DataService:
             rules_element = rules.to_xml_element()
             payload.append(rules_element)
 
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportData",
             payload=payload,
         )
@@ -1023,7 +1023,7 @@ class DataService:
         data: list[dict[str, str | int | float]] = []
         column_headers: Sequence[str] | None = None
         if data_element is not None and data_element.text is not None:
-            rows = StringIO(data_element.text.lstrip("\n"))
+            rows = StringIO(data_element.text.strip("\n"))
             csv_reader = DictReader(rows, lineterminator="\n")
             column_headers = csv_reader.fieldnames
             data = list(csv_reader)
@@ -1117,14 +1117,14 @@ class DataService:
             },
         )
 
-        response = self.__xml_api.make_xml_request(
+        response = self._xml_api.make_xml_request(
             method="exportConfigurableModelData",
             payload=[version_element, modeled_sheet_element],
         )
         data = response.find("output/data")
         sheet_data: list[dict[str, str | int | float | datetime]] = []
         if data is not None and data.text is not None:
-            rows = StringIO(data.text.lstrip("\n"))
+            rows = StringIO(data.text.strip("\n"))
             csv_reader = DictReader(rows, lineterminator="\n")
             sheet_data = list(csv_reader)
 

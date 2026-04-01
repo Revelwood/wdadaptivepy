@@ -1,18 +1,25 @@
 """wdadaptivepy model for Adaptive's Permission Sets."""
 
-from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import Annotated, ClassVar
+
+from pydantic import BeforeValidator
 
 from wdadaptivepy.models.base import (
+    ClassXMLMetadata,
+    FieldMetadata,
+    FieldXMLMetadata,
     Metadata,
-    int_or_none,
+)
+from wdadaptivepy.utils.parsers import (
     int_to_str,
-    str_or_none,
     str_to_str,
+)
+from wdadaptivepy.utils.validators import (
+    int_or_none,
+    str_or_none,
 )
 
 
-@dataclass(eq=False)
 class PermissionSet(Metadata):
     """wdadaptivepy model for Adaptive's Permission Sets.
 
@@ -20,54 +27,53 @@ class PermissionSet(Metadata):
         id: Adaptive Permission Set ID
         name: Adaptive Permission Set Name
         permissions: Adaptive Permission Set Permissions
-        __xml_tags: wdadaptivepy XML tags
 
     """
 
-    id: int | None = field(
-        default=None,
-        metadata={
-            "validator": int_or_none,
-            "xml_parser": int_to_str,
-            "xml_create": "",
-            "xml_read": "id",
-            "xml_update": "id",
-            "xml_delete": "id",
-        },
-    )
-    name: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "name",
-            "xml_read": "name",
-            "xml_update": "name",
-            "xml_delete": "name",
-        },
-    )
-    permissions: str | None = field(
-        default=None,
-        metadata={
-            "validator": str_or_none,
-            "xml_parser": str_to_str,
-            "xml_create": "permissions",
-            "xml_read": "permissions",
-            "xml_update": "permissions",
-            "xml_delete": "permissions",
-        },
-    )
-    __xml_tags: ClassVar[dict[str, str | dict[str, type]]] = {
-        "xml_create_parent_tag": "permission_sets",
-        "xml_create_tag": "permission_set",
-        "xml_create_children": {},
-        "xml_read_parent_tag": "permission_sets",
-        "xml_read_tag": "permission_set",
-        "xml_read_children": {},
-        "xml_update_parent_tag": "permission_sets",
-        "xml_update_tag": "permission_set",
-        "xml_update_children": {},
-        "xml_delete_parent_tag": "permission_sets",
-        "xml_delete_tag": "permission_set",
-        "xml_delete_children": {},
-    }
+    id: Annotated[
+        int | None,
+        BeforeValidator(int_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="id",
+                    create_tag="",
+                    serializer=int_to_str,
+                )
+            ]
+        ),
+    ] = None
+    name: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="name",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    permissions: Annotated[
+        str | None,
+        BeforeValidator(str_or_none),
+        FieldMetadata(
+            xml=[
+                FieldXMLMetadata(
+                    xml_version="default",
+                    default_tag="permissions",
+                    serializer=str_to_str,
+                )
+            ]
+        ),
+    ] = None
+    _xml_tags: ClassVar[list[ClassXMLMetadata]] = [
+        ClassXMLMetadata(
+            xml_version="default",
+            default_parent_tag="permission_sets",
+            default_tag="permission_set",
+        )
+    ]

@@ -99,7 +99,7 @@ def mock_attribute_values(
     # Create a mock object for the Attributes
     mocked_attribute_values = mocker.MagicMock()
     mocker.patch.object(
-        attribute_value_service._AttributeValueService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+        attribute_value_service._xml_api,  # noqa: SLF001
         "make_xml_request",
         mocked_attribute_values,
     )

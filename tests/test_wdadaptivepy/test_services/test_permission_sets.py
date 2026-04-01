@@ -83,7 +83,7 @@ def mock_permission_sets(
     # Create a mock object for the PermissionSets
     mocked_levels = mocker.MagicMock()
     mocker.patch.object(
-        permission_set_service._PermissionSetService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+        permission_set_service._xml_api,  # noqa: SLF001
         "make_xml_request",
         mocked_levels,
     )

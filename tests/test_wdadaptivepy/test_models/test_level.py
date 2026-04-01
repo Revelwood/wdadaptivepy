@@ -66,5 +66,5 @@ def test_remove_attribute_returns_new() -> None:
 
     level.remove_adaptive_attribute(adaptive_attribute_id=1)
     assert level.adaptive_attributes[0] != adaptive_attribute
-    assert level.adaptive_attributes[0].value_id == "0"
-    assert adaptive_attribute.value_id == "2"
+    assert level.adaptive_attributes[0].value_id == 0
+    assert adaptive_attribute.value_id == 2  # noqa: PLR2004

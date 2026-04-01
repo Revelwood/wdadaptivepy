@@ -156,7 +156,7 @@ def mock_dimension_values(
     # Create a mock object for the Dimensions
     mocked_levels = mocker.MagicMock()
     mocker.patch.object(
-        dimension_value_service._DimensionValueService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+        dimension_value_service._xml_api,  # noqa: SLF001
         "make_xml_request",
         mocked_levels,
     )

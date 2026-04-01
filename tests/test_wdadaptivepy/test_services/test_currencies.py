@@ -101,7 +101,7 @@ def mock_currencies(
     # Create a mock object for the Currencies
     mocked_levels = mocker.MagicMock()
     mocker.patch.object(
-        currency_service._CurrencyService__xml_api,  # noqa: SLF001  # pyright: ignore[reportAttributeAccessIssue]
+        currency_service._xml_api,  # noqa: SLF001
         "make_xml_request",
         mocked_levels,
     )
