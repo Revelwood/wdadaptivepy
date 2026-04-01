@@ -5,7 +5,7 @@ from abc import ABC
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from json import loads
-from typing import Annotated, Any, ClassVar, Literal
+from typing import Annotated, Any, ClassVar, Literal, cast
 from xml.etree import ElementTree as ET
 
 from pydantic import (
@@ -34,16 +34,14 @@ from wdadaptivepy.utils.validators import (
 )
 
 
-def remove_empty_elements(data: Any) -> Any:
+def remove_empty_elements(data: Any) -> Any:  # noqa: ANN401
     """Recursively removes None, empty lists, and empty dicts."""
     if isinstance(data, dict):
         cleaned = {k: remove_empty_elements(v) for k, v in data.items()}
-        return {
-            k: v for k, v in cleaned.items() if v is not None and v != [] and v != {}
-        }
-    elif isinstance(data, list):
+        return {k: v for k, v in cleaned.items() if v is not None and v not in [[], {}]}
+    if isinstance(data, list):
         cleaned = [remove_empty_elements(v) for v in data]
-        return [v for v in cleaned if v is not None and v != [] and v != {}]
+        return [v for v in cleaned if v is not None and v not in [[], {}]]
     return data
 
 
@@ -660,6 +658,15 @@ class BaseMetadata(BaseModel, ABC):
         self,
         handler: SerializerFunctionWrapHandler,
     ) -> dict[str, object]:
+        """Remove fields with None or empty values.
+
+        Args:
+            handler: Serializer object
+
+        Returns:
+            Cleaned object
+
+        """
         raw_dict = handler(self)
 
         return remove_empty_elements(raw_dict)
@@ -710,17 +717,27 @@ class BaseHierarchialMetadata(BaseModel, ABC):
         adaptive_parent: Self | None,
         handler: SerializerFunctionWrapHandler,
     ) -> None | int | str:
+        """Remove fields from parent object for JSON serialization.
+
+        Args:
+            adaptive_parent: Adaptive parent object
+            handler: Serializer object
+
+        Returns:
+            Identifier for parent, if it exists
+
+        """
         raw_adaptive_parent = handler(adaptive_parent)
         if raw_adaptive_parent is None:
             return None
         if self._adaptive_parent is None:
             return None
-        adaptive_id = self._adaptive_parent.id
+        adaptive_id = cast("int | None", getattr(self._adaptive_parent, "id", None))
         if adaptive_id is not None:
             # if adaptive_id := self._adaptive_parent.get("id", None) is not None:
             # if adaptive_id := getattr(raw_adaptive_parent, "id", None) is not None:
             return adaptive_id
-        code = self._adaptive_parent.code
+        code = cast("str | None", getattr(self._adaptive_parent, "code", None))
         if code is not None:
             # if code := self._adaptive_parent.get("code", None) is not None:
             # if code := getattr(raw_adaptive_parent, "code", None) is not None:
