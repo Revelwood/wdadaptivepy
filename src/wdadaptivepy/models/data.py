@@ -76,13 +76,13 @@ def has_name(value: T | Sequence[T]) -> None:
     """
     if isinstance(value, Sequence):
         for item in value:
-            has_code(item)
+            has_name(item)
     if not hasattr(value, "name"):
-        error_message = "Filter value missing code"
+        error_message = "Filter value missing name"
         raise KeyError(error_message)
-    code = getattr(value, "code", None)
-    if code in [None, ""]:
-        error_message = "Filter value must have a code"
+    name = getattr(value, "name", None)
+    if name in [None, ""]:
+        error_message = "Filter value must have a name"
         raise ValueError(error_message)
 
 
