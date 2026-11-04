@@ -10,6 +10,7 @@ from wdadaptivepy.services.dimensions import DimensionService
 from wdadaptivepy.services.groups import GroupService
 from wdadaptivepy.services.levels import LevelService
 from wdadaptivepy.services.permission_sets import PermissionSetService
+from wdadaptivepy.services.sheets import SheetService
 from wdadaptivepy.services.time import TimeService
 from wdadaptivepy.services.users import UserService
 from wdadaptivepy.services.versions import VersionService
@@ -25,6 +26,7 @@ __all__ = [
     "GroupService",
     "LevelService",
     "PermissionSetService",
+    "SheetService",
     "TimeService",
     "UserService",
     "VersionService",

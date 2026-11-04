@@ -18,6 +18,7 @@ from wdadaptivepy.services.dimensions import DimensionService
 from wdadaptivepy.services.groups import GroupService
 from wdadaptivepy.services.levels import LevelService
 from wdadaptivepy.services.permission_sets import PermissionSetService
+from wdadaptivepy.services.sheets import SheetService
 from wdadaptivepy.services.time import TimeService
 from wdadaptivepy.services.users import UserService
 from wdadaptivepy.services.versions import VersionService
@@ -44,6 +45,7 @@ class AdaptiveConnection:
         groups (GroupService): wdadaptivepy GroupService
         levels (LevelService): wdadaptivepy LevelService
         permission_sets (PermissionSetService): wdadaptivepy PermissionSetService
+        sheets (SheetService): wdadaptivepy SheetService
         time (TimeService): wdadaptivepy TimeService
         users (UserService): wdadaptivepy UserService
         versions (VersionService): wdadaptivepy VersionService
@@ -78,6 +80,7 @@ class AdaptiveConnection:
         self.groups = GroupService(xml_api=self.__xml_api)
         self.levels = LevelService(xml_api=self.__xml_api)
         self.permission_sets = PermissionSetService(xml_api=self.__xml_api)
+        self.sheets = SheetService(xml_api=self.__xml_api)
         self.time = TimeService(xml_api=self.__xml_api)
         self.users = UserService(xml_api=self.__xml_api)
         self.versions = VersionService(xml_api=self.__xml_api)

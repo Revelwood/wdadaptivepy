@@ -59,6 +59,8 @@ nav:
       - Connecting to Adaptive: getting_started/ConnectingtoAdaptive.md
       - Get All Levels: getting_started/Levels.GetAll.md
       - Get All Ancestors: getting_started/Levels.GetAncestors.md
+      - Get All Sheets: getting_started/Sheets.GetAll.md
+      - Get Sheet Definition: getting_started/Sheets.GetDefinition.md
       - Get Data from Modeled Sheet: getting_started/GetDataFromModeledSheet.md
       - Get Data: getting_started/GetData.md
   # - Usage:
