@@ -118,7 +118,7 @@ CubeSheet(id=24,
               CubeSheetDimension(
                   id=3,
                   name='Company',
-                  values=[ColumnValue(id=35, name=None)]
+                  values=[CubeSheetDimensionValue(id=35, rollup=None, uncategorized=None)]
               )
           ],
           levels=[CubeSheetLevels(levels=[LevelRef(id=1)])],

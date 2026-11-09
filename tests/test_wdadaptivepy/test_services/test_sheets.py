@@ -14,6 +14,7 @@ from wdadaptivepy.models import (
     CubeSheetAccount,
     CubeSheetAccounts,
     CubeSheetDimension,
+    CubeSheetDimensionValue,
     CubeSheetLevels,
     CubeSheetTime,
     CubeSheetUser,
@@ -344,7 +345,7 @@ cube_definition_tests.append(
                         name="Company",
                         new_value_behavior="parent",
                         editable_on_sheet=False,
-                        values=MetadataList([ColumnValue(id=35)]),
+                        values=MetadataList([CubeSheetDimensionValue(id=35)]),
                     ),
                 ]
             ),
@@ -379,6 +380,67 @@ cube_definition_tests.append(
                     CubeSheetUsers(
                         is_excluded_from_workflow=True,
                         users=MetadataList([CubeSheetUser(id=11)]),
+                    ),
+                ]
+            ),
+        ),
+    ),
+)
+
+# A cube sheet whose dimension values carry rollup/uncategorized flags. The
+# same value id can appear on several <value> rows distinguished only by the
+# flags.
+cube_definition_value_flags_xml = ET.fromstring(
+    """<?xml version="1.0" encoding="UTF-8"?>
+<response success="true">
+    <output>
+        <cube-sheet id="24" code="SummaryCube" name="Summary Cube"
+                   isGlobal="0" description="" strataId="1"
+                   horizontalAxis="-3" verticalAxis="-2" maxColumnWidth="0"
+                   suppressZeroRows="0" rearrangeGLAndCustomAccounts="0"
+                   hideRollupTotals="0">
+            <dimensions>
+                <dimension id="4" name="CountryRegion">
+                    <value id="144" />
+                    <value id="133" uncategorized="true" />
+                    <value id="133" rollup="true" />
+                </dimension>
+            </dimensions>
+        </cube-sheet>
+    </output>
+</response>""",
+)
+cube_definition_tests.append(
+    (
+        cube_definition_value_flags_xml,
+        CubeSheet(
+            id=24,
+            code="SummaryCube",
+            name="Summary Cube",
+            description="",
+            is_global=False,
+            strata_id=1,
+            horizontal_axis=-3,
+            vertical_axis=[-2],
+            max_column_width=0,
+            suppress_zero_rows=False,
+            rearrange_gl_and_custom_accounts=False,
+            hide_rollup_totals=False,
+            dimensions=MetadataList(
+                [
+                    CubeSheetDimension(
+                        id=4,
+                        name="CountryRegion",
+                        values=MetadataList(
+                            [
+                                CubeSheetDimensionValue(id=144),
+                                CubeSheetDimensionValue(
+                                    id=133,
+                                    uncategorized=True,
+                                ),
+                                CubeSheetDimensionValue(id=133, rollup=True),
+                            ],
+                        ),
                     ),
                 ]
             ),

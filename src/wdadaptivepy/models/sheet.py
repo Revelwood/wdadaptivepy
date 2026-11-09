@@ -18,8 +18,9 @@ import sys
 from dataclasses import dataclass, field
 from functools import partial
 from typing import ClassVar
-from typing_extensions import override
 from xml.etree import ElementTree as ET
+
+from typing_extensions import override
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -1088,6 +1089,72 @@ class CubeSheetUser(Metadata):
 
 
 @dataclass(eq=False)
+class CubeSheetDimensionValue(Metadata):
+    """Selected value within a cube sheet dimension.
+
+    Represents ``<value id="133" rollup="true" />``. Unlike the modeled-sheet
+    :class:`ColumnValue`, a cube sheet dimension value carries ``rollup`` and
+    ``uncategorized`` flags rather than a ``name``; the same ``id`` can appear
+    on several ``<value>`` rows distinguished only by those flags.
+
+    Attributes:
+        id: Adaptive Value ID
+        rollup: Adaptive Dimension Value Rollup
+        uncategorized: Adaptive Dimension Value Uncategorized
+        __xml_tags: wdadaptivepy XML tags
+
+    """
+
+    id: int | None = field(
+        default=None,
+        metadata={
+            "validator": int_or_none,
+            "xml_parser": int_to_str,
+            "xml_create": "",
+            "xml_read": "id",
+            "xml_update": "id",
+            "xml_delete": "id",
+        },
+    )
+    rollup: bool | None = field(
+        default=None,
+        metadata={
+            "validator": bool_or_none,
+            "xml_parser": bool_to_str_true_false,
+            "xml_create": "rollup",
+            "xml_read": "rollup",
+            "xml_update": "rollup",
+            "xml_delete": "rollup",
+        },
+    )
+    uncategorized: bool | None = field(
+        default=None,
+        metadata={
+            "validator": bool_or_none,
+            "xml_parser": bool_to_str_true_false,
+            "xml_create": "uncategorized",
+            "xml_read": "uncategorized",
+            "xml_update": "uncategorized",
+            "xml_delete": "uncategorized",
+        },
+    )
+    __xml_tags: ClassVar[dict[str, str | dict[str, type]]] = {
+        "xml_create_parent_tag": "value",
+        "xml_create_tag": "value",
+        "xml_create_children": {},
+        "xml_read_parent_tag": "value",
+        "xml_read_tag": "value",
+        "xml_read_children": {},
+        "xml_update_parent_tag": "value",
+        "xml_update_tag": "value",
+        "xml_update_children": {},
+        "xml_delete_parent_tag": "value",
+        "xml_delete_tag": "value",
+        "xml_delete_children": {},
+    }
+
+
+@dataclass(eq=False)
 class CubeSheetDimension(Metadata):
     """Dimension of a cube sheet.
 
@@ -1171,10 +1238,13 @@ class CubeSheetDimension(Metadata):
             "xml_delete": "editableOnSheet",
         },
     )
-    values: MetadataList[ColumnValue] = field(
-        default_factory=MetadataList[ColumnValue],
+    values: MetadataList[CubeSheetDimensionValue] = field(
+        default_factory=MetadataList[CubeSheetDimensionValue],
         metadata={
-            "validator": partial(metadatalist_or_none, data_type=ColumnValue),
+            "validator": partial(
+                metadatalist_or_none,
+                data_type=CubeSheetDimensionValue,
+            ),
             "xml_parser": None,
             "xml_create": "values",
             "xml_read": "values",
@@ -1185,16 +1255,16 @@ class CubeSheetDimension(Metadata):
     __xml_tags: ClassVar[dict[str, str | dict[str, type]]] = {
         "xml_create_parent_tag": "dimensions",
         "xml_create_tag": "dimension",
-        "xml_create_children": {"values": ColumnValue},
+        "xml_create_children": {"values": CubeSheetDimensionValue},
         "xml_read_parent_tag": "dimensions",
         "xml_read_tag": "dimension",
-        "xml_read_children": {"values": ColumnValue},
+        "xml_read_children": {"values": CubeSheetDimensionValue},
         "xml_update_parent_tag": "dimensions",
         "xml_update_tag": "dimension",
-        "xml_update_children": {"values": ColumnValue},
+        "xml_update_children": {"values": CubeSheetDimensionValue},
         "xml_delete_parent_tag": "dimensions",
         "xml_delete_tag": "dimension",
-        "xml_delete_children": {"values": ColumnValue},
+        "xml_delete_children": {"values": CubeSheetDimensionValue},
     }
 
 
