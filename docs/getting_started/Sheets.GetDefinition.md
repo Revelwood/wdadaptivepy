@@ -113,7 +113,7 @@ CubeSheet(id=24,
           is_global=False,
           strata_id=1,
           horizontal_axis=-3,
-          vertical_axis=-2,
+          vertical_axis=[-2],
           dimensions=[
               CubeSheetDimension(
                   id=3,

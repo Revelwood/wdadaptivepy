@@ -31,6 +31,8 @@ from wdadaptivepy.models.base import (
     bool_or_none,
     bool_to_str_one_zero,
     bool_to_str_true_false,
+    int_list_or_none,
+    int_list_to_str,
     int_or_none,
     int_to_str,
     metadatalist_or_none,
@@ -1424,11 +1426,11 @@ class CubeSheet(Sheet):
             "xml_delete": "horizontalAxis",
         },
     )
-    vertical_axis: int | None = field(
+    vertical_axis: list[int] | None = field(
         default=None,
         metadata={
-            "validator": int_or_none,
-            "xml_parser": int_to_str,
+            "validator": int_list_or_none,
+            "xml_parser": int_list_to_str,
             "xml_create": "verticalAxis",
             "xml_read": "verticalAxis",
             "xml_update": "verticalAxis",

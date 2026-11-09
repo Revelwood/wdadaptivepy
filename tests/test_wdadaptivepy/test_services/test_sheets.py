@@ -330,7 +330,7 @@ cube_definition_tests.append(
             is_global=False,
             strata_id=1,
             horizontal_axis=-3,
-            vertical_axis=-2,
+            vertical_axis=[-2],
             max_column_width=0,
             suppress_zero_rows=False,
             rearrange_gl_and_custom_accounts=False,
@@ -382,6 +382,38 @@ cube_definition_tests.append(
                     ),
                 ]
             ),
+        ),
+    ),
+)
+
+# A cube sheet whose verticalAxis lists multiple dimension ids.
+cube_definition_multi_axis_xml = ET.fromstring("""<?xml version="1.0" encoding="UTF-8"?>
+<response success="true">
+    <output>
+        <cube-sheet id="24" code="SummaryCube" name="Summary Cube"
+                   isGlobal="0" description="" strataId="1"
+                   horizontalAxis="-3" verticalAxis="-2,5,8" maxColumnWidth="0"
+                   suppressZeroRows="0" rearrangeGLAndCustomAccounts="0"
+                   hideRollupTotals="0">
+        </cube-sheet>
+    </output>
+</response>""")
+cube_definition_tests.append(
+    (
+        cube_definition_multi_axis_xml,
+        CubeSheet(
+            id=24,
+            code="SummaryCube",
+            name="Summary Cube",
+            description="",
+            is_global=False,
+            strata_id=1,
+            horizontal_axis=-3,
+            vertical_axis=[-2, 5, 8],
+            max_column_width=0,
+            suppress_zero_rows=False,
+            rearrange_gl_and_custom_accounts=False,
+            hide_rollup_totals=False,
         ),
     ),
 )
