@@ -13,6 +13,7 @@ from wdadaptivepy.models import (
     CubeSheet,
     CubeSheetAccount,
     CubeSheetAccounts,
+    CubeSheetAttribute,
     CubeSheetDimension,
     CubeSheetDimensionValue,
     CubeSheetLevels,
@@ -287,6 +288,92 @@ modeled_definition_tests.append(
     ),
 )
 
+# A modeled sheet requested with displayNameEnabled="true": values carry the
+# optional code and displayName attributes.
+modeled_definition_display_names_xml = ET.fromstring(
+    """<?xml version="1.0" encoding="UTF-8"?>
+<response success="true">
+    <output>
+        <modeled-sheet id="11" code="Personnel" name="Personnel"
+                      available-in-actuals="false" allow-splits="false"
+                      strataId="51">
+            <columns>
+                <dimension code="JobCode" name="JobCode" read-only="false"
+                          splittable="false" required="false" id="9">
+                    <value id="19" name="E1" code="E1" displayName="E1 - Engineer" />
+                    <value id="20" name="E2" />
+                </dimension>
+                <text-selector code="BenefitsSelector" name="Benefits"
+                              read-only="false" splittable="false"
+                              required="true" id="27">
+                    <value id="208" name="No" code="N" displayName="N - No" />
+                </text-selector>
+            </columns>
+        </modeled-sheet>
+    </output>
+</response>""",
+)
+modeled_definition_tests.append(
+    (
+        modeled_definition_display_names_xml,
+        ModeledSheet(
+            id=11,
+            code="Personnel",
+            name="Personnel",
+            available_in_actuals=False,
+            allow_splits=False,
+            strata_id=51,
+            dimension_columns=MetadataList(
+                [
+                    DimensionColumn(
+                        order=0,
+                        code="JobCode",
+                        name="JobCode",
+                        read_only=False,
+                        splittable=False,
+                        required=False,
+                        id=9,
+                        values=MetadataList(
+                            [
+                                ColumnValue(
+                                    id=19,
+                                    name="E1",
+                                    code="E1",
+                                    display_name="E1 - Engineer",
+                                ),
+                                ColumnValue(id=20, name="E2"),
+                            ],
+                        ),
+                    ),
+                ]
+            ),
+            text_selector_columns=MetadataList(
+                [
+                    TextSelectorColumn(
+                        order=1,
+                        code="BenefitsSelector",
+                        name="Benefits",
+                        read_only=False,
+                        splittable=False,
+                        required=True,
+                        id=27,
+                        values=MetadataList(
+                            [
+                                ColumnValue(
+                                    id=208,
+                                    name="No",
+                                    code="N",
+                                    display_name="N - No",
+                                ),
+                            ],
+                        ),
+                    ),
+                ]
+            ),
+        ),
+    ),
+)
+
 
 # exportSheetDefinition -- cube sheet #########################################
 
@@ -443,6 +530,100 @@ cube_definition_tests.append(
                         ),
                     ),
                 ]
+            ),
+        ),
+    ),
+)
+
+# A cube sheet with <attribute> elements between its dimensions and levels.
+cube_definition_attributes_xml = ET.fromstring(
+    """<?xml version="1.0" encoding="UTF-8"?>
+<response success="true">
+    <output>
+        <cube-sheet id="24" code="SummaryCube" name="Summary Cube"
+                   isGlobal="0" description="" strataId="1"
+                   horizontalAxis="-3" verticalAxis="-2" maxColumnWidth="0"
+                   suppressZeroRows="0" rearrangeGLAndCustomAccounts="0"
+                   hideRollupTotals="0">
+            <dimensions>
+                <dimension id="3" uncategorized="false" rollup="false"
+                          name="Company" newValueBehavior="parent"
+                          editableOnSheet="false">
+                    <value id="35" />
+                </dimension>
+                <attribute id="12" uncategorized="true" rollup="false"
+                          name="Region" newValueBehavior="available">
+                    <value id="101" />
+                    <value id="102" rollup="true" />
+                </attribute>
+                <attribute id="13" uncategorized="false" rollup="true"
+                          name="Segment" newValueBehavior="unavailable">
+                    <value id="201" />
+                </attribute>
+                <levels>
+                    <level id="1" />
+                </levels>
+            </dimensions>
+        </cube-sheet>
+    </output>
+</response>""",
+)
+cube_definition_tests.append(
+    (
+        cube_definition_attributes_xml,
+        CubeSheet(
+            id=24,
+            code="SummaryCube",
+            name="Summary Cube",
+            description="",
+            is_global=False,
+            strata_id=1,
+            horizontal_axis=-3,
+            vertical_axis=[-2],
+            max_column_width=0,
+            suppress_zero_rows=False,
+            rearrange_gl_and_custom_accounts=False,
+            hide_rollup_totals=False,
+            dimensions=MetadataList(
+                [
+                    CubeSheetDimension(
+                        id=3,
+                        uncategorized=False,
+                        rollup=False,
+                        name="Company",
+                        new_value_behavior="parent",
+                        editable_on_sheet=False,
+                        values=MetadataList([CubeSheetDimensionValue(id=35)]),
+                    ),
+                ]
+            ),
+            attributes=MetadataList(
+                [
+                    CubeSheetAttribute(
+                        id=12,
+                        uncategorized=True,
+                        rollup=False,
+                        name="Region",
+                        new_value_behavior="available",
+                        values=MetadataList(
+                            [
+                                CubeSheetDimensionValue(id=101),
+                                CubeSheetDimensionValue(id=102, rollup=True),
+                            ],
+                        ),
+                    ),
+                    CubeSheetAttribute(
+                        id=13,
+                        uncategorized=False,
+                        rollup=True,
+                        name="Segment",
+                        new_value_behavior="unavailable",
+                        values=MetadataList([CubeSheetDimensionValue(id=201)]),
+                    ),
+                ]
+            ),
+            levels=MetadataList(
+                [CubeSheetLevels(levels=MetadataList([LevelRef(id=1)]))],
             ),
         ),
     ),

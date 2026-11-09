@@ -7,7 +7,8 @@ Covers two XML API endpoints:
   the light attributes ``id``, ``name``, ``code``, ``description``,
   ``isGlobal``, and ``recalculateOnDemand``.
 - ``exportSheetDefinition`` returns the full definition of a single modeled or
-  cube sheet, including its columns (modeled) or dimensions/users (cube).
+  cube sheet, including its columns (modeled) or its dimensions, attributes,
+  and users (cube).
 
 ``Sheet`` is the shared base for the three sheet variants. ``ModeledSheet`` and
 ``CubeSheet`` carry the richer definition-endpoint fields, which stay empty when
@@ -172,9 +173,15 @@ class ColumnValue(Metadata):
     parent tag so the same model can be nested under ``<dimension>`` and
     ``<text-selector>`` elements alike.
 
+    ``code`` and ``display_name`` are only returned by Adaptive when the
+    definition is requested with ``displayNameEnabled="true"`` (API v31+) on an
+    instance with display names enabled; otherwise they stay ``None``.
+
     Attributes:
         id: Adaptive Value ID
         name: Adaptive Value Name
+        code: Adaptive Value Code
+        display_name: Adaptive Value Display Name
         __xml_tags: wdadaptivepy XML tags
 
     """
@@ -199,6 +206,28 @@ class ColumnValue(Metadata):
             "xml_read": "name",
             "xml_update": "name",
             "xml_delete": "name",
+        },
+    )
+    code: str | None = field(
+        default=None,
+        metadata={
+            "validator": str_or_none,
+            "xml_parser": str_to_str,
+            "xml_create": "code",
+            "xml_read": "code",
+            "xml_update": "code",
+            "xml_delete": "code",
+        },
+    )
+    display_name: str | None = field(
+        default=None,
+        metadata={
+            "validator": str_or_none,
+            "xml_parser": str_to_str,
+            "xml_create": "displayName",
+            "xml_read": "displayName",
+            "xml_update": "displayName",
+            "xml_delete": "displayName",
         },
     )
     __xml_tags: ClassVar[dict[str, str | dict[str, type]]] = {
@@ -1269,6 +1298,110 @@ class CubeSheetDimension(Metadata):
 
 
 @dataclass(eq=False)
+class CubeSheetAttribute(Metadata):
+    """Attribute of a cube sheet.
+
+    Represents ``<attribute>`` inside a cube sheet's ``<dimensions>`` block. It
+    mirrors :class:`CubeSheetDimension` (minus ``editableOnSheet``), and its
+    ``<value>`` children carry the same ``rollup``/``uncategorized`` flags.
+
+    Attributes:
+        id: Adaptive Attribute ID
+        uncategorized: Adaptive Attribute Uncategorized
+        rollup: Adaptive Attribute Rollup
+        name: Adaptive Attribute Name
+        new_value_behavior: Adaptive Attribute New Value Behavior
+        values: Selected Adaptive Attribute Values
+        __xml_tags: wdadaptivepy XML tags
+
+    """
+
+    id: int | None = field(
+        default=None,
+        metadata={
+            "validator": int_or_none,
+            "xml_parser": int_to_str,
+            "xml_create": "",
+            "xml_read": "id",
+            "xml_update": "id",
+            "xml_delete": "id",
+        },
+    )
+    uncategorized: bool | None = field(
+        default=None,
+        metadata={
+            "validator": bool_or_none,
+            "xml_parser": bool_to_str_true_false,
+            "xml_create": "uncategorized",
+            "xml_read": "uncategorized",
+            "xml_update": "uncategorized",
+            "xml_delete": "uncategorized",
+        },
+    )
+    rollup: bool | None = field(
+        default=None,
+        metadata={
+            "validator": bool_or_none,
+            "xml_parser": bool_to_str_true_false,
+            "xml_create": "rollup",
+            "xml_read": "rollup",
+            "xml_update": "rollup",
+            "xml_delete": "rollup",
+        },
+    )
+    name: str | None = field(
+        default=None,
+        metadata={
+            "validator": str_or_none,
+            "xml_parser": str_to_str,
+            "xml_create": "name",
+            "xml_read": "name",
+            "xml_update": "name",
+            "xml_delete": "name",
+        },
+    )
+    new_value_behavior: str | None = field(
+        default=None,
+        metadata={
+            "validator": str_or_none,
+            "xml_parser": str_to_str,
+            "xml_create": "newValueBehavior",
+            "xml_read": "newValueBehavior",
+            "xml_update": "newValueBehavior",
+            "xml_delete": "newValueBehavior",
+        },
+    )
+    values: MetadataList[CubeSheetDimensionValue] = field(
+        default_factory=MetadataList[CubeSheetDimensionValue],
+        metadata={
+            "validator": partial(
+                metadatalist_or_none,
+                data_type=CubeSheetDimensionValue,
+            ),
+            "xml_parser": None,
+            "xml_create": "values",
+            "xml_read": "values",
+            "xml_update": "values",
+            "xml_delete": "values",
+        },
+    )
+    __xml_tags: ClassVar[dict[str, str | dict[str, type]]] = {
+        "xml_create_parent_tag": "dimensions",
+        "xml_create_tag": "attribute",
+        "xml_create_children": {"values": CubeSheetDimensionValue},
+        "xml_read_parent_tag": "dimensions",
+        "xml_read_tag": "attribute",
+        "xml_read_children": {"values": CubeSheetDimensionValue},
+        "xml_update_parent_tag": "dimensions",
+        "xml_update_tag": "attribute",
+        "xml_update_children": {"values": CubeSheetDimensionValue},
+        "xml_delete_parent_tag": "dimensions",
+        "xml_delete_tag": "attribute",
+        "xml_delete_children": {"values": CubeSheetDimensionValue},
+    }
+
+
+@dataclass(eq=False)
 class CubeSheetLevels(Metadata):
     """Levels block of a cube sheet.
 
@@ -1466,6 +1599,7 @@ class CubeSheet(Sheet):
         rearrange_gl_and_custom_accounts: Adaptive Sheet Rearrange GL/Custom
         hide_rollup_totals: Adaptive Sheet Hide Rollup Totals
         dimensions: Adaptive Cube Sheet Dimensions
+        attributes: Adaptive Cube Sheet Attributes
         levels: Adaptive Cube Sheet Levels
         accounts: Adaptive Cube Sheet Accounts
         time: Adaptive Cube Sheet Time configuration
@@ -1562,6 +1696,17 @@ class CubeSheet(Sheet):
             "xml_delete": "dimensions",
         },
     )
+    attributes: MetadataList[CubeSheetAttribute] = field(
+        default_factory=MetadataList[CubeSheetAttribute],
+        metadata={
+            "validator": partial(metadatalist_or_none, data_type=CubeSheetAttribute),
+            "xml_parser": None,
+            "xml_create": "attributes",
+            "xml_read": "attributes",
+            "xml_update": "attributes",
+            "xml_delete": "attributes",
+        },
+    )
     levels: MetadataList[CubeSheetLevels] = field(
         default_factory=MetadataList[CubeSheetLevels],
         metadata={
@@ -1614,6 +1759,7 @@ class CubeSheet(Sheet):
         "xml_read_tag": "cube-sheet",
         "xml_read_children": {
             "dimensions": CubeSheetDimension,
+            "attributes": CubeSheetAttribute,
             "levels": CubeSheetLevels,
             "accounts": CubeSheetAccounts,
             "time": CubeSheetTime,

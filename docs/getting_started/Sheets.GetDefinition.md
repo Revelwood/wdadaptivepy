@@ -3,7 +3,7 @@
 `get_modeled_definition` and `get_cube_definition` call Adaptive's
 `exportSheetDefinition` method and return the full definition of a single
 modeled or cube sheet, including its columns (modeled) or its dimensions,
-levels, accounts, time configuration, and users (cube).
+attributes, levels, accounts, time configuration, and users (cube).
 
 ## Step 1: Import Adaptivepy and pretty print (to show results)
 
@@ -74,6 +74,16 @@ for dimension_column in personnel_definition.dimension_columns:
     print(dimension_column.name, [v.name for v in dimension_column.values])
 ```
 
+Values on `dimension` and `text-selector` columns are `ColumnValue` objects.
+`get_modeled_definition` requests display names by default
+(`display_name_enabled=True`), so on instances with display names enabled each
+value also carries its `code` and `display_name`; otherwise those stay `None`:
+
+```py
+for value in personnel_definition.dimension_columns[0].values:
+    print(value.id, value.name, value.code, value.display_name)
+```
+
 !!! note
 Each column carries its 0-based position within the sheet on `column.order`,
 and `columns` returns the columns sorted by it. The order is derived from the
@@ -119,6 +129,14 @@ CubeSheet(id=24,
                   id=3,
                   name='Company',
                   values=[CubeSheetDimensionValue(id=35, rollup=None, uncategorized=None)]
+              )
+          ],
+          attributes=[
+              CubeSheetAttribute(
+                  id=12,
+                  name='Region',
+                  new_value_behavior='available',
+                  values=[CubeSheetDimensionValue(id=101, rollup=None, uncategorized=None)]
               )
           ],
           levels=[CubeSheetLevels(levels=[LevelRef(id=1)])],
